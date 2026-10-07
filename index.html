@@ -3,800 +3,1083 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steadfast Courier - Operations Prospectus Portal</title>
+    <title>Steadfast Courier - Operations Prospectus</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        :root{
-            --primary:#1a73e8;--primary-dark:#1557b0;--primary-light:#e8f0fe;
-            --success:#0d904f;--success-light:#e6f4ea;
-            --warning:#e37400;--warning-light:#fef7e0;
-            --danger:#d93025;--danger-light:#fce8e6;
-            --g50:#f8f9fa;--g100:#f1f3f4;--g200:#e8eaed;--g300:#dadce0;
-            --g400:#bdc1c6;--g500:#9aa0a6;--g600:#80868b;--g700:#5f6368;
-            --g800:#3c4043;--g900:#202124;
-            --radius:8px;--radius-lg:12px;
-            --shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);
-            --shadow-md:0 4px 6px rgba(0,0,0,.1);--shadow-lg:0 10px 25px rgba(0,0,0,.15);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* THEME VARIABLES */
+        :root {
+            --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe;
+            --success: #0d904f; --success-light: #e6f4ea;
+            --warning: #e37400; --warning-light: #fef7e0;
+            --danger: #d93025; --danger-light: #fce8e6;
+            
+            --bg-body: #f8f9fa; --bg-card: #ffffff; --bg-sidebar: #ffffff;
+            --text-main: #202124; --text-muted: #5f6368;
+            --border: #e8eaed; --hover: #f1f3f4;
+            --input-bg: #ffffff;
+            
+            --radius: 8px; --radius-lg: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,.15);
         }
-        body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--g50);color:var(--g900);line-height:1.6}
 
-        /* LAYOUT */
-        .app{display:flex;min-height:100vh}
-        .sidebar{width:260px;background:#fff;border-right:1px solid var(--g200);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;transition:transform .3s}
-        .sidebar-head{padding:16px 20px;background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff}
-        .sidebar-head h2{font-size:15px;font-weight:700}
-        .sidebar-head p{font-size:10px;opacity:.8}
-        .sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
-        .nav-sec{padding:12px 20px 4px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--g500);letter-spacing:1px}
-        .nav-item{display:flex;align-items:center;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--g700);border-left:3px solid transparent;transition:all .15s}
-        .nav-item:hover{background:var(--g50);color:var(--primary)}
-        .nav-item.active{background:var(--primary-light);color:var(--primary);border-left-color:var(--primary);font-weight:600}
-        .nav-item .ic{margin-right:10px;font-size:16px;width:22px;text-align:center}
-        .nav-item .badge{margin-left:auto;background:var(--primary);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
-        .admin-only{display:none}
-        .is-admin .admin-only{display:flex}
-        .sidebar-foot{padding:12px 20px;border-top:1px solid var(--g200);font-size:11px;color:var(--g500)}
-        .sidebar-foot button{width:100%;padding:8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;margin-top:6px;border:1px solid;transition:background .2s}
-        .btn-login{background:var(--primary-light);color:var(--primary);border-color:var(--primary)}
-        .btn-login:hover{background:var(--primary);color:#fff}
-        .btn-logout{background:var(--danger-light);color:var(--danger);border-color:#f5c6cb}
-        .btn-logout:hover{background:var(--danger);color:#fff}
+        body.dark-mode {
+            --primary-light: #17325c; --success-light: #103320;
+            --warning-light: #3d260c; --danger-light: #421614;
+            
+            --bg-body: #121212; --bg-card: #1e1e1e; --bg-sidebar: #1a1a1a;
+            --text-main: #e8eaed; --text-muted: #9aa0a6;
+            --border: #333333; --hover: #2d2d2d;
+            --input-bg: #121212;
+            --shadow: 0 4px 6px rgba(0,0,0,.4);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,.5);
+        }
 
-        /* MAIN */
-        .main{flex:1;margin-left:260px;display:flex;flex-direction:column}
-        .top-bar{height:52px;background:#fff;border-bottom:1px solid var(--g200);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:50}
-        .mob-menu{display:none;border:none;background:none;font-size:22px;cursor:pointer;margin-right:10px}
-        .search-box{display:flex;align-items:center;background:var(--g100);border-radius:20px;padding:6px 14px;width:350px}
-        .search-box input{border:none;background:none;outline:none;width:100%;font-size:13px;margin-left:8px}
-        .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-        .admin-badge{background:var(--danger);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700}
-        .public-badge{background:var(--success);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700}
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; transition: background 0.3s, color 0.3s; }
 
-        /* PAGE */
-        .page{flex:1;padding:20px;overflow-y:auto;display:none}
-        .page.active{display:block}
-        .page-head{margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-        .page-head div h1{font-size:22px;font-weight:700}
-        .page-head div p{color:var(--g600);font-size:13px;margin-top:2px}
+        /* LAYOUT & SIDEBAR */
+        .app-container { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all 0.3s; }
+        .sidebar-header { padding: 16px 20px; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; }
+        .sidebar-header h2 { font-size: 15px; font-weight: 700; }
+        .sidebar-header p { font-size: 10px; opacity: 0.8; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+        
+        /* SIDEBAR TOGGLE SECTIONS */
+        .nav-section-title { 
+            padding: 12px 20px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; 
+            color: var(--text-muted); letter-spacing: 1px; display: flex; justify-content: space-between; 
+            align-items: center; cursor: pointer; transition: color 0.2s;
+        }
+        .nav-section-title:hover { color: var(--primary); }
+        .nav-section-title .chevron { font-size: 10px; transition: transform 0.3s; }
+        .nav-group { display: block; overflow: hidden; }
+        
+        .nav-item { display: flex; align-items: center; padding: 9px 20px; cursor: pointer; font-size: 13px; color: var(--text-main); border-left: 3px solid transparent; transition: all 0.15s; }
+        .nav-item:hover { background: var(--hover); color: var(--primary); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+        .nav-item .icon { margin-right: 10px; font-size: 16px; width: 22px; text-align: center; }
+        .nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 600; }
+        
+        .admin-only { display: none !important; }
+        .is-admin .admin-only { display: flex !important; }
+        .is-admin .admin-only-table { display: table-cell !important; }
+        .admin-only-table { display: none !important; }
 
-        /* CARD */
-        .card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
-        .card-head{padding:14px 20px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
-        .card-head h3{font-size:14px;font-weight:700}
-        .card-body{padding:16px 20px}
+        .sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); }
+        .sidebar-footer button { width: 100%; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-top: 6px; border: 1px solid; transition: background 0.2s; background: transparent; }
 
-        /* STATS */
-        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
-        .stat{background:#fff;border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow);transition:transform .15s}
-        .stat:hover{transform:translateY(-2px)}
-        .stat .si{font-size:24px;margin-bottom:4px}
-        .stat .sv{font-size:26px;font-weight:700}
-        .stat .sl{font-size:11px;color:var(--g600)}
+        /* MAIN & TOPBAR */
+        .main-content { flex: 1; margin-left: 260px; display: flex; flex-direction: column; }
+        .top-bar { height: 56px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; position: sticky; top: 0; z-index: 50; transition: background 0.3s; }
+        .search-box { display: flex; align-items: center; background: var(--hover); border-radius: 20px; padding: 6px 14px; width: 350px; border: 1px solid var(--border); }
+        .search-box input { border: none; background: none; outline: none; width: 100%; font-size: 13px; margin-left: 8px; color: var(--text-main); }
+        .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        
+        .theme-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .theme-btn:hover { background: var(--hover); }
+        .role-badge { padding: 4px 12px; border-radius: 12px; font-size: 10px; font-weight: 700; color: white; }
+        .role-public { background: var(--success); }
+        .role-admin { background: var(--danger); }
 
-        /* PILLAR */
-        .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-        .pillar{background:#fff;border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow);cursor:pointer;transition:all .2s}
-        .pillar:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-        .pillar.wp{border-top:4px solid #34a853}
-        .pillar.tw{border-top:4px solid #4285f4}
-        .pillar.we{border-top:4px solid #fbbc04}
-        .pillar h3{font-size:15px;margin:8px 0 4px}
-        .pillar p{font-size:11px;color:var(--g600)}
-        .pillar .pi{font-size:32px}
+        /* PAGE & CARDS */
+        .page-content { flex: 1; padding: 20px; overflow-y: auto; display: none; }
+        .page-content.active { display: block; }
+        .page-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .page-header h1 { font-size: 22px; font-weight: 700; }
+        .page-header p { color: var(--text-muted); font-size: 13px; }
+        
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
+        .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .card-header h3 { font-size: 14px; font-weight: 700; }
+        .card-body { padding: 16px 20px; }
+
+        /* DASHBOARD ELEMENTS */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 16px 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .stat-card .stat-icon { font-size: 24px; margin-bottom: 6px; }
+        .stat-card .stat-value { font-size: 26px; font-weight: 700; }
+        .stat-card .stat-label { font-size: 11px; color: var(--text-muted); }
+
+        .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        .pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s; }
+        .pillar-card:hover { transform: translateY(-3px); }
+        .pillar-card.wp { border-top: 4px solid #34a853; } .pillar-card.tw { border-top: 4px solid #4285f4; } .pillar-card.we { border-top: 4px solid #fbbc04; }
+        .pillar-card h3 { font-size: 15px; font-weight: 700; margin: 8px 0 4px; }
+        .pillar-card p { font-size: 11px; color: var(--text-muted); }
 
         /* BUTTONS */
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
-        .btn-p{background:var(--primary);color:#fff}.btn-p:hover{background:var(--primary-dark)}
-        .btn-s{background:var(--success);color:#fff}.btn-s:hover{background:#0a7a42}
-        .btn-w{background:var(--warning);color:#fff}
-        .btn-d{background:var(--danger);color:#fff}.btn-d:hover{background:#b71c1c}
-        .btn-o{background:#fff;color:var(--g700);border:1px solid var(--g300)}.btn-o:hover{background:var(--g50)}
-        .btn-sm{padding:5px 12px;font-size:11px}
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
+        .btn-sm { padding: 5px 12px; font-size: 11px; }
 
         /* TABLE */
-        .tbl{width:100%;border-collapse:collapse;font-size:13px}
-        .tbl th{background:var(--g100);padding:10px 14px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--g600);border-bottom:2px solid var(--g200)}
-        .tbl td{padding:10px 14px;border-bottom:1px solid var(--g100);vertical-align:middle}
-        .tbl tr:hover td{background:var(--primary-light)}
-        .tbl .acts{display:flex;gap:6px}
+        .process-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .process-table th { background: var(--hover); padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
+        .process-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+        .process-table tr:hover td { background: var(--primary-light); }
+        .actions { display: flex; gap: 6px; }
 
         /* BADGES */
-        .bp{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
-        .bp.h{background:var(--danger-light);color:var(--danger)}
-        .bp.m{background:var(--warning-light);color:var(--warning)}
-        .bp.l{background:var(--success-light);color:var(--success)}
-        .bs{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
-        .bs.ac{background:var(--success-light);color:var(--success)}
-        .bs.dr{background:var(--g100);color:var(--g600)}
-        .bs.ar{background:var(--danger-light);color:var(--danger)}
+        .badge-priority { padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .badge-priority.high { background: var(--danger-light); color: var(--danger); }
+        .badge-priority.medium { background: var(--warning-light); color: var(--warning); }
+        .badge-priority.low { background: var(--success-light); color: var(--success); }
+        
+        .badge-status { padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .badge-status.active { background: var(--success-light); color: var(--success); }
+        .badge-status.draft { background: var(--hover); color: var(--text-muted); }
 
-        /* FORM */
-        .fg{margin-bottom:14px}
-        .fg label{display:block;font-size:12px;font-weight:600;color:var(--g700);margin-bottom:4px}
-        .fc{width:100%;padding:8px 12px;border:1px solid var(--g300);border-radius:6px;font-size:13px;outline:none;transition:border .15s}
-        .fc:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
-        textarea.fc{resize:vertical}
-        .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-        .fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-        /* CHECKLIST */
-        .ck{display:flex;align-items:flex-start;padding:10px 14px;margin-bottom:6px;border:1px solid var(--g200);border-radius:var(--radius);cursor:pointer;transition:all .2s}
-        .ck:hover{border-color:var(--primary);background:var(--primary-light)}
-        .ck.done{background:var(--success-light);border-color:#a8dab5}
-        .ck-box{width:22px;height:22px;border-radius:50%;border:2px solid var(--g300);margin-right:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:all .15s}
-        .ck.done .ck-box{background:var(--success);border-color:var(--success);color:#fff}
-        .ck-text{font-size:13px;flex:1}
-        .ck-tags{display:flex;gap:6px;margin-top:4px}
-        .ck-tag{font-size:10px;padding:1px 8px;border-radius:4px;background:var(--g100);color:var(--g600)}
-        .ck-tag.man{background:var(--danger-light);color:var(--danger)}
-
-        /* PROGRESS */
-        .prog{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px;background:var(--g50);border-radius:var(--radius)}
-        .prog-bar{flex:1;height:8px;background:var(--g200);border-radius:4px;overflow:hidden}
-        .prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:4px;transition:width .4s}
-        .prog-txt{font-size:13px;font-weight:600;white-space:nowrap}
-
-        /* COVER */
-        .cover{background:linear-gradient(135deg,#1a237e,#0d47a1,#1565c0);color:#fff;border-radius:var(--radius-lg);padding:50px 32px;text-align:center;margin-bottom:20px}
-        .cover h1{font-size:28px;font-weight:800;margin-bottom:6px}
-        .cover h2{font-size:16px;font-weight:400;opacity:.9;margin-bottom:16px}
-        .cover-meta{display:flex;justify-content:center;gap:24px;font-size:11px;opacity:.8;flex-wrap:wrap}
-
-        /* PROCESS DETAIL */
-        .pd-card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
-        .pd-head{background:linear-gradient(135deg,#f8f9fa,#e8eaed);padding:20px 24px;border-bottom:1px solid var(--g200)}
-        .pd-head h2{font-size:20px;font-weight:700;margin:8px 0}
-        .pd-body{padding:20px 24px}
-        .pd-meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
-        .pd-mi{font-size:12px;color:var(--g600);display:flex;align-items:center;gap:4px}
+        /* FORMS */
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; outline: none; background: var(--input-bg); color: var(--text-main); }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         /* STEP BUILDER */
-        .sb-item{display:flex;align-items:center;gap:8px;padding:10px;margin-bottom:6px;border:1px dashed var(--g300);border-radius:var(--radius);background:var(--g50)}
-        .sb-item .dh{cursor:grab;color:var(--g400);font-size:16px}
-        .sb-item input[type="text"]{flex:1;padding:6px 10px;border:1px solid var(--g200);border-radius:4px;font-size:12px;outline:none}
-        .sb-item input[type="text"]:focus{border-color:var(--primary)}
-        .sb-opts{display:flex;gap:8px;align-items:center}
-        .sb-opts label{font-size:10px;display:flex;align-items:center;gap:2px;cursor:pointer}
-        .sb-item .rb{cursor:pointer;color:var(--danger);font-size:16px;border:none;background:none}
-        .add-s{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:2px dashed var(--g300);border-radius:var(--radius);background:none;cursor:pointer;font-size:12px;color:var(--primary);width:100%;transition:all .15s}
-        .add-s:hover{border-color:var(--primary);background:var(--primary-light)}
+        .step-builder-item { display: flex; align-items: center; gap: 8px; padding: 10px; margin-bottom: 6px; border: 1px dashed var(--border); border-radius: var(--radius); background: var(--hover); }
+        .step-builder-item input[type="text"] { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; outline: none; background: var(--input-bg); color: var(--text-main); }
+        .step-builder-options { display: flex; gap: 8px; align-items: center; }
+        .step-builder-options label { font-size: 10px; display: flex; align-items: center; gap: 2px; cursor: pointer; color: var(--text-main); }
+        .add-step-btn { display: flex; align-items: center; justify-content: center; padding: 10px; border: 2px dashed var(--border); border-radius: var(--radius); background: transparent; cursor: pointer; font-size: 12px; color: var(--primary); width: 100%; }
 
-        /* MODAL */
-        .modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:500}
-        .modal-bg.on{display:flex}
-        .modal{background:#fff;border-radius:var(--radius-lg);width:600px;max-width:95%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
-        .modal-h{padding:16px 20px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
-        .modal-h h3{font-size:16px;font-weight:700}
-        .modal-x{border:none;background:none;font-size:20px;cursor:pointer;color:var(--g500)}
-        .modal-b{padding:20px}
-        .modal-f{padding:14px 20px;border-top:1px solid var(--g200);display:flex;gap:10px;justify-content:flex-end}
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-box { background: var(--bg-card); border-radius: var(--radius-lg); width: 450px; max-width: 90%; box-shadow: var(--shadow-lg); overflow: hidden; border: 1px solid var(--border); }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-header h3 { font-size: 16px; font-weight: 700; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
 
-        /* LOGIN MODAL */
-        .login-modal .modal{width:400px}
-        .login-modal .login-ic{font-size:48px;text-align:center;margin-bottom:12px}
-        .login-modal h2{text-align:center;font-size:20px;margin-bottom:4px}
-        .login-modal .login-sub{text-align:center;font-size:12px;color:var(--g500);margin-bottom:20px}
-        .login-modal .login-err{color:var(--danger);font-size:12px;text-align:center;margin-top:8px;display:none}
-        .login-modal .login-hint{text-align:center;font-size:10px;color:var(--g400);margin-top:12px}
+        /* LOGIN SPECIFIC */
+        .login-box { text-align: center; padding: 30px 20px; }
+        .login-box .icon { font-size: 48px; margin-bottom: 12px; }
+        .login-box h2 { font-size: 20px; margin-bottom: 4px; }
+        .login-box p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+        .login-box .form-group { text-align: left; }
+        
+        /* PROSPECTUS COVER & VIEWS */
+        .prospectus-cover { background: linear-gradient(135deg, #1a237e, #0d47a1, #1565c0); color: white; border-radius: var(--radius-lg); padding: 50px 32px; text-align: center; margin-bottom: 20px; }
+        .prospectus-cover h1 { font-size: 28px; font-weight: 800; }
+        .prospectus-cover h2 { font-size: 16px; font-weight: 400; opacity: 0.9; margin: 10px 0 20px; }
+        .cover-meta { display: flex; justify-content: center; gap: 24px; font-size: 11px; opacity: 0.8; flex-wrap: wrap; }
 
-        /* CONFIRM */
-        .confirm{text-align:center;padding:20px}
-        .confirm .ci{font-size:48px;margin-bottom:12px}
-        .confirm h3{font-size:18px;margin-bottom:8px}
-        .confirm p{font-size:13px;color:var(--g600);margin-bottom:20px}
-
-        /* EMPTY */
-        .empty{text-align:center;padding:40px 20px;color:var(--g500)}
-        .empty .ei{font-size:48px;margin-bottom:12px}
-        .empty p{font-size:14px;margin-bottom:16px}
-
+        /* CHECKLIST */
+        .checklist-step { display: flex; align-items: flex-start; padding: 10px 14px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: var(--radius); }
+        .checklist-step.done { background: var(--success-light); border-color: var(--success); }
+        .step-checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-main); }
+        .checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; }
+        .step-tags { display: flex; gap: 6px; margin-top: 4px; }
+        .step-tag { font-size: 10px; padding: 1px 8px; border-radius: 4px; background: var(--hover); color: var(--text-muted); }
+        
         /* TOAST */
-        .toast-box{position:fixed;bottom:20px;right:20px;z-index:999}
-        .toast{display:flex;align-items:center;gap:8px;padding:10px 18px;background:var(--g900);color:#fff;border-radius:var(--radius);margin-top:6px;font-size:13px;box-shadow:var(--shadow-lg);animation:slideIn .3s;min-width:250px}
-        .toast.success{background:var(--success)}.toast.error{background:var(--danger)}.toast.warning{background:var(--warning)}
-        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-
-        /* RESPONSIVE */
-        @media(max-width:768px){
-            .sidebar{transform:translateX(-100%)}
-            .sidebar.open{transform:translateX(0)}
-            .main{margin-left:0}
-            .mob-menu{display:block}
-            .pillars{grid-template-columns:1fr}
-            .fr3,.fr2{grid-template-columns:1fr}
-            .search-box{width:160px}
-            .stats{grid-template-columns:1fr 1fr}
-            .cover-meta{flex-direction:column;gap:6px}
-            .pd-meta{flex-direction:column}
-        }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 99999; }
+        .toast { display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius); margin-top: 8px; font-size: 13px; box-shadow: var(--shadow-lg); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
-<div class="app" id="app">
+
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-head">
+        <div class="sidebar-header">
             <h2>📘 Steadfast Courier</h2>
             <p>Operations Prospectus Portal</p>
         </div>
         <nav class="sidebar-nav">
-            <div class="nav-sec">Main</div>
-            <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ic">📊</span>Dashboard</div>
-            <div class="nav-item" onclick="nav('prospectus',this)"><span class="ic">📖</span>Prospectus</div>
-            <div class="nav-item" onclick="nav('all',this)"><span class="ic">📋</span>সব Process<span class="badge" id="bTotal">0</span></div>
+            <div style="padding: 12px 20px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Main</div>
+            <div class="nav-item active" onclick="navigateTo('dashboard', this)"><span class="icon">📊</span> Dashboard</div>
+            <div class="nav-item" onclick="navigateTo('prospectus', this)"><span class="icon">📖</span> Prospectus</div>
+            <div class="nav-item" onclick="navigateTo('all-processes', this)"><span class="icon">📋</span> সব Process <span class="badge" id="bTotal">0</span></div>
 
-            <div class="nav-sec">📗 কাজের প্রক্রিয়া</div>
-            <div id="navWP"></div>
-            <div class="nav-sec">📘 টেকনিক্যাল</div>
-            <div id="navTW"></div>
-            <div class="nav-sec">📙 পরিবেশ</div>
-            <div id="navWE"></div>
+            <!-- COLLAPSIBLE SECTIONS -->
+            <div class="nav-section-title" onclick="toggleNavGroup('navWP', this)">
+                <span>📗 কাজের প্রক্রিয়া</span> <span class="chevron">▼</span>
+            </div>
+            <div id="navWP" class="nav-group"></div>
 
-            <div class="nav-sec admin-only">Admin Panel</div>
-            <div class="nav-item admin-only" onclick="nav('add',this)"><span class="ic">➕</span>নতুন Process</div>
-            <div class="nav-item admin-only" onclick="nav('cats',this)"><span class="ic">📂</span>Categories</div>
-            <div class="nav-item admin-only" onclick="nav('settings',this)"><span class="ic">⚙️</span>সেটিংস</div>
+            <div class="nav-section-title" onclick="toggleNavGroup('navTW', this)">
+                <span>📘 টেকনিক্যাল</span> <span class="chevron">▼</span>
+            </div>
+            <div id="navTW" class="nav-group"></div>
+
+            <div class="nav-section-title" onclick="toggleNavGroup('navWE', this)">
+                <span>📙 পরিবেশ</span> <span class="chevron">▼</span>
+            </div>
+            <div id="navWE" class="nav-group"></div>
+
+            <div style="padding: 12px 20px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;" class="admin-only">Admin Panel</div>
+            <div class="nav-item admin-only" onclick="navigateTo('add-process', this)"><span class="icon">➕</span> নতুন Process</div>
+            <div class="nav-item admin-only" onclick="navigateTo('manage-categories', this)"><span class="icon">📂</span> Categories</div>
+            <div class="nav-item admin-only" onclick="navigateTo('settings', this)"><span class="icon">⚙️</span> সেটিংস</div>
         </nav>
-        <div class="sidebar-foot">
-            <div id="footerInfo"></div>
-            <button id="authBtn" onclick="authAction()">🔐 Admin Login</button>
+        <div class="sidebar-footer">
+            <button id="authBtn" style="color:var(--text-main)" onclick="toggleAuth()">🔐 Admin Login</button>
         </div>
     </aside>
 
-    <!-- MAIN -->
-    <main class="main">
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
         <header class="top-bar">
-            <button class="mob-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-            <div class="search-box"><span>🔍</span><input type="text" placeholder="Process খুঁজুন..." id="searchIn" oninput="onSearch()"></div>
-            <div class="top-right">
-                <span id="roleBadge" class="public-badge">👁️ PUBLIC VIEW</span>
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" placeholder="Process খুঁজুন..." id="searchInput" oninput="renderProcessTable()">
+            </div>
+            <div class="top-bar-right">
+                <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+                <span class="role-badge role-public" id="roleBadge">👁️ PUBLIC VIEW</span>
             </div>
         </header>
 
         <!-- DASHBOARD -->
-        <div class="page active" id="pg-dashboard">
-            <div class="page-head"><div><h1>📊 Dashboard</h1><p>Operations Prospectus — সামগ্রিক চিত্র</p></div></div>
-            <div class="stats" id="dStats"></div>
-            <div class="pillars">
-                <div class="pillar wp" onclick="nav('prospectus')"><div class="pi">📗</div><h3>কাজের প্রক্রিয়া</h3><p id="cWP">0টি</p></div>
-                <div class="pillar tw" onclick="nav('prospectus')"><div class="pi">📘</div><h3>টেকনিক্যাল কাজ</h3><p id="cTW">0টি</p></div>
-                <div class="pillar we" onclick="nav('prospectus')"><div class="pi">📙</div><h3>কাজের পরিবেশ</h3><p id="cWE">0টি</p></div>
+        <div class="page-content active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <h1>📊 Dashboard</h1>
+                    <p>প্রস্পেক্টাসের লাইভ ডেটা ওভারভিউ</p>
+                </div>
             </div>
-            <div class="card"><div class="card-head"><h3>🔔 সাম্প্রতিক</h3></div><div class="card-body" id="actLog"><p style="color:var(--g500);font-size:13px">কোনো কার্যকলাপ নেই</p></div></div>
+            <div class="stats-row" id="dashboardStats">
+                <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value">Loading...</div></div>
+            </div>
+            <div class="pillar-grid">
+                <div class="pillar-card wp" onclick="navigateTo('all-processes')">
+                    <h3>📗 কাজের প্রক্রিয়া</h3><p id="cWP">0টি Process</p>
+                </div>
+                <div class="pillar-card tw" onclick="navigateTo('all-processes')">
+                    <h3>📘 টেকনিক্যাল কাজ</h3><p id="cTW">0টি Process</p>
+                </div>
+                <div class="pillar-card we" onclick="navigateTo('all-processes')">
+                    <h3>📙 কাজের পরিবেশ</h3><p id="cWE">0টি Process</p>
+                </div>
+            </div>
         </div>
 
-        <!-- PROSPECTUS -->
-        <div class="page" id="pg-prospectus">
-            <div class="cover"><h1>STEADFAST COURIER SERVICE</h1><h2>Operations Prospectus 2025</h2>
-                <div class="cover-meta"><span>📋 Version 3.2</span><span>📅 ২০২৫</span><span>✅ Approved</span></div>
+        <!-- PROSPECTUS VIEW -->
+        <div class="page-content" id="page-prospectus">
+            <div class="prospectus-cover">
+                <h1>STEADFAST COURIER SERVICE</h1>
+                <h2>Operations Prospectus 2025</h2>
+                <div class="cover-meta">
+                    <span>📅 ০১ জুলাই ২০২৫</span>
+                    <span>✅ Approved: Operations Director</span>
+                </div>
             </div>
-            <div id="prosContent"></div>
+            <div id="prospectusContent"></div>
         </div>
 
         <!-- ALL PROCESSES -->
-        <div class="page" id="pg-all">
-            <div class="page-head">
-                <div><h1>📋 সব Process</h1><p>সম্পূর্ণ তালিকা</p></div>
-                <button class="btn btn-p admin-only" onclick="nav('add')">➕ নতুন Process</button>
+        <div class="page-content" id="page-all-processes">
+            <div class="page-header">
+                <div>
+                    <h1>📋 সব Process</h1>
+                    <p>সম্পূর্ণ লাইভ তালিকা</p>
+                </div>
+                <button class="btn btn-primary admin-only" onclick="navigateTo('add-process')">➕ নতুন Process</button>
             </div>
             <div class="card">
-                <div class="card-head">
-                    <div style="display:flex;gap:8px">
-                        <select class="fc" style="width:150px" id="fPillar" onchange="renderTable()"><option value="all">সব Pillar</option><option value="Work Process">📗 কাজের প্রক্রিয়া</option><option value="Technical">📘 টেকনিক্যাল</option><option value="Environment">📙 পরিবেশ</option></select>
-                        <select class="fc" style="width:150px" id="fCat" onchange="renderTable()"><option value="all">সব Category</option></select>
+                <div class="card-header">
+                    <div style="display:flex;gap:8px;">
+                        <select class="form-control" style="width:160px" id="filterPillar" onchange="renderProcessTable()">
+                            <option value="all">সব Pillar</option>
+                            <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
+                            <option value="Technical">📘 টেকনিক্যাল</option>
+                            <option value="Environment">📙 পরিবেশ</option>
+                        </select>
+                        <select class="form-control" style="width:150px" id="filterCategory" onchange="renderProcessTable()">
+                            <option value="all">সব Category</option>
+                        </select>
                     </div>
                 </div>
-                <div class="card-body" style="padding:0;overflow-x:auto">
-                    <table class="tbl"><thead><tr><th>Code</th><th>Title</th><th>Pillar</th><th>Category</th><th>Priority</th><th>Status</th><th>Steps</th><th class="admin-only">Actions</th></tr></thead><tbody id="tBody"></tbody></table>
+                <div class="card-body" style="padding:0;overflow-x:auto;">
+                    <table class="process-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Pillar</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Steps</th>
+                                <th class="admin-only-table">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="processTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- ADD/EDIT -->
-        <div class="page admin-only" id="pg-add">
-            <div class="page-head"><div><h1 id="fTitle">➕ নতুন Process</h1><p>ফিল্ড পূরণ করুন ও Steps যোগ করুন</p></div></div>
-            <div class="card"><div class="card-body">
-                <input type="hidden" id="eId" value="">
-                <div class="fr3">
-                    <div class="fg"><label>নাম *</label><input type="text" class="fc" id="fName" placeholder="পার্সেল নিখোঁজ"></div>
-                    <div class="fg"><label>Code *</label><input type="text" class="fc" id="fCode" placeholder="WP-001"></div>
-                    <div class="fg"><label>Version</label><input type="text" class="fc" id="fVer" value="1.0"></div>
+        <!-- ADD/EDIT PROCESS -->
+        <div class="page-content admin-only" id="page-add-process">
+            <div class="page-header">
+                <div>
+                    <h1 id="formTitle">➕ নতুন Process তৈরি করুন</h1>
+                    <p>সব ফিল্ড পূরণ করুন এবং Steps যোগ করুন</p>
                 </div>
-                <div class="fr3">
-                    <div class="fg"><label>Pillar *</label><select class="fc" id="fPil"><option value="Work Process">📗 কাজের প্রক্রিয়া</option><option value="Technical">📘 টেকনিক্যাল</option><option value="Environment">📙 পরিবেশ</option></select></div>
-                    <div class="fg"><label>Category *</label><select class="fc" id="fCatSel"></select></div>
-                    <div class="fg"><label>Priority</label><select class="fc" id="fPri"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option></select></div>
-                </div>
-                <div class="fr3">
-                    <div class="fg"><label>Status</label><select class="fc" id="fStat"><option value="active">✅ Active</option><option value="draft">📝 Draft</option><option value="archived">📦 Archived</option></select></div>
-                    <div class="fg"><label>SLA</label><input type="text" class="fc" id="fSla" placeholder="২৪ ঘণ্টা"></div>
-                    <div class="fg"><label>Icon</label><input type="text" class="fc" id="fIcon" value="📋"></div>
-                </div>
-                <div class="fg"><label>বিবরণ</label><textarea class="fc" rows="2" id="fDesc" placeholder="সংক্ষিপ্ত বিবরণ..."></textarea></div>
-                <hr style="margin:20px 0;border:none;border-top:1px solid var(--g200)">
-                <h3 style="font-size:15px;margin-bottom:12px">📝 Steps / Checklist</h3>
-                <div id="stepsB"></div>
-                <button class="add-s" onclick="addStep()">➕ নতুন Step</button>
-                <hr style="margin:20px 0;border:none;border-top:1px solid var(--g200)">
-                <div style="display:flex;gap:10px">
-                    <button class="btn btn-s" onclick="saveProc()">💾 Save</button>
-                    <button class="btn btn-o" onclick="resetForm();nav('all')">❌ Cancel</button>
-                </div>
-            </div></div>
-        </div>
-
-        <!-- PROCESS DETAIL -->
-        <div class="page" id="pg-detail"><div id="detailBox"></div></div>
-
-        <!-- CATEGORIES -->
-        <div class="page admin-only" id="pg-cats">
-            <div class="page-head">
-                <div><h1>📂 Categories</h1><p>Category পরিচালনা</p></div>
-                <button class="btn btn-p" onclick="openCatModal()">➕ নতুন Category</button>
             </div>
-            <div class="card"><div class="card-body" style="padding:0;overflow-x:auto">
-                <table class="tbl"><thead><tr><th>Icon</th><th>Name</th><th>Pillar</th><th>Processes</th><th>Actions</th></tr></thead><tbody id="catBody"></tbody></table>
-            </div></div>
+            <div class="card">
+                <div class="card-body">
+                    <input type="hidden" id="editProcessId" value="">
+                    
+                    <div class="form-group">
+                        <label>Process-এর নাম *</label>
+                        <input type="text" class="form-control" id="processTitle" placeholder="উদাহরণ: পার্সেল নিখোঁজ">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Pillar *</label>
+                            <select class="form-control" id="processPillar">
+                                <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
+                                <option value="Technical">📘 টেকনিক্যাল কাজ</option>
+                                <option value="Environment">📙 কাজের পরিবেশ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select class="form-control" id="processCategory"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select class="form-control" id="processPriority">
+                                <option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group"><label>Status</label><select class="form-control" id="processStatus"><option value="active">✅ Active</option><option value="draft">📝 Draft</option></select></div>
+                        <div class="form-group"><label>SLA</label><input type="text" class="form-control" id="processSla" placeholder="২৪ ঘণ্টা"></div>
+                        <div class="form-group"><label>Icon</label><input type="text" class="form-control" id="processIcon" value="📋"></div>
+                    </div>
+                    
+                    <div class="form-group"><label>বিবরণ</label><textarea class="form-control" rows="2" id="processDesc"></textarea></div>
+
+                    <hr style="margin:20px 0; border:none; border-top:1px solid var(--border);">
+                    <h3 style="font-size:15px; margin-bottom:12px;">📝 Steps / Checklist</h3>
+                    <div id="stepsBuilder"></div>
+                    <button class="add-step-btn" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
+                    
+                    <hr style="margin:20px 0; border:none; border-top:1px solid var(--border);">
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-success" onclick="saveProcess()">💾 Save to Database</button>
+                        <button class="btn btn-outline" onclick="navigateTo('all-processes')">❌ Cancel</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- SETTINGS -->
-        <div class="page admin-only" id="pg-settings">
-            <div class="page-head"><div><h1>⚙️ সেটিংস</h1><p>Admin Password ও Data Management</p></div></div>
-            <div class="card"><div class="card-head"><h3>🔑 Password পরিবর্তন</h3></div><div class="card-body">
-                <div class="fr2">
-                    <div class="fg"><label>নতুন Username</label><input type="text" class="fc" id="nUser" placeholder="admin"></div>
-                    <div class="fg"><label>নতুন Password</label><input type="password" class="fc" id="nPass" placeholder="••••••"></div>
-                </div>
-                <button class="btn btn-p" onclick="changeCreds()">💾 সংরক্ষণ</button>
-            </div></div>
-            <div class="card"><div class="card-head"><h3>🗄️ Data Management</h3></div><div class="card-body">
-                <div style="display:flex;gap:10px;flex-wrap:wrap">
-                    <button class="btn btn-p" onclick="exportData()">📤 Export JSON</button>
-                    <button class="btn btn-o" onclick="document.getElementById('impFile').click()">📥 Import</button>
-                    <input type="file" id="impFile" accept=".json" style="display:none" onchange="importData(event)">
-                    <button class="btn btn-d" onclick="confirmReset()">🗑️ Reset All</button>
-                </div>
-            </div></div>
+        <!-- PROCESS DETAIL (Preview) -->
+        <div class="page-content" id="page-process-detail">
+            <div id="processDetailContent"></div>
         </div>
+
+        <!-- MANAGE CATEGORIES -->
+        <div class="page-content admin-only" id="page-manage-categories">
+            <div class="page-header">
+                <div>
+                    <h1>📂 Categories পরিচালনা</h1>
+                    <p>লাইভ ক্যাটাগরি তৈরি ও ডিলিট করুন</p>
+                </div>
+                <button class="btn btn-primary" onclick="openCategoryModal()">➕ নতুন Category</button>
+            </div>
+            <div class="card">
+                <div class="card-body" style="padding:0;overflow-x:auto;">
+                    <table class="process-table">
+                        <thead><tr><th>Icon</th><th>Name</th><th>Pillar</th><th>Processes</th><th>Actions</th></tr></thead>
+                        <tbody id="categoryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS (PASSWORD CHANGE) -->
+        <div class="page-content admin-only" id="page-settings">
+            <div class="page-header">
+                <div>
+                    <h1>⚙️ সেটিংস</h1>
+                    <p>Admin Credentials পরিবর্তন করুন</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>🔑 Username ও Password পরিবর্তন</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>নতুন Username</label>
+                            <input type="text" class="form-control" id="newUsername" placeholder="admin">
+                        </div>
+                        <div class="form-group">
+                            <label>নতুন Password</label>
+                            <input type="password" class="form-control" id="newPassword" placeholder="••••••">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:10px;" onclick="changeAdminCredentials()">💾 সংরক্ষণ করুন</button>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
-<!-- MODAL -->
-<div class="modal-bg" id="modalBg"><div class="modal">
-    <div class="modal-h"><h3 id="mTitle">Modal</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-b" id="mBody"></div>
-    <div class="modal-f" id="mFoot"></div>
-</div></div>
+<!-- ================= MODALS ================= -->
 
-<!-- LOGIN MODAL -->
-<div class="modal-bg login-modal" id="loginBg"><div class="modal">
-    <div class="modal-b">
-        <div class="login-ic">🔐</div>
-        <h2>Admin Login</h2>
-        <p class="login-sub">Edit/Delete করতে Admin Login প্রয়োজন</p>
-        <div class="fg"><label>Username</label><input type="text" class="fc" id="lUser" placeholder="admin"></div>
-        <div class="fg"><label>Password</label><input type="password" class="fc" id="lPass" placeholder="••••••"></div>
-        <button class="btn btn-p" style="width:100%;justify-content:center" onclick="doLogin()">🔓 Login</button>
-        <div class="login-err" id="lErr">❌ ভুল Username বা Password!</div>
-        <p class="login-hint">Default: admin / admin123</p>
+<!-- LOGIN MODAL (Strong UI) -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-box" style="width:400px">
+        <div class="login-box">
+            <div class="icon">🔐</div>
+            <h2>Admin Login</h2>
+            <p>Secure Area (Edit/Delete Access)</p>
+            
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control" id="loginUser" placeholder="admin">
+            </div>
+            <div class="form-group" style="margin-bottom:20px">
+                <label>Password</label>
+                <input type="password" class="form-control" id="loginPass" placeholder="••••••">
+            </div>
+            
+            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:10px" onclick="doLogin()">🔓 Secure Login</button>
+            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:10px; margin-top:10px;" onclick="closeModal('loginModal')">❌ Cancel (Public View)</button>
+            
+            <p id="loginError" style="color:var(--danger); font-size:12px; margin-top:10px; display:none;">❌ ভুল Username বা Password!</p>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:15px;">(Initial Default: admin / admin123)</p>
+        </div>
     </div>
-    <div class="modal-f"><button class="btn btn-o" onclick="closeLogin()">❌ Cancel</button></div>
-</div></div>
+</div>
 
-<!-- TOAST -->
-<div class="toast-box" id="toastBox"></div>
+<!-- CATEGORY MODAL -->
+<div class="modal-overlay" id="categoryModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="catModalTitle">➕ নতুন Category</h3>
+            <button class="modal-close" onclick="closeModal('categoryModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editCatId">
+            <div class="form-group">
+                <label>Category Name *</label>
+                <input type="text" class="form-control" id="catName" placeholder="যেমন: পার্সেল সমস্যা">
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Pillar *</label>
+                    <select class="form-control" id="catPillar">
+                        <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
+                        <option value="Technical">📘 টেকনিক্যাল</option>
+                        <option value="Environment">📙 পরিবেশ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Icon (Emoji)</label>
+                    <input type="text" class="form-control" id="catIcon" placeholder="📂" value="📂">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('categoryModal')">❌ Cancel</button>
+            <button class="btn btn-success" onclick="saveCategory()">💾 Save</button>
+        </div>
+    </div>
+</div>
 
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box" style="width:350px">
+        <div class="modal-body" style="text-align:center; padding:30px 20px;">
+            <div style="font-size:48px; margin-bottom:10px;">⚠️</div>
+            <h3 style="font-size:18px; margin-bottom:10px;" id="confirmTitle">মুছে ফেলতে চান?</h3>
+            <p style="font-size:13px; color:var(--text-muted);" id="confirmDesc">এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না!</p>
+        </div>
+        <div class="modal-footer" style="justify-content:center;">
+            <button class="btn btn-outline" onclick="closeModal('confirmModal')">Cancel</button>
+            <button class="btn btn-danger" id="confirmBtn">Yes, Delete!</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastBox"></div>
+
+<!-- ========================================== -->
+<!-- FIREBASE & CORE JAVASCRIPT -->
+<!-- ========================================== -->
 <script>
-// ====== DB ======
-const K={cr:'sf_cr',pr:'sf_pr',ca:'sf_ca',ac:'sf_ac',cs:'sf_cs'};
-const g=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch{return null}};
-const s=(k,d)=>localStorage.setItem(k,JSON.stringify(d));
-let isAdmin=false;
+// ১. আপনার ফায়ারবেস কনফিগারেশন
+const firebaseConfig = {
+  apiKey: "AIzaSyDljJin3ud3xj-EUIYN5p4MJUPmNZekuZE",
+  authDomain: "operations-prospectus-portal.firebaseapp.com",
+  databaseURL: "https://operations-prospectus-portal-default-rtdb.firebaseio.com",
+  projectId: "operations-prospectus-portal",
+  storageBucket: "operations-prospectus-portal.firebasestorage.app",
+  messagingSenderId: "939292299466",
+  appId: "1:939292299466:web:c24d3f7aca4fc75725e433"
+};
 
-// ====== DEFAULT DATA ======
-function defCats(){return[
-    {id:'c1',name:'পার্সেল সমস্যা',pillar:'Work Process',icon:'📦'},
-    {id:'c2',name:'ডেলিভারি সমস্যা',pillar:'Work Process',icon:'🚚'},
-    {id:'c3',name:'হাব/রুট সমস্যা',pillar:'Work Process',icon:'🏢'},
-    {id:'c4',name:'রাইডার সমস্যা',pillar:'Work Process',icon:'🏍️'},
-    {id:'c5',name:'পেমেন্ট/COD',pillar:'Work Process',icon:'💰'},
-    {id:'c6',name:'মার্চেন্ট সমস্যা',pillar:'Work Process',icon:'🏪'},
-    {id:'c7',name:'কাস্টমার সমস্যা',pillar:'Work Process',icon:'👤'},
-    {id:'c8',name:'পিকআপ সমস্যা',pillar:'Work Process',icon:'📥'},
-    {id:'c9',name:'সিস্টেম/এন্ট্রি',pillar:'Work Process',icon:'⚙️'},
-    {id:'c10',name:'তদন্ত/Claim',pillar:'Work Process',icon:'🔍'},
-    {id:'c11',name:'রিটার্ন',pillar:'Work Process',icon:'🔄'},
-    {id:'c12',name:'সফটওয়্যার গাইড',pillar:'Technical',icon:'💻'},
-    {id:'c13',name:'ট্রাবলশুটিং',pillar:'Technical',icon:'🔧'},
-    {id:'c14',name:'ইকুইপমেন্ট',pillar:'Technical',icon:'📹'},
-    {id:'c15',name:'হাব সেটআপ',pillar:'Environment',icon:'🏗️'},
-    {id:'c16',name:'শিফট ও সময়সূচী',pillar:'Environment',icon:'⏰'},
-    {id:'c17',name:'টিম স্ট্রাকচার',pillar:'Environment',icon:'👥'},
-    {id:'c18',name:'সেফটি ও নিয়মাবলী',pillar:'Environment',icon:'🛡️'}
-]}
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-function defProcs(){return[
-    {id:'p1',code:'WP-001',title:'পার্সেল নিখোঁজ',icon:'📦',pillar:'Work Process',category:'পার্সেল সমস্যা',priority:'high',status:'active',version:'2.1',sla:'২৪ ঘণ্টা',description:'পার্সেল নিখোঁজ হলে কীভাবে তদন্ত করতে হবে।',steps:[
-        {text:'পার্সেলের সর্বশেষ স্ক্যান/আপডেট চেক করতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'সংশ্লিষ্ট হাব/ওয়্যারহাউসে খুঁজে দেখতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'CCTV ফুটেজ চেক করতে হবে।',note:true,evidence:true,mandatory:true},
-        {text:'Entry Man, Rider ও Hub Staff-এর হ্যান্ডওভার হিস্টোরি জানতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'পার্সেলের ওজন ও প্যাকেজ যাচাই করতে হবে।',note:true,evidence:true,mandatory:true},
-        {text:'ভুল হাবে ট্রান্সফার হয়েছে কি না চেক করতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Monitoring Team-কে জানিয়ে তদন্ত করতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Policy অনুযায়ী Claim/Refund/Compensation প্রক্রিয়া সম্পন্ন করতে হবে।',note:true,evidence:true,mandatory:true}
-    ],createdAt:new Date().toISOString()},
-    {id:'p2',code:'WP-004',title:'ডেলিভারি বিলম্ব',icon:'⏰',pillar:'Work Process',category:'ডেলিভারি সমস্যা',priority:'medium',status:'active',version:'1.3',sla:'১২ ঘণ্টা',description:'ডেলিভারি বিলম্ব হলে কী করতে হবে।',steps:[
-        {text:'পার্সেল কোনো হাবে Pending আছে কি না চেক।',note:true,evidence:false,mandatory:true},
-        {text:'বিলম্বের কারণ জানতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Hub Manager/TL-কে জানাতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Same-day/পরবর্তী Delivery ব্যবস্থা।',note:true,evidence:false,mandatory:true},
-        {text:'Customer/Merchant-কে Update দিতে হবে।',note:true,evidence:false,mandatory:false},
-        {text:'Charge Waiver প্রযোজ্য হলে জানাতে হবে।',note:true,evidence:false,mandatory:false}
-    ],createdAt:new Date().toISOString()},
-    {id:'p3',code:'WP-015',title:'COD Amount ভুল',icon:'💰',pillar:'Work Process',category:'পেমেন্ট/COD',priority:'high',status:'active',version:'1.3',sla:'৮ ঘণ্টা',description:'COD গরমিল সমাধান।',steps:[
-        {text:'Merchant-এর Declared COD চেক।',note:true,evidence:false,mandatory:true},
-        {text:'System ও Label Amount তুলনা।',note:true,evidence:true,mandatory:true},
-        {text:'Customer কত দিয়েছে যাচাই।',note:true,evidence:false,mandatory:true},
-        {text:'Payment Team-কে জানানো।',note:true,evidence:false,mandatory:true},
-        {text:'COD Correction করা।',note:true,evidence:true,mandatory:true}
-    ],createdAt:new Date().toISOString()},
-    {id:'p4',code:'WP-009',title:'পার্সেল ক্ষতিগ্রস্ত',icon:'💥',pillar:'Work Process',category:'পার্সেল সমস্যা',priority:'high',status:'active',version:'2.0',sla:'২৪ ঘণ্টা',description:'পার্সেল ক্ষতিগ্রস্ত হলে কী করতে হবে।',steps:[
-        {text:'Packaging ও Product Condition চেক।',note:true,evidence:true,mandatory:true},
-        {text:'Delivery-র আগে/পরে Packaging যাচাই।',note:true,evidence:false,mandatory:true},
-        {text:'CCTV/Photo/Video Evidence সংগ্রহ।',note:true,evidence:true,mandatory:true},
-        {text:'Damage Rider নাকি Packaging Issue নির্ধারণ।',note:true,evidence:false,mandatory:true},
-        {text:'Merchant/Customer Statement নেওয়া।',note:true,evidence:true,mandatory:true},
-        {text:'Refund/Claim/Compensation প্রক্রিয়া।',note:true,evidence:true,mandatory:true}
-    ],createdAt:new Date().toISOString()},
-    {id:'p5',code:'TW-001',title:'Admin Panel Guide',icon:'💻',pillar:'Technical',category:'সফটওয়্যার গাইড',priority:'low',status:'active',version:'3.0',sla:'-',description:'Admin Panel ব্যবহারের গাইড।',steps:[
-        {text:'Login URL ও Credentials চেক করতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Dashboard-এর প্রতিটি Section বুঝতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Parcel Tracking কীভাবে করতে হয় শিখতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Report Generation শিখতে হবে।',note:true,evidence:false,mandatory:false}
-    ],createdAt:new Date().toISOString()},
-    {id:'p6',code:'WE-001',title:'Morning Shift Rules',icon:'⏰',pillar:'Environment',category:'শিফট ও সময়সূচী',priority:'medium',status:'active',version:'1.0',sla:'-',description:'সকালের শিফটের নিয়মাবলী।',steps:[
-        {text:'সকাল ৮:০০টায় উপস্থিত থাকতে হবে।',note:false,evidence:false,mandatory:true},
-        {text:'আগের দিনের Pending পার্সেল চেক করতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Rider Assignment সম্পন্ন করতে হবে।',note:true,evidence:false,mandatory:true},
-        {text:'Morning Meeting-এ অংশ নিতে হবে।',note:false,evidence:false,mandatory:true}
-    ],createdAt:new Date().toISOString()}
-]}
+// GLOBAL STATE
+let globalCategories = [];
+let globalProcesses = [];
+let isAdmin = sessionStorage.getItem('sf_admin') === '1';
 
-// ====== INIT ======
-function init(){
-    if(!g(K.cr))s(K.cr,{username:'admin',password:'admin123'});
-    if(!g(K.ca))s(K.ca,defCats());
-    if(!g(K.pr))s(K.pr,defProcs());
-    if(!g(K.ac))s(K.ac,[]);
-    if(!g(K.cs))s(K.cs,{});
-    refreshAll();
-}
+// THEME LOGIC
+let isDark = localStorage.getItem('sf_theme') === 'dark';
+if(isDark) document.body.classList.add('dark-mode');
+document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
 
-// ====== AUTH ======
-function authAction(){
-    if(isAdmin){doLogout()}
-    else{document.getElementById('loginBg').classList.add('on');document.getElementById('lUser').focus()}
-}
-function doLogin(){
-    const u=document.getElementById('lUser').value.trim(),p=document.getElementById('lPass').value.trim(),cr=g(K.cr);
-    if(u===cr.username&&p===cr.password){
-        isAdmin=true;sessionStorage.setItem('sf_admin','1');
-        closeLogin();setAdminUI();toast('✅ Admin Login সফল!','success');refreshAll();
-    }else{document.getElementById('lErr').style.display='block';setTimeout(()=>document.getElementById('lErr').style.display='none',3000)}
-}
-function doLogout(){isAdmin=false;sessionStorage.removeItem('sf_admin');setAdminUI();toast('Logged out','success');refreshAll();nav('dashboard')}
-function closeLogin(){document.getElementById('loginBg').classList.remove('on');document.getElementById('lPass').value=''}
-function setAdminUI(){
-    const app=document.getElementById('app');
-    if(isAdmin){app.classList.add('is-admin');document.getElementById('roleBadge').className='admin-badge';document.getElementById('roleBadge').textContent='🔑 ADMIN';document.getElementById('authBtn').textContent='🚪 Logout';document.getElementById('authBtn').className='btn-logout';document.getElementById('footerInfo').innerHTML='<span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--success)"></span>Admin Mode</span>'}
-    else{app.classList.remove('is-admin');document.getElementById('roleBadge').className='public-badge';document.getElementById('roleBadge').textContent='👁️ PUBLIC VIEW';document.getElementById('authBtn').textContent='🔐 Admin Login';document.getElementById('authBtn').className='btn-login';document.getElementById('footerInfo').innerHTML='<span style="color:var(--g500)">Public Mode — শুধু দেখা যাবে</span>'}
-}
-function changeCreds(){
-    const u=document.getElementById('nUser').value.trim(),p=document.getElementById('nPass').value.trim();
-    if(!u||!p)return toast('Username ও Password দিন!','error');
-    s(K.cr,{username:u,password:p});toast('✅ Credentials পরিবর্তন হয়েছে!','success');document.getElementById('nUser').value='';document.getElementById('nPass').value='';
-}
-
-// ====== NAVIGATION ======
-function nav(page,el){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    const t=document.getElementById('pg-'+page);if(t)t.classList.add('active');
-    if(el){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));el.classList.add('active')}
-    if(page==='dashboard')renderDash();
-    if(page==='all')renderTable();
-    if(page==='prospectus')renderPros();
-    if(page==='cats')renderCats();
-    if(page==='add'){resetForm();popCatDD()}
-    document.getElementById('sidebar').classList.remove('open');
-}
-
-// ====== REFRESH ======
-function refreshAll(){renderSideNav();renderDash();updateBadges();popCatDD();popFilterCats();setAdminUI();
-    if(sessionStorage.getItem('sf_admin')==='1'){isAdmin=true;setAdminUI()}
-}
-
-// ====== SIDEBAR NAV ======
-function renderSideNav(){
-    const pr=g(K.pr)||[],ca=g(K.ca)||[];
-    const map={'Work Process':'navWP','Technical':'navTW','Environment':'navWE'};
-    Object.entries(map).forEach(([pil,id])=>{
-        const el=document.getElementById(id),cats=ca.filter(c=>c.pillar===pil);
-        el.innerHTML=cats.map(c=>{const cnt=pr.filter(p=>p.category===c.name).length;
-            return`<div class="nav-item" onclick="filterCat('${c.name}',this)" style="padding-left:28px;font-size:12px"><span class="ic">${c.icon}</span>${c.name}${cnt?`<span class="badge">${cnt}</span>`:''}</div>`}).join('')});
-}
-
-// ====== DASHBOARD ======
-function renderDash(){
-    const pr=g(K.pr)||[],ca=g(K.ca)||[];
-    const wp=pr.filter(p=>p.pillar==='Work Process').length,tw=pr.filter(p=>p.pillar==='Technical').length,we=pr.filter(p=>p.pillar==='Environment').length;
-    const act=pr.filter(p=>p.status==='active').length,ts=pr.reduce((s,p)=>s+(p.steps?.length||0),0);
-    document.getElementById('dStats').innerHTML=`
-        <div class="stat"><div class="si">📋</div><div class="sv">${pr.length}</div><div class="sl">মোট Process</div></div>
-        <div class="stat"><div class="si">✅</div><div class="sv">${act}</div><div class="sl">Active</div></div>
-        <div class="stat"><div class="si">📂</div><div class="sv">${ca.length}</div><div class="sl">Categories</div></div>
-        <div class="stat"><div class="si">📝</div><div class="sv">${ts}</div><div class="sl">মোট Steps</div></div>`;
-    document.getElementById('cWP').textContent=wp+'টি Process';
-    document.getElementById('cTW').textContent=tw+'টি Process';
-    document.getElementById('cWE').textContent=we+'টি Process';
-    const acs=g(K.ac)||[],al=document.getElementById('actLog');
-    al.innerHTML=acs.length?acs.slice(-8).reverse().map(a=>`<div style="padding:8px 0;border-bottom:1px solid var(--g100);font-size:13px">${a.icon||'📌'} ${a.text}<div style="font-size:10px;color:var(--g400);margin-top:2px">${new Date(a.time).toLocaleString('bn-BD')}</div></div>`).join(''):'<p style="color:var(--g500);font-size:13px">কোনো কার্যকলাপ নেই</p>';
-}
-
-// ====== PROCESS TABLE ======
-function renderTable(){
-    const pr=g(K.pr)||[],fp=document.getElementById('fPillar').value,fc=document.getElementById('fCat').value,q=(document.getElementById('searchIn').value||'').toLowerCase();
-    let f=pr;
-    if(fp!=='all')f=f.filter(p=>p.pillar===fp);
-    if(fc!=='all')f=f.filter(p=>p.category===fc);
-    if(q)f=f.filter(p=>p.title.toLowerCase().includes(q)||p.code.toLowerCase().includes(q)||p.category.toLowerCase().includes(q));
-    const tb=document.getElementById('tBody');
-    if(!f.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><div class="ei">📭</div><p>কোনো Process পাওয়া যায়নি</p></div></td></tr>';return}
-    tb.innerHTML=f.map(p=>`<tr>
-        <td><strong>${p.code}</strong></td>
-        <td>${p.icon||'📋'} ${p.title}</td>
-        <td>${p.pillar==='Work Process'?'📗':p.pillar==='Technical'?'📘':'📙'} ${p.pillar}</td>
-        <td>${p.category}</td>
-        <td><span class="bp ${p.priority[0]}">${p.priority==='high'?'🔴 High':p.priority==='medium'?'🟡 Medium':'🟢 Low'}</span></td>
-        <td><span class="bs ${p.status==='active'?'ac':p.status==='draft'?'dr':'ar'}">${p.status==='active'?'✅ Active':p.status==='draft'?'📝 Draft':'📦 Archived'}</span></td>
-        <td>${p.steps?.length||0}</td>
-        <td class="admin-only"><div class="acts">
-            <button class="btn btn-p btn-sm" onclick="viewProc('${p.id}')">👁️</button>
-            <button class="btn btn-w btn-sm" onclick="editProc('${p.id}')">✏️</button>
-            <button class="btn btn-d btn-sm" onclick="confirmDel('${p.id}')">🗑️</button>
-        </div></td>
-    </tr>`).join('');
-    // Public view: add view button for non-admin
-    if(!isAdmin){
-        f.forEach(p=>{
-            const rows=tb.querySelectorAll('tr');
-            rows.forEach(r=>{
-                if(r.querySelector('td')?.textContent===p.code){
-                    // Already has onclick via title
-                }
-            });
-        });
-        // Make rows clickable for public
-        tb.querySelectorAll('tr').forEach((r,i)=>{
-            if(f[i])r.style.cursor='pointer';
-            r.addEventListener('click',function(e){
-                if(!e.target.closest('.acts')&&f[i])viewProc(f[i].id)
-            });
-        });
+function toggleTheme() {
+    isDark = !isDark;
+    if(isDark) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('sf_theme', 'dark');
+        document.getElementById('themeBtn').textContent = '☀️';
+    } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('sf_theme', 'light');
+        document.getElementById('themeBtn').textContent = '🌙';
     }
 }
 
-// ====== PROSPECTUS ======
-function renderPros(){
-    const pr=g(K.pr)||[],ca=g(K.ca)||[];
-    const pils=[{n:'Work Process',l:'📗 অধ্যায় ১: কাজের প্রক্রিয়া',c:'#34a853'},{n:'Technical',l:'📘 অধ্যায় ২: টেকনিক্যাল কাজ',c:'#4285f4'},{n:'Environment',l:'📙 অধ্যায় ৩: কাজের পরিবেশ',c:'#fbbc04'}];
-    document.getElementById('prosContent').innerHTML=pils.map(pil=>{
-        const cats=ca.filter(c=>c.pillar===pil.n);
-        const catH=cats.map(cat=>{
-            const procs=pr.filter(p=>p.category===cat.name&&p.pillar===pil.n&&p.status!=='archived');
-            if(!procs.length)return'';
-            return`<div style="margin-bottom:12px"><h4 style="font-size:14px;color:var(--g700);margin-bottom:8px;padding-left:8px">${cat.icon} ${cat.name}</h4>
-                ${procs.map(p=>`<div onclick="viewProc('${p.id}')" style="display:flex;align-items:center;padding:8px 16px;cursor:pointer;border-radius:6px;transition:background .15s;margin-bottom:2px" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background='transparent'">
-                    <span style="width:8px;height:8px;border-radius:50%;background:${p.priority==='high'?'var(--danger)':p.priority==='medium'?'var(--warning)':'var(--success)'};margin-right:10px;flex-shrink:0"></span>
-                    <span style="flex:1;font-size:13px">${p.icon||'📋'} ${p.title}</span>
-                    <span style="font-size:10px;color:var(--g400)">v${p.version} | ${p.steps?.length||0} steps</span>
-                </div>`).join('')}</div>`}).join('');
-        return`<div class="card" style="margin-bottom:16px"><div class="card-head" style="border-left:4px solid ${pil.c};cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'"><h3>${pil.l}</h3><span style="font-size:12px;color:var(--g500)">${pr.filter(p=>p.pillar===pil.n).length}টি ▼</span></div><div class="card-body">${catH||'<p style="color:var(--g400);font-size:13px">কোনো Process নেই</p>'}</div></div>`}).join('');
+// SIDEBAR TOGGLE
+function toggleNavGroup(id, el) {
+    const group = document.getElementById(id);
+    const chevron = el.querySelector('.chevron');
+    if(group.style.display === 'none') {
+        group.style.display = 'block';
+        chevron.textContent = '▼';
+    } else {
+        group.style.display = 'none';
+        chevron.textContent = '▶';
+    }
 }
 
-// ====== VIEW PROCESS ======
-function viewProc(id){
-    const pr=g(K.pr)||[],p=pr.find(x=>x.id===id);if(!p)return;
-    const cs=g(K.cs)||{},comp=cs[id]||[];
-    nav('detail');
-    document.getElementById('detailBox').innerHTML=`
-        <div style="margin-bottom:12px;display:flex;gap:6px;flex-wrap:wrap">
-            <button class="btn btn-o btn-sm" onclick="nav('prospectus')">← ফিরে যান</button>
-            ${isAdmin?`<button class="btn btn-w btn-sm" onclick="editProc('${p.id}')">✏️ Edit</button><button class="btn btn-d btn-sm" onclick="confirmDel('${p.id}')">🗑️ Delete</button>`:''}
-        </div>
-        <div class="pd-card">
-            <div class="pd-head">
-                <span class="bs ${p.status==='active'?'ac':p.status==='draft'?'dr':'ar'}">${p.status}</span>
-                <span class="bp ${p.priority[0]}" style="margin-left:6px">${p.priority}</span>
-                <h2>${p.icon||'📋'} ${p.title}</h2>
-                <div class="pd-meta">
-                    <span class="pd-mi">📋 ${p.code}</span><span class="pd-mi">📌 v${p.version}</span>
-                    <span class="pd-mi">⏰ SLA: ${p.sla||'-'}</span>
-                    <span class="pd-mi">${p.pillar==='Work Process'?'📗':p.pillar==='Technical'?'📘':'📙'} ${p.pillar}</span>
-                    <span class="pd-mi">📂 ${p.category}</span>
-                </div>
-                ${p.description?`<p style="font-size:13px;color:var(--g600);margin-top:8px">${p.description}</p>`:''}
-            </div>
-            <div class="pd-body">
-                <h3 style="font-size:15px;margin-bottom:12px">✅ ধাপসমূহ (${p.steps?.length||0}টি)</h3>
-                <div id="dCL"></div>
-                <div class="prog"><span>📊</span><div class="prog-bar"><div class="prog-fill" id="dProg" style="width:0%"></div></div><span class="prog-txt" id="dProgT">0/0</span></div>
-            </div>
-        </div>`;
-    renderCL(p,id);
+// ==========================================
+// REAL-TIME DATABASE LISTENERS
+// ==========================================
+db.ref('categories').on('value', snap => {
+    const data = snap.val();
+    globalCategories = data ? Object.values(data) : [];
+    refreshUI();
+});
+
+db.ref('processes').on('value', snap => {
+    const data = snap.val();
+    globalProcesses = data ? Object.values(data) : [];
+    refreshUI();
+});
+
+function refreshUI() {
+    setAdminUI();
+    renderSidebarNav();
+    renderDashboard();
+    renderProcessTable();
+    renderCategoryTable();
+    populateCategoryDropdowns();
+    
+    if(document.getElementById('page-prospectus').classList.contains('active')) {
+        renderProspectus();
+    }
 }
 
-function renderCL(p,id){
-    const cs=g(K.cs)||{},comp=cs[id]||[];
-    const el=document.getElementById('dCL');if(!el)return;
-    el.innerHTML=(p.steps||[]).map((st,i)=>{
-        const done=comp.includes(i);
-        return`<div class="ck ${done?'done':''}" onclick="togStep('${id}',${i})">
-            <div class="ck-box">${done?'✓':(i+1)}</div>
-            <div><div class="ck-text">${st.text}</div>
-                <div class="ck-tags">${st.note?'<span class="ck-tag">📝 Note</span>':''}${st.evidence?'<span class="ck-tag">📎 Evidence</span>':''}${st.mandatory?'<span class="ck-tag man">✱ Mandatory</span>':'<span class="ck-tag">Optional</span>'}</div>
-            </div></div>`}).join('');
-    const total=p.steps?.length||0,done=comp.length,pct=total?Math.round(done/total*100):0;
-    const progEl=document.getElementById('dProg');if(progEl)progEl.style.width=pct+'%';
-    const progT=document.getElementById('dProgT');if(progT)progT.textContent=`${done}/${total} (${pct}%)`;
+// ==========================================
+// AUTHENTICATION LOGIC (With DB Password Change)
+// ==========================================
+function toggleAuth() {
+    if(isAdmin) {
+        isAdmin = false;
+        sessionStorage.removeItem('sf_admin');
+        toast('Logged out successfully', 'success');
+        refreshUI();
+        navigateTo('dashboard');
+    } else {
+        document.getElementById('loginModal').classList.add('active');
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginUser').value = '';
+    }
 }
 
-function togStep(pid,si){
-    const cs=g(K.cs)||{};if(!cs[pid])cs[pid]=[];
-    const idx=cs[pid].indexOf(si);
-    if(idx>-1)cs[pid].splice(idx,1);else cs[pid].push(si);
-    s(K.cs,cs);
-    const pr=g(K.pr)||[],p=pr.find(x=>x.id===pid);if(p)renderCL(p,pid);
-}
+function doLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    
+    db.ref('settings/admin_credentials').once('value').then(snap => {
+        let dbCreds = { username: 'admin', password: 'admin123' }; 
+        if(snap.exists()) {
+            dbCreds = snap.val();
+        } else {
+            db.ref('settings/admin_credentials').set(dbCreds);
+        }
 
-// ====== PROCESS CRUD ======
-function saveProc(){
-    if(!isAdmin)return toast('Admin Login প্রয়োজন!','error');
-    const eid=document.getElementById('eId').value,title=document.getElementById('fName').value.trim(),code=document.getElementById('fCode').value.trim();
-    if(!title||!code)return toast('নাম ও Code দিন!','error');
-    const steps=[];
-    document.querySelectorAll('#stepsB .sb-item').forEach(it=>{
-        const t=it.querySelector('input[type="text"]').value.trim();if(!t)return;
-        const ch=it.querySelectorAll('input[type="checkbox"]');
-        steps.push({text:t,note:ch[0]?.checked||false,evidence:ch[1]?.checked||false,mandatory:ch[2]?.checked||false})
+        if(user === dbCreds.username && pass === dbCreds.password) {
+            isAdmin = true;
+            sessionStorage.setItem('sf_admin', '1');
+            closeModal('loginModal');
+            toast('✅ Admin Access Granted!', 'success');
+            refreshUI();
+        } else {
+            const err = document.getElementById('loginError');
+            err.style.display = 'block';
+            setTimeout(() => err.style.display = 'none', 3000);
+        }
     });
-    const obj={id:eid||'p-'+Date.now(),code,title,icon:document.getElementById('fIcon').value||'📋',
-        pillar:document.getElementById('fPil').value,category:document.getElementById('fCatSel').value,
-        priority:document.getElementById('fPri').value,status:document.getElementById('fStat').value,
-        version:document.getElementById('fVer').value||'1.0',sla:document.getElementById('fSla').value,
-        description:document.getElementById('fDesc').value,steps,updatedAt:new Date().toISOString()};
-    const pr=g(K.pr)||[];
-    if(eid){const i=pr.findIndex(p=>p.id===eid);if(i>-1){obj.createdAt=pr[i].createdAt;pr[i]=obj}addAct('✏️',`"${title}" updated`);toast(`✅ "${title}" আপডেট!`,'success')}
-    else{obj.createdAt=new Date().toISOString();pr.push(obj);addAct('➕',`"${title}" যোগ হয়েছে`);toast(`✅ "${title}" তৈরি!`,'success')}
-    s(K.pr,pr);resetForm();refreshAll();nav('all');
 }
 
-function editProc(id){
-    if(!isAdmin)return toast('Admin Login প্রয়োজন!','error');
-    const pr=g(K.pr)||[],p=pr.find(x=>x.id===id);if(!p)return;
-    nav('add');document.getElementById('fTitle').textContent='✏️ Process Edit';
-    document.getElementById('eId').value=p.id;
-    document.getElementById('fName').value=p.title;document.getElementById('fCode').value=p.code;
-    document.getElementById('fVer').value=p.version;document.getElementById('fPil').value=p.pillar;
-    popCatDD();setTimeout(()=>document.getElementById('fCatSel').value=p.category,50);
-    document.getElementById('fPri').value=p.priority;document.getElementById('fStat').value=p.status;
-    document.getElementById('fSla').value=p.sla||'';document.getElementById('fIcon').value=p.icon||'📋';
-    document.getElementById('fDesc').value=p.description||'';
-    document.getElementById('stepsB').innerHTML='';
-    (p.steps||[]).forEach(st=>addStep(st.text,st.note,st.evidence,st.mandatory));
+function changeAdminCredentials() {
+    const u = document.getElementById('newUsername').value.trim();
+    const p = document.getElementById('newPassword').value.trim();
+    
+    if(!u || !p) return toast('Username ও Password দিন!', 'error');
+    
+    db.ref('settings/admin_credentials').set({ username: u, password: p }).then(() => {
+        toast('✅ Username ও Password পরিবর্তন হয়েছে!', 'success');
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+    });
 }
 
-function confirmDel(id){
-    if(!isAdmin)return toast('Admin Login প্রয়োজন!','error');
-    const pr=g(K.pr)||[],p=pr.find(x=>x.id===id);if(!p)return;
-    openModal('🗑️ Delete?',`<div class="confirm"><div class="ci">⚠️</div><h3>"${p.title}" মুছবেন?</h3><p>এটি পূর্বাবস্থায় ফেরানো যাবে না!</p></div>`,
-        `<button class="btn btn-o" onclick="closeModal()">❌ Cancel</button><button class="btn btn-d" onclick="delProc('${id}')">🗑️ Delete</button>`);
-}
-function delProc(id){
-    let pr=g(K.pr)||[];const p=pr.find(x=>x.id===id);pr=pr.filter(x=>x.id!==id);s(K.pr,pr);
-    if(p)addAct('🗑️',`"${p.title}" মুছে ফেলা হয়েছে`);toast('🗑️ Deleted!','success');closeModal();refreshAll();nav('all');
+function setAdminUI() {
+    const b = document.body;
+    const badge = document.getElementById('roleBadge');
+    const btn = document.getElementById('authBtn');
+    
+    if(isAdmin) {
+        b.classList.add('is-admin');
+        badge.className = 'role-badge role-admin';
+        badge.textContent = '🔑 ADMIN MODE';
+        btn.innerHTML = '🚪 Logout Admin';
+        btn.style.color = 'var(--danger)';
+    } else {
+        b.classList.remove('is-admin');
+        badge.className = 'role-badge role-public';
+        badge.textContent = '👁️ PUBLIC VIEW';
+        btn.innerHTML = '🔐 Admin Login';
+        btn.style.color = 'var(--text-main)';
+    }
 }
 
-// ====== STEP BUILDER ======
-function addStep(text,note,evidence,mandatory){
-    const b=document.getElementById('stepsB'),d=document.createElement('div');d.className='sb-item';
-    d.innerHTML=`<span class="dh">☰</span><input type="text" placeholder="Step: কী করতে হবে..." value="${text||''}">
-        <div class="sb-opts"><label><input type="checkbox" ${note!==false?'checked':''}> 📝</label><label><input type="checkbox" ${evidence?'checked':''}> 📎</label><label><input type="checkbox" ${mandatory!==false?'checked':''}> ✱</label></div>
-        <button class="rb" onclick="this.parentElement.remove()">✕</button>`;
-    b.appendChild(d);if(!text)d.querySelector('input[type="text"]').focus();
+// ==========================================
+// NAVIGATION & RENDERING
+// ==========================================
+function navigateTo(page, el) {
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    
+    if(el) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+    }
+    
+    if(page === 'add-process') resetProcessForm();
+    if(page === 'prospectus') renderProspectus();
 }
-function resetForm(){document.getElementById('fTitle').textContent='➕ নতুন Process';document.getElementById('eId').value='';
-    ['fName','fCode','fSla','fDesc'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('fVer').value='1.0';document.getElementById('fIcon').value='📋';
-    document.getElementById('fPri').value='medium';document.getElementById('fStat').value='active';
-    document.getElementById('stepsB').innerHTML=''}
 
-// ====== CATEGORY CRUD ======
-function renderCats(){
-    const ca=g(K.ca)||[],pr=g(K.pr)||[];
-    document.getElementById('catBody').innerHTML=ca.map(c=>{const cnt=pr.filter(p=>p.category===c.name).length;
-        return`<tr><td style="font-size:20px">${c.icon}</td><td><strong>${c.name}</strong></td>
-            <td>${c.pillar==='Work Process'?'📗':c.pillar==='Technical'?'📘':'📙'} ${c.pillar}</td><td>${cnt}</td>
-            <td><div class="acts"><button class="btn btn-w btn-sm" onclick="openCatModal('${c.id}')">✏️</button><button class="btn btn-d btn-sm" onclick="confirmDelCat('${c.id}')">🗑️</button></div></td></tr>`}).join('');
+function renderSidebarNav() {
+    const pils = {'Work Process':'navWP', 'Technical':'navTW', 'Environment':'navWE'};
+    
+    Object.entries(pils).forEach(([pil, id]) => {
+        const cats = globalCategories.filter(c => c.pillar === pil);
+        document.getElementById(id).innerHTML = cats.map(c => {
+            const count = globalProcesses.filter(p => p.category === c.name).length;
+            return `<div class="nav-item" style="padding-left:30px; font-size:12px" onclick="filterBySideCat('${c.name}', this)">
+                <span class="icon">${c.icon}</span>${c.name} ${count ? `<span class="badge">${count}</span>` : ''}
+            </div>`;
+        }).join('');
+    });
+    
+    document.getElementById('bTotal').textContent = globalProcesses.length;
 }
-function openCatModal(eid){
-    const ca=g(K.ca)||[],c=eid?ca.find(x=>x.id===eid):null;
-    openModal(c?'✏️ Edit Category':'➕ নতুন Category',`
-        <input type="hidden" id="eCatId" value="${eid||''}">
-        <div class="fg"><label>Name *</label><input type="text" class="fc" id="catN" value="${c?.name||''}" placeholder="Category নাম"></div>
-        <div class="fr2"><div class="fg"><label>Pillar</label><select class="fc" id="catPil">
-            <option value="Work Process" ${c?.pillar==='Work Process'?'selected':''}>📗 কাজের প্রক্রিয়া</option>
-            <option value="Technical" ${c?.pillar==='Technical'?'selected':''}>📘 টেকনিক্যাল</option>
-            <option value="Environment" ${c?.pillar==='Environment'?'selected':''}>📙 পরিবেশ</option></select></div>
-        <div class="fg"><label>Icon</label><input type="text" class="fc" id="catIc" value="${c?.icon||'📂'}"></div></div>`,
-        `<button class="btn btn-o" onclick="closeModal()">❌ Cancel</button><button class="btn btn-s" onclick="saveCat()">💾 Save</button>`);
+
+function filterBySideCat(catName, el) {
+    navigateTo('all-processes', el);
+    setTimeout(() => {
+        document.getElementById('filterCategory').value = catName;
+        renderProcessTable();
+    }, 50);
 }
-function saveCat(){
-    const eid=document.getElementById('eCatId').value,name=document.getElementById('catN').value.trim();
-    if(!name)return toast('নাম দিন!','error');
-    const obj={id:eid||'c-'+Date.now(),name,pillar:document.getElementById('catPil').value,icon:document.getElementById('catIc').value||'📂'};
-    const ca=g(K.ca)||[];
-    if(eid){const i=ca.findIndex(c=>c.id===eid);if(i>-1)ca[i]=obj;toast('✅ Updated!','success')}
-    else{ca.push(obj);toast('✅ যোগ হয়েছে!','success')}
-    s(K.ca,ca);closeModal();refreshAll();renderCats();
+
+function renderDashboard() {
+    document.getElementById('dashboardStats').innerHTML = `
+        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-value">${globalProcesses.length}</div><div class="stat-label">মোট Process</div></div>
+        <div class="stat-card"><div class="stat-icon">📂</div><div class="stat-value">${globalCategories.length}</div><div class="stat-label">Categories</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">${globalProcesses.filter(p=>p.status==='active').length}</div><div class="stat-label">Active Processes</div></div>
+    `;
+    document.getElementById('cWP').textContent = globalProcesses.filter(p=>p.pillar==='Work Process').length + 'টি Process';
+    document.getElementById('cTW').textContent = globalProcesses.filter(p=>p.pillar==='Technical').length + 'টি Process';
+    document.getElementById('cWE').textContent = globalProcesses.filter(p=>p.pillar==='Environment').length + 'টি Process';
 }
-function confirmDelCat(id){
-    const ca=g(K.ca)||[],c=ca.find(x=>x.id===id);if(!c)return;
-    openModal('🗑️ Delete?',`<div class="confirm"><div class="ci">⚠️</div><h3>"${c.name}" মুছবেন?</h3></div>`,
-        `<button class="btn btn-o" onclick="closeModal()">❌ Cancel</button><button class="btn btn-d" onclick="delCat('${id}')">🗑️ Delete</button>`);
+
+function renderProcessTable() {
+    const fp = document.getElementById('filterPillar').value;
+    const fc = document.getElementById('filterCategory').value;
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    
+    let f = globalProcesses;
+    if(fp !== 'all') f = f.filter(p => p.pillar === fp);
+    if(fc !== 'all') f = f.filter(p => p.category === fc);
+    if(q) f = f.filter(p => p.title.toLowerCase().includes(q));
+
+    const tb = document.getElementById('processTableBody');
+    tb.innerHTML = f.map(p => `
+        <tr>
+            <td>${p.icon} <strong>${p.title}</strong></td>
+            <td>${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</td>
+            <td>${p.category}</td>
+            <td><span class="badge-priority ${p.priority}">${p.priority}</span></td>
+            <td><span class="badge-status ${p.status}">${p.status}</span></td>
+            <td>${p.steps ? p.steps.length : 0}</td>
+            <td class="admin-only-table">
+                <div class="actions">
+                    <button class="btn btn-outline btn-sm" onclick="viewProcessPreview('${p.id}')">👁️</button>
+                    <button class="btn btn-warning btn-sm" onclick="editProcess('${p.id}')">✏️</button>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('process', '${p.id}', '${p.title}')">🗑️</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
 }
-function delCat(id){let ca=g(K.ca)||[];ca=ca.filter(c=>c.id!==id);s(K.ca,ca);toast('🗑️ Deleted!','success');closeModal();refreshAll();renderCats()}
 
-// ====== HELPERS ======
-function popCatDD(){const ca=g(K.ca)||[],sel=document.getElementById('fCatSel');if(!sel)return;sel.innerHTML=ca.map(c=>`<option value="${c.name}">${c.icon} ${c.name}</option>`).join('')}
-function popFilterCats(){const ca=g(K.ca)||[],sel=document.getElementById('fCat');if(!sel)return;sel.innerHTML='<option value="all">সব Category</option>'+ca.map(c=>`<option value="${c.name}">${c.icon} ${c.name}</option>`).join('')}
-function updateBadges(){document.getElementById('bTotal').textContent=(g(K.pr)||[]).length}
-function filterCat(name,el){nav('all',el);setTimeout(()=>{document.getElementById('fCat').value=name;renderTable()},50)}
-function onSearch(){const ap=document.querySelector('.page.active');if(ap?.id==='pg-all')renderTable()}
-function addAct(icon,text){const ac=g(K.ac)||[];ac.push({icon,text,time:new Date().toISOString()});if(ac.length>50)ac.shift();s(K.ac,ac)}
+function renderProspectus() {
+    const pillars = [
+        { name: 'Work Process', label: '📗 অধ্যায় ১: কাজের প্রক্রিয়া', c: '#34a853' },
+        { name: 'Technical', label: '📘 অধ্যায় ২: টেকনিক্যাল কাজ', c: '#4285f4' },
+        { name: 'Environment', label: '📙 অধ্যায় ৩: কাজের পরিবেশ', c: '#fbbc04' }
+    ];
 
-// ====== DATA ======
-function exportData(){
-    const d={categories:g(K.ca),processes:g(K.pr),activities:g(K.ac),completedSteps:g(K.cs),exportedAt:new Date().toISOString()};
-    const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='steadfast-backup.json';a.click();toast('📤 Exported!','success');
+    const html = pillars.map(pil => {
+        const cats = globalCategories.filter(c => c.pillar === pil.name);
+        
+        const catHtml = cats.map(cat => {
+            const procs = globalProcesses.filter(p => p.category === cat.name && p.pillar === pil.name);
+            
+            // NEW LOGIC: Show empty categories with a message instead of hiding them
+            const processListHtml = procs.length ? procs.map(p => `
+                <div onclick="viewProcessPreview('${p.id}')" style="display:flex; align-items:center; padding:10px 16px; background:var(--hover); border-radius:6px; margin-bottom:4px; cursor:pointer; border:1px solid var(--border)">
+                    <span style="width:8px; height:8px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:10px;"></span>
+                    <span style="flex:1; font-size:13px; font-weight:600;">${p.title}</span>
+                    <span style="font-size:11px; color:var(--text-muted)">SLA: ${p.sla||'-'}</span>
+                </div>
+            `).join('') : `<div style="padding:10px 16px; border-radius:6px; background:var(--hover); font-size:12px; color:var(--text-muted); font-style:italic;">এই ক্যাটাগরিতে কোনো Process নেই।</div>`;
+
+            return `
+                <div style="margin-bottom:15px">
+                    <h4 style="font-size:14px; color:var(--text-muted); margin-bottom:8px;">${cat.icon} ${cat.name}</h4>
+                    ${processListHtml}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header" style="border-left:4px solid ${pil.c}; cursor:pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none' ? 'block' : 'none'">
+                    <h3 style="font-size:16px;">${pil.label}</h3>
+                    <span style="font-size:12px; color:var(--text-muted)">${globalProcesses.filter(p=>p.pillar===pil.name).length}টি ▼</span>
+                </div>
+                <div class="card-body" style="display:block;">
+                    ${catHtml || '<p style="color:var(--text-muted); font-size:13px;">কোনো ক্যাটাগরি নেই</p>'}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('prospectusContent').innerHTML = html;
 }
-function importData(e){
-    const f=e.target.files[0];if(!f)return;const r=new FileReader();
-    r.onload=function(ev){try{const d=JSON.parse(ev.target.result);
-        if(d.categories)s(K.ca,d.categories);if(d.processes)s(K.pr,d.processes);
-        if(d.activities)s(K.ac,d.activities);if(d.completedSteps)s(K.cs,d.completedSteps);
-        refreshAll();toast('📥 Imported!','success')}catch{toast('❌ Invalid file!','error')}};
-    r.readAsText(f);e.target.value='';
+
+function viewProcessPreview(id) {
+    const p = globalProcesses.find(x => x.id === id);
+    if(!p) return;
+    
+    navigateTo('process-detail');
+    
+    const localKey = 'sf_check_' + id;
+    let comp = JSON.parse(localStorage.getItem(localKey)) || [];
+
+    const stepsHtml = (p.steps || []).map((st, i) => {
+        const isDone = comp.includes(i);
+        return `
+            <div class="checklist-step ${isDone?'done':''}" onclick="toggleCheck('${id}', ${i}, this)">
+                <div class="step-checkbox">${isDone?'✓':(i+1)}</div>
+                <div>
+                    <div style="font-size:13px; font-weight:500;">${st.text}</div>
+                    <div class="step-tags">
+                        ${st.note ? '<span class="step-tag">📝 Note</span>' : ''}
+                        ${st.evidence ? '<span class="step-tag">📎 Evidence</span>' : ''}
+                        ${st.mandatory ? '<span class="step-tag" style="background:var(--danger-light);color:var(--danger)">✱ Mandatory</span>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('processDetailContent').innerHTML = `
+        <div style="margin-bottom:15px; display:flex; gap:10px;">
+            <button class="btn btn-outline" onclick="navigateTo('prospectus')">← ফিরে যান</button>
+        </div>
+        <div class="card">
+            <div class="card-header" style="background:var(--hover);">
+                <div>
+                    <h2 style="font-size:20px; margin-bottom:5px;">${p.icon} ${p.title}</h2>
+                    <div style="font-size:12px; color:var(--text-muted); display:flex; gap:15px;">
+                        <span>⏰ SLA: <strong>${p.sla||'-'}</strong></span>
+                        <span>📂 ${p.category}</span>
+                    </div>
+                </div>
+                <span class="badge-priority ${p.priority}">${p.priority}</span>
+            </div>
+            <div class="card-body">
+                ${p.description ? `<p style="font-size:13px; margin-bottom:20px; padding:10px; background:var(--hover); border-radius:6px;">${p.description}</p>` : ''}
+                <h3 style="font-size:15px; margin-bottom:15px;">✅ ধাপসমূহ (${p.steps?.length||0}টি)</h3>
+                ${stepsHtml}
+            </div>
+        </div>
+    `;
 }
-function confirmReset(){openModal('⚠️ Reset All?',`<div class="confirm"><div class="ci">🚨</div><h3>সব মুছবেন?</h3><p>Default Data-তে ফিরে যাবে!</p></div>`,
-    `<button class="btn btn-o" onclick="closeModal()">❌ Cancel</button><button class="btn btn-d" onclick="resetAll()">🗑️ Reset</button>`)}
-function resetAll(){s(K.ca,defCats());s(K.pr,defProcs());s(K.ac,[]);s(K.cs,{});closeModal();refreshAll();nav('dashboard');toast('🔄 Reset done!','success')}
 
-// ====== MODAL ======
-function openModal(title,body,foot){document.getElementById('mTitle').textContent=title;document.getElementById('mBody').innerHTML=body;document.getElementById('mFoot').innerHTML=foot||'';document.getElementById('modalBg').classList.add('on')}
-function closeModal(){document.getElementById('modalBg').classList.remove('on')}
+// Local toggle for public checklist preview
+function toggleCheck(id, index, el) {
+    const localKey = 'sf_check_' + id;
+    let comp = JSON.parse(localStorage.getItem(localKey)) || [];
+    const idx = comp.indexOf(index);
+    
+    if(idx > -1) {
+        comp.splice(idx, 1);
+        el.classList.remove('done');
+        el.querySelector('.step-checkbox').innerHTML = (index+1);
+    } else {
+        comp.push(index);
+        el.classList.add('done');
+        el.querySelector('.step-checkbox').innerHTML = '✓';
+    }
+    localStorage.setItem(localKey, JSON.stringify(comp));
+}
 
-// ====== TOAST ======
-function toast(msg,type){const c=document.getElementById('toastBox'),t=document.createElement('div');t.className='toast '+(type||'');
-    const ic={success:'✅',error:'❌',warning:'⚠️'};t.innerHTML=`${ic[type]||'📌'} ${msg}`;c.appendChild(t);
-    setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100%)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300)},3000)}
+// ==========================================
+// CRUD: PROCESSES
+// ==========================================
+function saveProcess() {
+    if(!isAdmin) return toast('Admin Login প্রয়োজন!', 'error');
+    
+    const eid = document.getElementById('editProcessId').value;
+    const title = document.getElementById('processTitle').value.trim();
+    
+    if(!title) return toast('Process-এর নাম দিন!', 'error');
+    
+    const id = eid || 'p_' + Date.now();
+    
+    const steps = [];
+    document.querySelectorAll('.step-builder-item').forEach(it => {
+        const t = it.querySelector('input[type="text"]').value.trim();
+        if(!t) return;
+        const checks = it.querySelectorAll('input[type="checkbox"]');
+        steps.push({
+            text: t,
+            note: checks[0]?.checked || false,
+            evidence: checks[1]?.checked || false,
+            mandatory: checks[2]?.checked || false
+        });
+    });
 
-// ENTER KEY
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginBg').classList.contains('on'))doLogin()});
+    const obj = {
+        id: id,
+        title: title,
+        pillar: document.getElementById('processPillar').value,
+        category: document.getElementById('processCategory').value,
+        priority: document.getElementById('processPriority').value,
+        status: document.getElementById('processStatus').value,
+        sla: document.getElementById('processSla').value,
+        icon: document.getElementById('processIcon').value || '📋',
+        description: document.getElementById('processDesc').value,
+        steps: steps
+    };
 
-// START
-init();
+    db.ref('processes/' + id).set(obj).then(() => {
+        toast('✅ Process Database-এ সেভ হয়েছে!', 'success');
+        navigateTo('all-processes');
+    });
+}
+
+function editProcess(id) {
+    const p = globalProcesses.find(x => x.id === id);
+    if(!p) return;
+    
+    navigateTo('add-process');
+    document.getElementById('formTitle').textContent = '✏️ Process Edit করুন';
+    document.getElementById('editProcessId').value = p.id;
+    document.getElementById('processTitle').value = p.title;
+    document.getElementById('processPillar').value = p.pillar;
+    populateCategoryDropdowns();
+    setTimeout(() => document.getElementById('processCategory').value = p.category, 50);
+    document.getElementById('processPriority').value = p.priority;
+    document.getElementById('processStatus').value = p.status;
+    document.getElementById('processSla').value = p.sla || '';
+    document.getElementById('processIcon').value = p.icon;
+    document.getElementById('processDesc').value = p.description || '';
+    
+    document.getElementById('stepsBuilder').innerHTML = '';
+    (p.steps || []).forEach(st => addBuilderStep(st.text, st.note, st.evidence, st.mandatory));
+}
+
+function addBuilderStep(text='', note=true, evidence=false, mandatory=true) {
+    const builder = document.getElementById('stepsBuilder');
+    const div = document.createElement('div');
+    div.className = 'step-builder-item';
+    div.innerHTML = `
+        <span style="color:var(--text-muted); cursor:grab">☰</span>
+        <input type="text" placeholder="Step: কী করতে হবে..." value="${text}">
+        <div class="step-builder-options">
+            <label><input type="checkbox" ${note ? 'checked' : ''}> 📝 Note</label>
+            <label><input type="checkbox" ${evidence ? 'checked' : ''}> 📎 Evi</label>
+            <label><input type="checkbox" ${mandatory ? 'checked' : ''}> ✱ Man</label>
+        </div>
+        <button class="btn btn-outline" style="border:none; color:var(--danger)" onclick="this.parentElement.remove()">✕</button>
+    `;
+    builder.appendChild(div);
+}
+
+function resetProcessForm() {
+    document.getElementById('formTitle').textContent = '➕ নতুন Process তৈরি করুন';
+    document.getElementById('editProcessId').value = '';
+    document.getElementById('processTitle').value = '';
+    document.getElementById('processDesc').value = '';
+    document.getElementById('processSla').value = '';
+    document.getElementById('stepsBuilder').innerHTML = '';
+}
+
+// ==========================================
+// CRUD: CATEGORIES
+// ==========================================
+function renderCategoryTable() {
+    document.getElementById('categoryTableBody').innerHTML = globalCategories.map(c => {
+        const count = globalProcesses.filter(p => p.category === c.name).length;
+        return `
+        <tr>
+            <td style="font-size:20px">${c.icon}</td>
+            <td><strong>${c.name}</strong></td>
+            <td>${c.pillar}</td>
+            <td>${count}টি Process</td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-warning btn-sm" onclick="openCategoryModal('${c.id}')">✏️</button>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('category', '${c.id}', '${c.name}')">🗑️</button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function openCategoryModal(editId = null) {
+    const c = editId ? globalCategories.find(x => x.id === editId) : null;
+    
+    document.getElementById('catModalTitle').textContent = c ? '✏️ Edit Category' : '➕ নতুন Category';
+    document.getElementById('editCatId').value = c ? c.id : '';
+    document.getElementById('catName').value = c ? c.name : '';
+    document.getElementById('catPillar').value = c ? c.pillar : 'Work Process';
+    document.getElementById('catIcon').value = c ? c.icon : '📂';
+    
+    document.getElementById('categoryModal').classList.add('active');
+}
+
+function saveCategory() {
+    const eid = document.getElementById('editCatId').value;
+    const name = document.getElementById('catName').value.trim();
+    if(!name) return toast('Category Name দিন!', 'error');
+
+    const id = eid || 'c_' + Date.now();
+    const obj = {
+        id: id,
+        name: name,
+        pillar: document.getElementById('catPillar').value,
+        icon: document.getElementById('catIcon').value || '📂'
+    };
+
+    db.ref('categories/' + id).set(obj).then(() => {
+        toast('✅ Category Saved!', 'success');
+        closeModal('categoryModal');
+    });
+}
+
+function populateCategoryDropdowns() {
+    const sel = document.getElementById('processCategory');
+    const fSel = document.getElementById('filterCategory');
+    const opts = globalCategories.map(c => `<option value="${c.name}">${c.icon} ${c.name}</option>`).join('');
+    if(sel) sel.innerHTML = opts;
+    if(fSel) fSel.innerHTML = '<option value="all">সব Category</option>' + opts;
+}
+
+// ==========================================
+// CONFIRMATION MODAL & DELETE
+// ==========================================
+let deleteTarget = { type: null, id: null };
+
+function confirmDelete(type, id, title) {
+    deleteTarget = { type, id };
+    document.getElementById('confirmTitle').textContent = `"${title}" মুছে ফেলবেন?`;
+    document.getElementById('confirmDesc').textContent = type === 'category' ? 'এর ভেতরের Process গুলোও এতিম হয়ে যাবে!' : 'এই কাজটি ফেরানো যাবে না!';
+    document.getElementById('confirmModal').classList.add('active');
+}
+
+document.getElementById('confirmBtn').addEventListener('click', () => {
+    if(deleteTarget.type === 'process') {
+        db.ref('processes/' + deleteTarget.id).remove().then(() => toast('🗑️ Process Deleted!', 'success'));
+    } else if(deleteTarget.type === 'category') {
+        db.ref('categories/' + deleteTarget.id).remove().then(() => toast('🗑️ Category Deleted!', 'success'));
+    }
+    closeModal('confirmModal');
+});
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+}
+
+function toast(msg, type) {
+    const b = document.getElementById('toastBox');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    const icons = { success:'✅', error:'❌', warning:'⚠️' };
+    t.innerHTML = `${icons[type] || '📌'} ${msg}`;
+    b.appendChild(t);
+    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100%)'; setTimeout(()=>t.remove(), 300); }, 3000);
+}
+
+// ENTER KEY LOGIN
+document.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && document.getElementById('loginModal').classList.contains('active')) doLogin();
+});
+
+// Seed Initial Categories if Database is totally empty
+db.ref('categories').once('value', snap => {
+    if(!snap.exists()) {
+        const initialCats = [
+            {id:'c1', name:'পার্সেল সমস্যা', pillar:'Work Process', icon:'📦'},
+            {id:'c2', name:'ডেলিভারি সমস্যা', pillar:'Work Process', icon:'🚚'},
+            {id:'c12', name:'সফটওয়্যার গাইড', pillar:'Technical', icon:'💻'},
+            {id:'c15', name:'হাব সেটআপ', pillar:'Environment', icon:'🏗️'}
+        ];
+        initialCats.forEach(cat => db.ref('categories/' + cat.id).set(cat));
+    }
+});
 </script>
 </body>
 </html>
