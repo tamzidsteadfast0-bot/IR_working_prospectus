@@ -1012,11 +1012,11 @@ function viewProcessPreview(id) {
             
             <div class="card-body" style="padding:40px 32px;">
                 ${p.description ? `
-                    <div style="margin-bottom:32px;">
-                        <h4 style="font-size:14px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Description</h4>
-                        <p style="font-size:15.5px; line-height:1.8; padding:20px 24px; background:var(--primary-light); color:var(--primary-dark); border-radius:12px; border-left:4px solid var(--primary); font-weight:500;">${p.description}</p>
-                    </div>
-                ` : ''}
+    <div style="margin-bottom:32px;">
+        <h4 style="font-size:14px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Description</h4>
+        <div style="font-size:15px; line-height:1.8; padding:20px 24px; background:var(--primary-light); color:var(--primary-dark); border-radius:12px; border-left:4px solid var(--primary); font-weight:500; white-space: pre-wrap; word-wrap: break-word;">${p.description}</div>
+    </div>
+` : ''}
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h3 style="font-size:20px; font-weight:800; color:var(--text-main);">✅ Resolution Checklist</h3>
