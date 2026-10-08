@@ -3,245 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steadfast Courier - Operations Prospectus</title>
+    <title>Steadfast Courier - Operations Portal</title>
+    
+    <!-- Google Fonts for Premium Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <style>
+        /* ========================================================
+           PREMIUM THEME VARIABLES & RESET
+        ======================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* THEME VARIABLES */
         :root {
-            --primary: #1a73e8; --primary-dark: #1557b0; --primary-light: #e8f0fe;
-            --success: #0d904f; --success-light: #e6f4ea;
-            --warning: #e37400; --warning-light: #fef7e0;
-            --danger: #d93025; --danger-light: #fce8e6;
+            --primary: #4f46e5; --primary-dark: #4338ca; --primary-light: #e0e7ff;
+            --success: #10b981; --success-light: #d1fae5;
+            --warning: #f59e0b; --warning-light: #fef3c7;
+            --danger: #ef4444; --danger-light: #fee2e2;
             
-            --bg-body: #f8f9fa; --bg-card: #ffffff; --bg-sidebar: #ffffff;
-            --text-main: #202124; --text-muted: #5f6368;
-            --border: #e8eaed; --hover: #f1f3f4;
+            --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-sidebar: #ffffff;
+            --text-main: #111827; --text-muted: #64748b;
+            --border: #e2e8f0; --hover: #f8fafc;
             --input-bg: #ffffff;
             
-            --radius: 8px; --radius-lg: 12px;
-            --shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,.15);
+            --radius-sm: 8px; --radius: 12px; --radius-lg: 20px; --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body.dark-mode {
-            --primary-light: #17325c; --success-light: #103320;
-            --warning-light: #3d260c; --danger-light: #421614;
+            --primary: #6366f1; --primary-light: #1e1b4b;
+            --success-light: #064e3b; --warning-light: #78350f; --danger-light: #7f1d1d;
             
-            --bg-body: #121212; --bg-card: #1e1e1e; --bg-sidebar: #1a1a1a;
-            --text-main: #e8eaed; --text-muted: #9aa0a6;
-            --border: #333333; --hover: #2d2d2d;
-            --input-bg: #121212;
-            --shadow: 0 4px 6px rgba(0,0,0,.4);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,.5);
+            --bg-body: #0f172a; --bg-card: #1e293b; --bg-sidebar: #1e293b;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
+            --border: #334155; --hover: #334155;
+            --input-bg: #0f172a;
+            
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
 
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; transition: background 0.3s, color 0.3s; }
+        body { font-family: 'Inter', 'Noto Sans Bengali', sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; transition: background var(--transition), color var(--transition); overflow-x: hidden; }
 
-        /* LAYOUT & SIDEBAR */
+        /* ========================================================
+           ANIMATIONS
+        ======================================================== */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ========================================================
+           LAYOUT & SIDEBAR (MODERN PILL DESIGN)
+        ======================================================== */
         .app-container { display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all 0.3s; }
-        .sidebar-header { padding: 16px 20px; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; }
-        .sidebar-header h2 { font-size: 15px; font-weight: 700; }
-        .sidebar-header p { font-size: 10px; opacity: 0.8; }
-        .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
         
-        /* SIDEBAR TOGGLE SECTIONS */
-        .nav-section-title { 
-            padding: 12px 20px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; 
-            color: var(--text-muted); letter-spacing: 1px; display: flex; justify-content: space-between; 
-            align-items: center; cursor: pointer; transition: color 0.2s;
-        }
+        .sidebar { width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all var(--transition); }
+        
+        /* Logo Hover Animation Added Here */
+        .sidebar-header { padding: 20px 18px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); }
+        .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: default; }
+        .logo-wrap svg { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .logo-wrap:hover svg { transform: scale(1.1); }
+        
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        
+        .nav-section-title { padding: 16px 12px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: color 0.2s; }
         .nav-section-title:hover { color: var(--primary); }
-        .nav-section-title .chevron { font-size: 10px; transition: transform 0.3s; }
-        .nav-group { display: block; overflow: hidden; }
+        .nav-section-title .chevron { transition: transform 0.3s; font-size: 10px; }
         
-        .nav-item { display: flex; align-items: center; padding: 9px 20px; cursor: pointer; font-size: 13px; color: var(--text-main); border-left: 3px solid transparent; transition: all 0.15s; }
-        .nav-item:hover { background: var(--hover); color: var(--primary); }
-        .nav-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
-        .nav-item .icon { margin-right: 10px; font-size: 16px; width: 22px; text-align: center; }
-        .nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 600; }
+        .nav-item { display: flex; align-items: center; padding: 10px 14px; cursor: pointer; font-size: 13.5px; font-weight: 500; color: var(--text-muted); transition: all 0.2s; border-radius: var(--radius); margin-bottom: 4px; }
+        .nav-item:hover { background: var(--hover); color: var(--primary); transform: translateX(4px); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; box-shadow: inset 3px 0 0 var(--primary); }
+        .nav-item .icon { margin-right: 12px; font-size: 18px; width: 24px; text-align: center; transition: transform 0.2s; }
+        .nav-item:hover .icon { transform: scale(1.1); }
+        .nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); font-weight: 600; box-shadow: var(--shadow-sm); }
         
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); background: var(--bg-sidebar); }
+        .sidebar-footer button { width: 100%; padding: 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 600; border: 1px solid var(--border); transition: all 0.2s; background: var(--hover); color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .sidebar-footer button:hover { border-color: var(--text-muted); background: var(--bg-sidebar); }
+
         .admin-only { display: none !important; }
         .is-admin .admin-only { display: flex !important; }
         .is-admin .admin-only-table { display: table-cell !important; }
         .admin-only-table { display: none !important; }
 
-        .sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); }
-        .sidebar-footer button { width: 100%; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-top: 6px; border: 1px solid; transition: background 0.2s; background: transparent; }
-
-        /* MAIN & TOPBAR */
-        .main-content { flex: 1; margin-left: 260px; display: flex; flex-direction: column; }
-        .top-bar { height: 56px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; position: sticky; top: 0; z-index: 50; transition: background 0.3s; }
-        .search-box { display: flex; align-items: center; background: var(--hover); border-radius: 20px; padding: 6px 14px; width: 350px; border: 1px solid var(--border); }
-        .search-box input { border: none; background: none; outline: none; width: 100%; font-size: 13px; margin-left: 8px; color: var(--text-main); }
-        .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        /* ========================================================
+           MAIN & TOPBAR (GLASSMORPHISM)
+        ======================================================== */
+        .main-content { flex: 1; margin-left: 280px; display: flex; flex-direction: column; background: var(--bg-body); }
         
-        .theme-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .theme-btn:hover { background: var(--hover); }
-        .role-badge { padding: 4px 12px; border-radius: 12px; font-size: 10px; font-weight: 700; color: white; }
-        .role-public { background: var(--success); }
-        .role-admin { background: var(--danger); }
+        .top-bar { height: 72px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+        body.dark-mode .top-bar { background: rgba(30, 41, 59, 0.7); }
+        
+        .search-box { display: flex; align-items: center; background: var(--bg-card); border-radius: var(--radius-full); padding: 10px 20px; width: 400px; border: 1px solid var(--border); transition: all 0.2s; box-shadow: var(--shadow-sm); }
+        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light), var(--shadow); transform: translateY(-1px); }
+        .search-box input { border: none; background: none; outline: none; width: 100%; font-size: 14px; margin-left: 10px; color: var(--text-main); font-family: inherit; }
+        
+        .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+        .theme-btn { background: var(--bg-card); border: 1px solid var(--border); font-size: 18px; cursor: pointer; color: var(--text-main); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+        .theme-btn:hover { transform: rotate(15deg); border-color: var(--primary); color: var(--primary); }
+        
+        .role-badge { padding: 8px 16px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.5px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 6px; }
+        .role-public { background: linear-gradient(135deg, #10b981, #059669); }
+        .role-admin { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
-        /* PAGE & CARDS */
-        .page-content { flex: 1; padding: 20px; overflow-y: auto; display: none; }
+        /* ========================================================
+           PAGE, CARDS & STATS
+        ======================================================== */
+        .page-content { flex: 1; padding: 32px; overflow-y: auto; display: none; animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .page-content.active { display: block; }
-        .page-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .page-header h1 { font-size: 22px; font-weight: 700; }
-        .page-header p { color: var(--text-muted); font-size: 13px; }
         
-        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
-        .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .card-header h3 { font-size: 14px; font-weight: 700; }
-        .card-body { padding: 16px 20px; }
+        .page-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .page-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+        .page-header p { color: var(--text-muted); font-size: 14.5px; margin-top: 6px; font-weight: 500; }
+        
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); transition: box-shadow 0.3s; }
+        .card:hover { box-shadow: var(--shadow-lg); }
+        .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); }
+        .card-header h3 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .card-body { padding: 24px; }
 
-        /* DASHBOARD ELEMENTS */
-        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
-        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 16px 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .stat-card .stat-icon { font-size: 24px; margin-bottom: 6px; }
-        .stat-card .stat-value { font-size: 26px; font-weight: 700; }
-        .stat-card .stat-label { font-size: 11px; color: var(--text-muted); }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+        .stat-info { display: flex; flex-direction: column; }
+        .stat-label { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .stat-value { font-size: 32px; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .stat-icon-wrap { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
 
-        .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
-        .pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s; }
-        .pillar-card:hover { transform: translateY(-3px); }
-        .pillar-card.wp { border-top: 4px solid #34a853; } .pillar-card.tw { border-top: 4px solid #4285f4; } .pillar-card.we { border-top: 4px solid #fbbc04; }
-        .pillar-card h3 { font-size: 15px; font-weight: 700; margin: 8px 0 4px; }
-        .pillar-card p { font-size: 11px; color: var(--text-muted); }
+        .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px; }
+        .pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+        .pillar-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+        .pillar-card.wp::before { background: var(--success); }
+        .pillar-card.tw::before { background: var(--primary); }
+        .pillar-card.we::before { background: var(--warning); }
+        .pillar-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .pillar-card h3 { font-size: 18px; font-weight: 800; margin: 16px 0 8px; color: var(--text-main); }
+        .pillar-card p { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+        .pillar-card .p-icon { font-size: 32px; background: var(--hover); display: inline-block; padding: 12px; border-radius: 16px; }
 
-        /* BUTTONS */
-        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-dark); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
-        .btn-sm { padding: 5px 12px; font-size: 11px; }
-
-        /* TABLE */
-        .process-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .process-table th { background: var(--hover); padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
-        .process-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+        /* ========================================================
+           TABLES & BADGES
+        ======================================================== */
+        .process-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+        .process-table th { background: var(--hover); padding: 16px 20px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border); letter-spacing: 0.5px; }
+        .process-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); transition: background 0.2s; color: var(--text-main); }
+        .process-table tr { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
         .process-table tr:hover td { background: var(--primary-light); }
-        .actions { display: flex; gap: 6px; }
-
-        /* BADGES */
-        .badge-priority { padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        
+        .badge-priority, .badge-status { padding: 6px 12px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; }
         .badge-priority.high { background: var(--danger-light); color: var(--danger); }
         .badge-priority.medium { background: var(--warning-light); color: var(--warning); }
         .badge-priority.low { background: var(--success-light); color: var(--success); }
-        
-        .badge-status { padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .badge-status.active { background: var(--success-light); color: var(--success); }
         .badge-status.draft { background: var(--hover); color: var(--text-muted); }
 
-        /* FORMS */
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; outline: none; background: var(--input-bg); color: var(--text-main); }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* ========================================================
+           BUTTONS & FORMS
+        ======================================================== */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; font-family: inherit; }
+        .btn:active { transform: scale(0.96); box-shadow: none; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); } 
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
+        .btn-success { background: var(--success); color: white; } 
+        .btn-danger { background: var(--danger); color: white; } 
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { background: transparent; color: var(--text-main); border-color: var(--border); } 
+        .btn-outline:hover { background: var(--hover); border-color: var(--text-muted); }
+        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 6px; }
 
-        /* STEP BUILDER */
-        .step-builder-item { display: flex; align-items: center; gap: 8px; padding: 10px; margin-bottom: 6px; border: 1px dashed var(--border); border-radius: var(--radius); background: var(--hover); }
-        .step-builder-item input[type="text"] { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; outline: none; background: var(--input-bg); color: var(--text-main); }
-        .step-builder-options { display: flex; gap: 8px; align-items: center; }
-        .step-builder-options label { font-size: 10px; display: flex; align-items: center; gap: 2px; cursor: pointer; color: var(--text-main); }
-        .add-step-btn { display: flex; align-items: center; justify-content: center; padding: 10px; border: 2px dashed var(--border); border-radius: var(--radius); background: transparent; cursor: pointer; font-size: 12px; color: var(--primary); width: 100%; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14.5px; outline: none; background: var(--input-bg); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-        /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999; }
-        .modal-overlay.active { display: flex; }
+        .step-builder-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--hover); transition: all 0.2s; }
+        .step-builder-item:focus-within { border-color: var(--primary); background: var(--bg-card); box-shadow: var(--shadow-sm); }
+        .step-builder-item input[type="text"] { flex: 1; border: none; background: transparent; font-size: 14px; outline: none; color: var(--text-main); font-family: inherit; }
+
+        /* ========================================================
+           CHECKLIST & PROSPECTUS
+        ======================================================== */
+        .prospectus-cover { background: linear-gradient(135deg, #1e1b4b, #4f46e5); color: white; border-radius: var(--radius-lg); padding: 60px 40px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .prospectus-cover::after { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; top: -100px; right: -100px; filter: blur(40px); pointer-events: none; }
+        .prospectus-cover h1 { font-size: 36px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; position: relative; z-index: 1; }
         
-        .modal-box { background: var(--bg-card); border-radius: var(--radius-lg); width: 450px; max-width: 90%; box-shadow: var(--shadow-lg); overflow: hidden; border: 1px solid var(--border); }
-        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-header h3 { font-size: 16px; font-weight: 700; }
-        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
-
-        /* LOGIN SPECIFIC */
-        .login-box { text-align: center; padding: 30px 20px; }
-        .login-box .icon { font-size: 48px; margin-bottom: 12px; }
-        .login-box h2 { font-size: 20px; margin-bottom: 4px; }
-        .login-box p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
-        .login-box .form-group { text-align: left; }
-        
-        /* PROSPECTUS COVER & VIEWS */
-        .prospectus-cover { background: linear-gradient(135deg, #1a237e, #0d47a1, #1565c0); color: white; border-radius: var(--radius-lg); padding: 50px 32px; text-align: center; margin-bottom: 20px; }
-        .prospectus-cover h1 { font-size: 28px; font-weight: 800; }
-        .prospectus-cover h2 { font-size: 16px; font-weight: 400; opacity: 0.9; margin: 10px 0 20px; }
-        .cover-meta { display: flex; justify-content: center; gap: 24px; font-size: 11px; opacity: 0.8; flex-wrap: wrap; }
-
-        /* CHECKLIST */
-        .checklist-step { display: flex; align-items: flex-start; padding: 10px 14px; margin-bottom: 6px; border: 1px solid var(--border); border-radius: var(--radius); }
+        .checklist-step { display: flex; align-items: flex-start; padding: 16px 20px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+        .checklist-step:hover { border-color: var(--primary); transform: translateX(4px); box-shadow: var(--shadow); }
         .checklist-step.done { background: var(--success-light); border-color: var(--success); }
-        .step-checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-main); }
-        .checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; }
-        .step-tags { display: flex; gap: 6px; margin-top: 4px; }
-        .step-tag { font-size: 10px; padding: 1px 8px; border-radius: 4px; background: var(--hover); color: var(--text-muted); }
         
-        /* TOAST */
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 99999; }
-        .toast { display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius); margin-top: 8px; font-size: 13px; box-shadow: var(--shadow-lg); animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .step-checkbox { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border); margin-right: 16px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--text-main); flex-shrink: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--input-bg); }
+        .checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; animation: popIn 0.4s forwards; }
+        
+        .step-tags { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .step-tag { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: var(--hover); color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
+
+        /* ========================================================
+           MODALS, SPINNER & TOAST
+        ======================================================== */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-box { background: var(--bg-card); border-radius: var(--radius-lg); width: 480px; max-width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); border: 1px solid var(--border); transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-header h3 { font-size: 18px; font-weight: 700; }
+        .modal-close { background: var(--hover); border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .modal-close:hover { background: var(--danger-light); color: var(--danger); }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--hover); }
+
+        .spinner { border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+        
+        .toast-container { position: fixed; bottom: 32px; right: 32px; z-index: 99999; }
+        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius-sm); margin-top: 12px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-left: 4px solid var(--success); }
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>📘 Steadfast Courier</h2>
-            <p>Issue Resolution Prospectus Portal</p>
+        <!-- OFFICIAL LOGO ADDED HERE -->
+                        <div class="sidebar-header">
+            <div class="logo-wrap" style="display:flex; align-items:center; gap:12px;">
+                <img src="steadfast-logo.png" alt="Steadfast" 
+                     style="width:44px; height:44px; object-fit:contain; border-radius:6px;">
+                <div>
+                    <h2 style="font-size:15px; font-weight:800; color:var(--text-main); line-height:1.2; margin:0;">Steadfast Courier</h2>
+                    <p style="font-size:11px; color:var(--text-muted); font-weight:500; margin:0;">Issue Resolution Prospectus</p>
+                </div>
+            </div>
         </div>
+
         <nav class="sidebar-nav">
-            <div style="padding: 12px 20px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Main</div>
+            <div style="padding: 12px 12px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Main Menu</div>
             <div class="nav-item active" onclick="navigateTo('dashboard', this)"><span class="icon">📊</span> Dashboard</div>
             <div class="nav-item" onclick="navigateTo('prospectus', this)"><span class="icon">📖</span> Prospectus</div>
-            <div class="nav-item" onclick="navigateTo('all-processes', this)"><span class="icon">📋</span> সব Process <span class="badge" id="bTotal">0</span></div>
+            <div class="nav-item" onclick="navigateTo('all-processes', this)"><span class="icon">📋</span> All Processes <span class="badge" id="bTotal">0</span></div>
 
-            <!-- COLLAPSIBLE SECTIONS -->
             <div class="nav-section-title" onclick="toggleNavGroup('navWP', this)">
-                <span>📗 কাজের প্রক্রিয়া</span> <span class="chevron">▼</span>
+                <span>📗 কাজের প্রক্রিয়া</span> <span class="chevron" style="transition:0.3s">▼</span>
             </div>
             <div id="navWP" class="nav-group"></div>
 
             <div class="nav-section-title" onclick="toggleNavGroup('navTW', this)">
-                <span>📘 টেকনিক্যাল</span> <span class="chevron">▼</span>
+                <span>📘 টেকনিক্যাল</span> <span class="chevron" style="transition:0.3s">▼</span>
             </div>
             <div id="navTW" class="nav-group"></div>
 
             <div class="nav-section-title" onclick="toggleNavGroup('navWE', this)">
-                <span>📙 পরিবেশ</span> <span class="chevron">▼</span>
+                <span>📙 পরিবেশ</span> <span class="chevron" style="transition:0.3s">▼</span>
             </div>
             <div id="navWE" class="nav-group"></div>
 
-            <div style="padding: 12px 20px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;" class="admin-only">Admin Panel</div>
-            <div class="nav-item admin-only" onclick="navigateTo('add-process', this)"><span class="icon">➕</span> নতুন Process</div>
+            <div style="padding: 16px 12px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;" class="admin-only">Admin Controls</div>
+            <div class="nav-item admin-only" onclick="navigateTo('add-process', this)"><span class="icon">➕</span> Add Process</div>
             <div class="nav-item admin-only" onclick="navigateTo('manage-categories', this)"><span class="icon">📂</span> Categories</div>
-            <div class="nav-item admin-only" onclick="navigateTo('settings', this)"><span class="icon">⚙️</span> সেটিংস</div>
+            <div class="nav-item admin-only" onclick="navigateTo('settings', this)"><span class="icon">⚙️</span> Settings</div>
         </nav>
         <div class="sidebar-footer">
-            <button id="authBtn" style="color:var(--text-main)" onclick="toggleAuth()">🔐 Admin Login</button>
+            <button id="authBtn" onclick="toggleAuth()">🔐 Admin Login</button>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
         <header class="top-bar">
+            <!-- FIXED GLOBAL SEARCH -->
             <div class="search-box">
-                <span>🔍</span>
-                <input type="text" placeholder="Process খুঁজুন..." id="searchInput" oninput="renderProcessTable()">
+                <span style="font-size:16px; color:var(--text-muted)">🔍</span>
+                <input type="text" placeholder="Process বা Category খুঁজুন..." id="searchInput" oninput="handleGlobalSearch()">
             </div>
             <div class="top-bar-right">
-                <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+                <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
                 <span class="role-badge role-public" id="roleBadge">👁️ PUBLIC VIEW</span>
             </div>
         </header>
@@ -250,22 +305,32 @@
         <div class="page-content active" id="page-dashboard">
             <div class="page-header">
                 <div>
-                    <h1>📊 Dashboard</h1>
-                    <p>প্রস্পেক্টাসের লাইভ ডেটা ওভারভিউ</p>
+                    <h1>Overview Dashboard</h1>
+                    <p>লাইভ ডেটা ও প্রস্পেক্টাস স্ট্যাটাস</p>
                 </div>
             </div>
             <div class="stats-row" id="dashboardStats">
-                <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value">Loading...</div></div>
+                <div class="stat-card">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="spinner"></div> <span style="font-size:16px; font-weight:600;">Connecting Database...</span>
+                    </div>
+                </div>
             </div>
             <div class="pillar-grid">
                 <div class="pillar-card wp" onclick="navigateTo('all-processes')">
-                    <h3>📗 কাজের প্রক্রিয়া</h3><p id="cWP">0টি Process</p>
+                    <div class="p-icon" style="color:var(--success); background:var(--success-light)">📗</div>
+                    <h3>কাজের প্রক্রিয়া</h3>
+                    <p id="cWP">0টি Process</p>
                 </div>
                 <div class="pillar-card tw" onclick="navigateTo('all-processes')">
-                    <h3>📘 টেকনিক্যাল কাজ</h3><p id="cTW">0টি Process</p>
+                    <div class="p-icon" style="color:var(--primary); background:var(--primary-light)">📘</div>
+                    <h3>টেকনিক্যাল কাজ</h3>
+                    <p id="cTW">0টি Process</p>
                 </div>
                 <div class="pillar-card we" onclick="navigateTo('all-processes')">
-                    <h3>📙 কাজের পরিবেশ</h3><p id="cWE">0টি Process</p>
+                    <div class="p-icon" style="color:var(--warning); background:var(--warning-light)">📙</div>
+                    <h3>কাজের পরিবেশ</h3>
+                    <p id="cWE">0টি Process</p>
                 </div>
             </div>
         </div>
@@ -273,11 +338,11 @@
         <!-- PROSPECTUS VIEW -->
         <div class="page-content" id="page-prospectus">
             <div class="prospectus-cover">
-                <h1>STEADFAST COURIER SERVICE</h1>
-                <h2>Operations Prospectus 2025</h2>
+                <h1>STEADFAST COURIER</h1>
+                <h2>Operations Prospectus & Standard Operating Procedures (SOP)</h2>
                 <div class="cover-meta">
-                    <span>📅 ০১ জুলাই ২০২৫</span>
-                    <span>✅ Approved: Operations Director</span>
+                    <span style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:var(--radius-full); font-weight:600;">📅 Updated: 2025</span>
+                    <span style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:var(--radius-full); font-weight:600;">✅ Official Guidelines</span>
                 </div>
             </div>
             <div id="prospectusContent"></div>
@@ -287,21 +352,21 @@
         <div class="page-content" id="page-all-processes">
             <div class="page-header">
                 <div>
-                    <h1>📋 সব Process</h1>
-                    <p>সম্পূর্ণ লাইভ তালিকা</p>
+                    <h1>All Processes</h1>
+                    <p>সম্পূর্ণ লাইভ তালিকা (যেকোনো লাইনে ক্লিক করে বিস্তারিত দেখুন)</p>
                 </div>
-                <button class="btn btn-primary admin-only" onclick="navigateTo('add-process')">➕ নতুন Process</button>
+                <button class="btn btn-primary admin-only" onclick="navigateTo('add-process')">➕ Create Process</button>
             </div>
             <div class="card">
                 <div class="card-header">
-                    <div style="display:flex;gap:8px;">
-                        <select class="form-control" style="width:160px" id="filterPillar" onchange="renderProcessTable()">
+                    <div style="display:flex;gap:12px;">
+                        <select class="form-control" style="width:200px;" id="filterPillar" onchange="renderProcessTable()">
                             <option value="all">সব Pillar</option>
                             <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
                             <option value="Technical">📘 টেকনিক্যাল</option>
                             <option value="Environment">📙 পরিবেশ</option>
                         </select>
-                        <select class="form-control" style="width:150px" id="filterCategory" onchange="renderProcessTable()">
+                        <select class="form-control" style="width:200px;" id="filterCategory" onchange="renderProcessTable()">
                             <option value="all">সব Category</option>
                         </select>
                     </div>
@@ -310,7 +375,7 @@
                     <table class="process-table">
                         <thead>
                             <tr>
-                                <th>Title</th>
+                                <th>Process Title</th>
                                 <th>Pillar</th>
                                 <th>Category</th>
                                 <th>Priority</th>
@@ -329,17 +394,17 @@
         <div class="page-content admin-only" id="page-add-process">
             <div class="page-header">
                 <div>
-                    <h1 id="formTitle">➕ নতুন Process তৈরি করুন</h1>
-                    <p>সব ফিল্ড পূরণ করুন এবং Steps যোগ করুন</p>
+                    <h1 id="formTitle">Create New Process</h1>
+                    <p>প্রয়োজনীয় ফিল্ড ও স্টেপস পূরণ করুন</p>
                 </div>
             </div>
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" style="padding:32px;">
                     <input type="hidden" id="editProcessId" value="">
                     
                     <div class="form-group">
-                        <label>Process-এর নাম *</label>
-                        <input type="text" class="form-control" id="processTitle" placeholder="উদাহরণ: পার্সেল নিখোঁজ">
+                        <label>Process Title *</label>
+                        <input type="text" class="form-control" id="processTitle" placeholder="যেমন: পার্সেল নিখোঁজ হলে করণীয়" style="font-size:16px; padding:14px 16px;">
                     </div>
                     
                     <div class="form-row">
@@ -365,21 +430,25 @@
                     
                     <div class="form-row">
                         <div class="form-group"><label>Status</label><select class="form-control" id="processStatus"><option value="active">✅ Active</option><option value="draft">📝 Draft</option></select></div>
-                        <div class="form-group"><label>SLA</label><input type="text" class="form-control" id="processSla" placeholder="২৪ ঘণ্টা"></div>
-                        <div class="form-group"><label>Icon</label><input type="text" class="form-control" id="processIcon" value="📋"></div>
+                        <div class="form-group"><label>SLA (সময়সীমা)</label><input type="text" class="form-control" id="processSla" placeholder="যেমন: ২৪ ঘণ্টা"></div>
+                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" class="form-control" id="processIcon" value="📋"></div>
                     </div>
                     
-                    <div class="form-group"><label>বিবরণ</label><textarea class="form-control" rows="2" id="processDesc"></textarea></div>
+                    <div class="form-group"><label>Description (বিবরণ)</label><textarea class="form-control" rows="3" id="processDesc" placeholder="প্রসেস সম্পর্কে বিস্তারিত লিখুন..."></textarea></div>
 
-                    <hr style="margin:20px 0; border:none; border-top:1px solid var(--border);">
-                    <h3 style="font-size:15px; margin-bottom:12px;">📝 Steps / Checklist</h3>
-                    <div id="stepsBuilder"></div>
-                    <button class="add-step-btn" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
+                    <hr style="margin:32px 0; border:none; border-top:1px solid var(--border);">
                     
-                    <hr style="margin:20px 0; border:none; border-top:1px solid var(--border);">
-                    <div style="display:flex;gap:10px;">
-                        <button class="btn btn-success" onclick="saveProcess()">💾 Save to Database</button>
-                        <button class="btn btn-outline" onclick="navigateTo('all-processes')">❌ Cancel</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="font-size:18px; font-weight:700;">📝 Steps / Checklist</h3>
+                    </div>
+                    
+                    <div id="stepsBuilder"></div>
+                    <button class="btn btn-outline" style="width:100%; border:2px dashed var(--border); margin-top:10px; padding:14px; background:transparent;" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
+                    
+                    <hr style="margin:32px 0; border:none; border-top:1px solid var(--border);">
+                    <div style="display:flex;gap:16px; justify-content:flex-end;">
+                        <button class="btn btn-outline" onclick="navigateTo('all-processes')">Cancel</button>
+                        <button class="btn btn-primary" style="padding-left:32px; padding-right:32px;" onclick="saveProcess()">💾 Save to Database</button>
                     </div>
                 </div>
             </div>
@@ -394,45 +463,43 @@
         <div class="page-content admin-only" id="page-manage-categories">
             <div class="page-header">
                 <div>
-                    <h1>📂 Categories পরিচালনা</h1>
-                    <p>লাইভ ক্যাটাগরি তৈরি ও ডিলিট করুন</p>
+                    <h1>Manage Categories</h1>
+                    <p>লাইভ ক্যাটাগরি তৈরি ও সাজান</p>
                 </div>
-                <button class="btn btn-primary" onclick="openCategoryModal()">➕ নতুন Category</button>
+                <button class="btn btn-primary" onclick="openCategoryModal()">➕ Add Category</button>
             </div>
             <div class="card">
                 <div class="card-body" style="padding:0;overflow-x:auto;">
                     <table class="process-table">
-                        <thead><tr><th>Icon</th><th>Name</th><th>Pillar</th><th>Processes</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>Icon</th><th>Category Name</th><th>Pillar</th><th>Total Processes</th><th>Actions</th></tr></thead>
                         <tbody id="categoryTableBody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- SETTINGS (PASSWORD CHANGE) -->
+        <!-- SETTINGS -->
         <div class="page-content admin-only" id="page-settings">
             <div class="page-header">
                 <div>
-                    <h1>⚙️ সেটিংস</h1>
+                    <h1>Settings</h1>
                     <p>Admin Credentials পরিবর্তন করুন</p>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" style="max-width: 600px;">
                 <div class="card-header">
-                    <h3>🔑 Username ও Password পরিবর্তন</h3>
+                    <h3>🔑 Security Settings</h3>
                 </div>
                 <div class="card-body">
-                    <div class="form-row-2">
-                        <div class="form-group">
-                            <label>নতুন Username</label>
-                            <input type="text" class="form-control" id="newUsername" placeholder="admin">
-                        </div>
-                        <div class="form-group">
-                            <label>নতুন Password</label>
-                            <input type="password" class="form-control" id="newPassword" placeholder="••••••">
-                        </div>
+                    <div class="form-group">
+                        <label>নতুন Username</label>
+                        <input type="text" class="form-control" id="newUsername" placeholder="admin">
                     </div>
-                    <button class="btn btn-primary" style="margin-top:10px;" onclick="changeAdminCredentials()">💾 সংরক্ষণ করুন</button>
+                    <div class="form-group">
+                        <label>নতুন Password</label>
+                        <input type="password" class="form-control" id="newPassword" placeholder="••••••">
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:10px; width:100%" onclick="changeAdminCredentials()">💾 Update Credentials</button>
                 </div>
             </div>
         </div>
@@ -441,45 +508,41 @@
 </div>
 
 <!-- ================= MODALS ================= -->
-
-<!-- LOGIN MODAL (Strong UI) -->
 <div class="modal-overlay" id="loginModal">
-    <div class="modal-box" style="width:400px">
-        <div class="login-box">
-            <div class="icon">🔐</div>
-            <h2>Admin Login</h2>
-            <p>Secure Area (Edit/Delete Access)</p>
+    <div class="modal-box" style="width:420px">
+        <div class="modal-body" style="text-align:center; padding: 48px 40px;">
+            <div style="font-size:56px; margin-bottom:16px; background:var(--primary-light); width:96px; height:96px; line-height:96px; border-radius:50%; margin:0 auto 24px;">🔐</div>
+            <h2 style="font-size:24px; font-weight:800; margin-bottom:8px;">Admin Login</h2>
+            <p style="font-size:14px; color:var(--text-muted); margin-bottom:32px;">Secure Authentication Required</p>
             
-            <div class="form-group">
+            <div class="form-group" style="text-align:left;">
                 <label>Username</label>
-                <input type="text" class="form-control" id="loginUser" placeholder="admin">
+                <input type="text" class="form-control" id="loginUser" placeholder="Enter username">
             </div>
-            <div class="form-group" style="margin-bottom:20px">
+            <div class="form-group" style="text-align:left; margin-bottom:32px;">
                 <label>Password</label>
                 <input type="password" class="form-control" id="loginPass" placeholder="••••••">
             </div>
             
-            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:10px" onclick="doLogin()">🔓 Secure Login</button>
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:10px; margin-top:10px;" onclick="closeModal('loginModal')">❌ Cancel (Public View)</button>
+            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:var(--radius-full);" onclick="doLogin()">Authenticate</button>
+            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:14px; margin-top:12px; border-radius:var(--radius-full); border:none;" onclick="closeModal('loginModal')">Return to Public View</button>
             
-            <p id="loginError" style="color:var(--danger); font-size:12px; margin-top:10px; display:none;">❌ ভুল Username বা Password!</p>
-            <p style="font-size:11px; color:var(--text-muted); margin-top:15px;">(Initial Default: admin / admin123)</p>
+            <p id="loginError" style="color:var(--danger); font-size:13px; font-weight:600; margin-top:16px; display:none;">❌ Invalid Credentials!</p>
         </div>
     </div>
 </div>
 
-<!-- CATEGORY MODAL -->
 <div class="modal-overlay" id="categoryModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3 id="catModalTitle">➕ নতুন Category</h3>
+            <h3 id="catModalTitle" style="font-size:18px;">➕ Add Category</h3>
             <button class="modal-close" onclick="closeModal('categoryModal')">✕</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editCatId">
             <div class="form-group">
                 <label>Category Name *</label>
-                <input type="text" class="form-control" id="catName" placeholder="যেমন: পার্সেল সমস্যা">
+                <input type="text" class="form-control" id="catName" placeholder="e.g. পার্সেল সমস্যা">
             </div>
             <div class="form-row-2">
                 <div class="form-group">
@@ -497,35 +560,33 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('categoryModal')">❌ Cancel</button>
-            <button class="btn btn-success" onclick="saveCategory()">💾 Save</button>
+            <button class="btn btn-outline" onclick="closeModal('categoryModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveCategory()">Save Category</button>
         </div>
     </div>
 </div>
 
-<!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirmModal">
-    <div class="modal-box" style="width:350px">
-        <div class="modal-body" style="text-align:center; padding:30px 20px;">
-            <div style="font-size:48px; margin-bottom:10px;">⚠️</div>
-            <h3 style="font-size:18px; margin-bottom:10px;" id="confirmTitle">মুছে ফেলতে চান?</h3>
-            <p style="font-size:13px; color:var(--text-muted);" id="confirmDesc">এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না!</p>
+    <div class="modal-box" style="width:400px; text-align:center;">
+        <div class="modal-body" style="padding:48px 32px 32px;">
+            <div style="font-size:64px; margin-bottom:16px;">⚠️</div>
+            <h3 style="font-size:22px; font-weight:800; margin-bottom:12px;" id="confirmTitle">Are you sure?</h3>
+            <p style="font-size:14.5px; color:var(--text-muted); line-height:1.5;" id="confirmDesc">This action cannot be undone!</p>
         </div>
-        <div class="modal-footer" style="justify-content:center;">
-            <button class="btn btn-outline" onclick="closeModal('confirmModal')">Cancel</button>
-            <button class="btn btn-danger" id="confirmBtn">Yes, Delete!</button>
+        <div class="modal-footer" style="justify-content:center; padding:24px; background:transparent; border:none; gap:16px;">
+            <button class="btn btn-outline" style="flex:1; border-radius:var(--radius-full)" onclick="closeModal('confirmModal')">Cancel</button>
+            <button class="btn btn-danger" style="flex:1; border-radius:var(--radius-full)" id="confirmBtn">Yes, Delete</button>
         </div>
     </div>
 </div>
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastBox"></div>
 
 <!-- ========================================== -->
-<!-- FIREBASE & CORE JAVASCRIPT -->
+<!-- JAVASCRIPT LOGIC (FIREBASE INCLUDED) -->
 <!-- ========================================== -->
 <script>
-// ১. আপনার ফায়ারবেস কনফিগারেশন
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDljJin3ud3xj-EUIYN5p4MJUPmNZekuZE",
   authDomain: "operations-prospectus-portal.firebaseapp.com",
@@ -536,16 +597,14 @@ const firebaseConfig = {
   appId: "1:939292299466:web:c24d3f7aca4fc75725e433"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// GLOBAL STATE
 let globalCategories = [];
 let globalProcesses = [];
 let isAdmin = sessionStorage.getItem('sf_admin') === '1';
 
-// THEME LOGIC
+// Theme
 let isDark = localStorage.getItem('sf_theme') === 'dark';
 if(isDark) document.body.classList.add('dark-mode');
 document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
@@ -563,22 +622,19 @@ function toggleTheme() {
     }
 }
 
-// SIDEBAR TOGGLE
 function toggleNavGroup(id, el) {
     const group = document.getElementById(id);
     const chevron = el.querySelector('.chevron');
-    if(group.style.display === 'none') {
+    if(group.style.display === 'none' || group.style.display === '') {
         group.style.display = 'block';
-        chevron.textContent = '▼';
+        chevron.style.transform = 'rotate(180deg)';
     } else {
         group.style.display = 'none';
-        chevron.textContent = '▶';
+        chevron.style.transform = 'rotate(0deg)';
     }
 }
 
-// ==========================================
-// REAL-TIME DATABASE LISTENERS
-// ==========================================
+// DB Listeners
 db.ref('categories').on('value', snap => {
     const data = snap.val();
     globalCategories = data ? Object.values(data) : [];
@@ -604,9 +660,7 @@ function refreshUI() {
     }
 }
 
-// ==========================================
-// AUTHENTICATION LOGIC (With DB Password Change)
-// ==========================================
+// Auth
 function toggleAuth() {
     if(isAdmin) {
         isAdmin = false;
@@ -625,36 +679,36 @@ function doLogin() {
     const user = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
     
+    const btn = document.querySelector('#loginModal .btn-primary');
+    btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;border-top-color:#fff;margin-right:8px"></div> Authenticating...';
+    
     db.ref('settings/admin_credentials').once('value').then(snap => {
         let dbCreds = { username: 'admin', password: 'admin123' }; 
-        if(snap.exists()) {
-            dbCreds = snap.val();
-        } else {
-            db.ref('settings/admin_credentials').set(dbCreds);
-        }
+        if(snap.exists()) dbCreds = snap.val();
+        else db.ref('settings/admin_credentials').set(dbCreds);
 
         if(user === dbCreds.username && pass === dbCreds.password) {
             isAdmin = true;
             sessionStorage.setItem('sf_admin', '1');
             closeModal('loginModal');
-            toast('✅ Admin Access Granted!', 'success');
+            toast('Admin Access Granted!', 'success');
             refreshUI();
         } else {
             const err = document.getElementById('loginError');
             err.style.display = 'block';
             setTimeout(() => err.style.display = 'none', 3000);
         }
+        btn.innerHTML = 'Authenticate';
     });
 }
 
 function changeAdminCredentials() {
     const u = document.getElementById('newUsername').value.trim();
     const p = document.getElementById('newPassword').value.trim();
-    
     if(!u || !p) return toast('Username ও Password দিন!', 'error');
     
     db.ref('settings/admin_credentials').set({ username: u, password: p }).then(() => {
-        toast('✅ Username ও Password পরিবর্তন হয়েছে!', 'success');
+        toast('Credentials Updated!', 'success');
         document.getElementById('newUsername').value = '';
         document.getElementById('newPassword').value = '';
     });
@@ -668,21 +722,17 @@ function setAdminUI() {
     if(isAdmin) {
         b.classList.add('is-admin');
         badge.className = 'role-badge role-admin';
-        badge.textContent = '🔑 ADMIN MODE';
+        badge.innerHTML = '🛡️ ADMIN MODE';
         btn.innerHTML = '🚪 Logout Admin';
-        btn.style.color = 'var(--danger)';
     } else {
         b.classList.remove('is-admin');
         badge.className = 'role-badge role-public';
-        badge.textContent = '👁️ PUBLIC VIEW';
+        badge.innerHTML = '👁️ PUBLIC VIEW';
         btn.innerHTML = '🔐 Admin Login';
-        btn.style.color = 'var(--text-main)';
     }
 }
 
-// ==========================================
-// NAVIGATION & RENDERING
-// ==========================================
+// Nav
 function navigateTo(page, el) {
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
@@ -691,9 +741,22 @@ function navigateTo(page, el) {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
     }
-    
     if(page === 'add-process') resetProcessForm();
     if(page === 'prospectus') renderProspectus();
+}
+
+// FIXED: GLOBAL SEARCH Redirects to Table and Filters correctly
+function handleGlobalSearch() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    
+    if(!q) { renderProcessTable(); return; }
+    
+    navigateTo('all-processes');
+    setTimeout(() => {
+        document.getElementById('filterPillar').value = 'all';
+        document.getElementById('filterCategory').value = 'all';
+        renderProcessTable();
+    }, 50);
 }
 
 function renderSidebarNav() {
@@ -703,16 +766,16 @@ function renderSidebarNav() {
         const cats = globalCategories.filter(c => c.pillar === pil);
         document.getElementById(id).innerHTML = cats.map(c => {
             const count = globalProcesses.filter(p => p.category === c.name).length;
-            return `<div class="nav-item" style="padding-left:30px; font-size:12px" onclick="filterBySideCat('${c.name}', this)">
+            return `<div class="nav-item" style="padding-left:36px; font-size:12.5px" onclick="filterBySideCat('${c.name}', this)">
                 <span class="icon">${c.icon}</span>${c.name} ${count ? `<span class="badge">${count}</span>` : ''}
             </div>`;
         }).join('');
     });
-    
     document.getElementById('bTotal').textContent = globalProcesses.length;
 }
 
 function filterBySideCat(catName, el) {
+    document.getElementById('searchInput').value = ''; 
     navigateTo('all-processes', el);
     setTimeout(() => {
         document.getElementById('filterCategory').value = catName;
@@ -720,85 +783,145 @@ function filterBySideCat(catName, el) {
     }, 50);
 }
 
+// Dashboard
 function renderDashboard() {
+    const totalP = globalProcesses.length;
+    const totalC = globalCategories.length;
+    const activeP = globalProcesses.filter(p=>p.status==='active').length;
+    
     document.getElementById('dashboardStats').innerHTML = `
-        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-value">${globalProcesses.length}</div><div class="stat-label">মোট Process</div></div>
-        <div class="stat-card"><div class="stat-icon">📂</div><div class="stat-value">${globalCategories.length}</div><div class="stat-label">Categories</div></div>
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">${globalProcesses.filter(p=>p.status==='active').length}</div><div class="stat-label">Active Processes</div></div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-label">Total Processes</span>
+                <span class="stat-value">${totalP}</span>
+            </div>
+            <div class="stat-icon-wrap" style="background:var(--primary-light); color:var(--primary);">📋</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-label">Categories</span>
+                <span class="stat-value">${totalC}</span>
+            </div>
+            <div class="stat-icon-wrap" style="background:var(--warning-light); color:var(--warning);">📂</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-label">Active Processes</span>
+                <span class="stat-value">${activeP}</span>
+            </div>
+            <div class="stat-icon-wrap" style="background:var(--success-light); color:var(--success);">✅</div>
+        </div>
     `;
-    document.getElementById('cWP').textContent = globalProcesses.filter(p=>p.pillar==='Work Process').length + 'টি Process';
-    document.getElementById('cTW').textContent = globalProcesses.filter(p=>p.pillar==='Technical').length + 'টি Process';
-    document.getElementById('cWE').textContent = globalProcesses.filter(p=>p.pillar==='Environment').length + 'টি Process';
+    document.getElementById('cWP').textContent = globalProcesses.filter(p=>p.pillar==='Work Process').length + ' Process';
+    document.getElementById('cTW').textContent = globalProcesses.filter(p=>p.pillar==='Technical').length + ' Process';
+    document.getElementById('cWE').textContent = globalProcesses.filter(p=>p.pillar==='Environment').length + ' Process';
 }
 
+// Table (FIXED: Row is clickable)
 function renderProcessTable() {
     const fp = document.getElementById('filterPillar').value;
     const fc = document.getElementById('filterCategory').value;
-    const q = document.getElementById('searchInput').value.toLowerCase();
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
     
     let f = globalProcesses;
     if(fp !== 'all') f = f.filter(p => p.pillar === fp);
     if(fc !== 'all') f = f.filter(p => p.category === fc);
-    if(q) f = f.filter(p => p.title.toLowerCase().includes(q));
+    
+    if(q) {
+        f = f.filter(p => 
+            (p.title || '').toLowerCase().includes(q) || 
+            (p.category || '').toLowerCase().includes(q) ||
+            (p.description || '').toLowerCase().includes(q) ||
+            (p.pillar || '').toLowerCase().includes(q)
+        );
+    }
 
     const tb = document.getElementById('processTableBody');
+    if(f.length === 0) {
+        tb.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:80px 20px; color:var(--text-muted);">
+            <div style="font-size:48px; margin-bottom:16px;">🔍</div>
+            <div style="font-size:16px; font-weight:600;">${q ? `"${q}" সম্পর্কিত কোনো ফলাফল পাওয়া যায়নি` : 'কোনো Process নেই'}</div>
+        </td></tr>`;
+        return;
+    }
+    
     tb.innerHTML = f.map(p => `
-        <tr>
-            <td>${p.icon} <strong>${p.title}</strong></td>
-            <td>${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</td>
-            <td>${p.category}</td>
+        <tr onclick="viewProcessPreview('${p.id}')" style="cursor: pointer;" title="ক্লিক করে বিস্তারিত দেখুন">
+            <td><div style="display:flex; align-items:center; gap:12px;">
+                <span style="font-size:20px; background:var(--hover); width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;">${p.icon || '📋'}</span>
+                <strong style="color:var(--text-main); font-size:14.5px;">${p.title}</strong>
+            </div></td>
+            <td><span style="display:inline-flex; align-items:center; gap:6px; background:var(--hover); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; color:var(--text-main); border:1px solid var(--border);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</span></td>
+            <td><span style="font-weight:600; color:var(--text-muted);">${p.category}</span></td>
             <td><span class="badge-priority ${p.priority}">${p.priority}</span></td>
             <td><span class="badge-status ${p.status}">${p.status}</span></td>
-            <td>${p.steps ? p.steps.length : 0}</td>
-            <td class="admin-only-table">
-                <div class="actions">
-                    <button class="btn btn-outline btn-sm" onclick="viewProcessPreview('${p.id}')">👁️</button>
-                    <button class="btn btn-warning btn-sm" onclick="editProcess('${p.id}')">✏️</button>
-                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('process', '${p.id}', '${p.title}')">🗑️</button>
+            <td><span style="font-weight:700; color:var(--primary); background:var(--primary-light); padding:4px 10px; border-radius:20px; font-size:12px;">${p.steps ? p.steps.length : 0} Steps</span></td>
+            <td class="admin-only-table" onclick="event.stopPropagation()">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="editProcess('${p.id}')">✏️ Edit</button>
+                    <button class="btn btn-outline btn-sm" style="border-color:var(--danger); color:var(--danger)" onclick="confirmDelete('process', '${p.id}', '${p.title}')">🗑️ Del</button>
                 </div>
             </td>
         </tr>
     `).join('');
 }
 
+// Prospectus (FIXED: Chapters closed by default)
 function renderProspectus() {
     const pillars = [
-        { name: 'Work Process', label: '📗 অধ্যায় ১: কাজের প্রক্রিয়া', c: '#34a853' },
-        { name: 'Technical', label: '📘 অধ্যায় ২: টেকনিক্যাল কাজ', c: '#4285f4' },
-        { name: 'Environment', label: '📙 অধ্যায় ৩: কাজের পরিবেশ', c: '#fbbc04' }
+        { name: 'Work Process', label: '📗 অধ্যায় ১: কাজের প্রক্রিয়া', c: 'var(--success)' },
+        { name: 'Technical', label: '📘 অধ্যায় ২: টেকনিক্যাল কাজ', c: 'var(--primary)' },
+        { name: 'Environment', label: '📙 অধ্যায় ৩: কাজের পরিবেশ', c: 'var(--warning)' }
     ];
 
-    const html = pillars.map(pil => {
+    const html = pillars.map((pil, pIndex) => {
         const cats = globalCategories.filter(c => c.pillar === pil.name);
+        const totalProcs = globalProcesses.filter(p => p.pillar === pil.name).length;
         
-        const catHtml = cats.map(cat => {
+        const catHtml = cats.map((cat, cIndex) => {
             const procs = globalProcesses.filter(p => p.category === cat.name && p.pillar === pil.name);
+            const catId = `cat-${pIndex}-${cIndex}`;
             
-            // NEW LOGIC: Show empty categories with a message instead of hiding them
             const processListHtml = procs.length ? procs.map(p => `
-                <div onclick="viewProcessPreview('${p.id}')" style="display:flex; align-items:center; padding:10px 16px; background:var(--hover); border-radius:6px; margin-bottom:4px; cursor:pointer; border:1px solid var(--border)">
-                    <span style="width:8px; height:8px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:10px;"></span>
-                    <span style="flex:1; font-size:13px; font-weight:600;">${p.title}</span>
-                    <span style="font-size:11px; color:var(--text-muted)">SLA: ${p.sla||'-'}</span>
+                <div onclick="viewProcessPreview('${p.id}')" 
+                     style="display:flex; align-items:center; padding:12px 16px; background:var(--bg-card); border-radius:8px; margin-bottom:6px; cursor:pointer; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:transform 0.2s, box-shadow 0.2s;"
+                     onmouseover="this.style.transform='translateX(4px)'; this.style.borderColor='var(--primary)';" 
+                     onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='var(--border)';">
+                    <span style="width:10px; height:10px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:12px;"></span>
+                    <span style="flex:1; font-size:14px; font-weight:600; color:var(--text-main);">${p.icon || '📋'} ${p.title}</span>
+                    <span style="font-size:11px; color:var(--text-muted); font-weight:600; background:var(--hover); padding:4px 10px; border-radius:20px;">SLA: ${p.sla || '-'}</span>
                 </div>
-            `).join('') : `<div style="padding:10px 16px; border-radius:6px; background:var(--hover); font-size:12px; color:var(--text-muted); font-style:italic;">এই ক্যাটাগরিতে কোনো Process নেই।</div>`;
+            `).join('') : `<div style="padding:12px 16px; border-radius:8px; background:var(--hover); font-size:13px; color:var(--text-muted); font-style:italic;">এই ক্যাটাগরিতে কোনো Process নেই</div>`;
 
             return `
-                <div style="margin-bottom:15px">
-                    <h4 style="font-size:14px; color:var(--text-muted); margin-bottom:8px;">${cat.icon} ${cat.name}</h4>
-                    ${processListHtml}
+                <div style="margin-bottom:12px;">
+                    <div onclick="toggleCategory('${catId}', this)" 
+                         style="display:flex; align-items:center; padding:12px 16px; cursor:pointer; border-radius:8px; background:var(--hover); border:1px solid var(--border); transition:background 0.2s;">
+                        <span class="cat-chevron" style="margin-right:10px; font-size:12px; transition:transform 0.3s; color:var(--text-muted);">▶</span>
+                        <span style="font-size:15px; font-weight:700; color:var(--text-main);">${cat.icon} ${cat.name}</span>
+                        <span style="margin-left:auto; font-size:12px; font-weight:600; color:var(--primary); background:var(--primary-light); padding:2px 10px; border-radius:20px;">${procs.length}টি Process</span>
+                    </div>
+                    <div id="${catId}" style="display:none; margin-top:8px; padding-left:12px;">
+                        ${processListHtml}
+                    </div>
                 </div>
             `;
         }).join('');
 
+        const chapterId = `chapter-${pIndex}`;
+        
         return `
-            <div class="card" style="margin-bottom:20px;">
-                <div class="card-header" style="border-left:4px solid ${pil.c}; cursor:pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none' ? 'block' : 'none'">
-                    <h3 style="font-size:16px;">${pil.label}</h3>
-                    <span style="font-size:12px; color:var(--text-muted)">${globalProcesses.filter(p=>p.pillar===pil.name).length}টি ▼</span>
+            <div class="card" style="margin-bottom:24px; border:none; box-shadow:var(--shadow-lg);">
+                <div class="card-header" style="border-left:6px solid ${pil.c}; cursor:pointer; background:var(--bg-card); padding:24px 32px;" 
+                     onclick="toggleChapter('${chapterId}', this)">
+                    <h3 style="font-size:18px; display:flex; align-items:center; gap:12px; color:var(--text-main);">
+                        <span class="chapter-chevron" style="font-size:14px; color:var(--text-muted); transition:transform 0.3s;">▶</span>
+                        ${pil.label}
+                    </h3>
+                    <span style="font-size:13px; font-weight:600; color:var(--text-muted); background:var(--bg-body); padding:4px 12px; border-radius:20px;">মোট: ${totalProcs}টি</span>
                 </div>
-                <div class="card-body" style="display:block;">
-                    ${catHtml || '<p style="color:var(--text-muted); font-size:13px;">কোনো ক্যাটাগরি নেই</p>'}
+                <div id="${chapterId}" class="card-body" style="display:none; padding:24px; background:var(--bg-body);">
+                    ${catHtml || '<p style="color:var(--text-muted); font-size:14px; text-align:center;">কোনো ক্যাটাগরি নেই</p>'}
                 </div>
             </div>
         `;
@@ -807,6 +930,27 @@ function renderProspectus() {
     document.getElementById('prospectusContent').innerHTML = html;
 }
 
+function toggleChapter(id, el) {
+    const body = document.getElementById(id);
+    const chevron = el.querySelector('.chapter-chevron');
+    if(body.style.display === 'none' || body.style.display === '') {
+        body.style.display = 'block'; chevron.style.transform = 'rotate(90deg)';
+    } else {
+        body.style.display = 'none'; chevron.style.transform = 'rotate(0deg)';
+    }
+}
+
+function toggleCategory(id, el) {
+    const body = document.getElementById(id);
+    const chevron = el.querySelector('.cat-chevron');
+    if(body.style.display === 'none' || body.style.display === '') {
+        body.style.display = 'block'; chevron.style.transform = 'rotate(90deg)';
+    } else {
+        body.style.display = 'none'; chevron.style.transform = 'rotate(0deg)';
+    }
+}
+
+// PREVIEW & CHECKLIST
 function viewProcessPreview(id) {
     const p = globalProcesses.find(x => x.id === id);
     if(!p) return;
@@ -821,12 +965,12 @@ function viewProcessPreview(id) {
         return `
             <div class="checklist-step ${isDone?'done':''}" onclick="toggleCheck('${id}', ${i}, this)">
                 <div class="step-checkbox">${isDone?'✓':(i+1)}</div>
-                <div>
-                    <div style="font-size:13px; font-weight:500;">${st.text}</div>
+                <div style="flex:1;">
+                    <div style="font-size:15px; font-weight:600; color:var(--text-main); margin-bottom:6px; line-height:1.5;">${st.text}</div>
                     <div class="step-tags">
-                        ${st.note ? '<span class="step-tag">📝 Note</span>' : ''}
-                        ${st.evidence ? '<span class="step-tag">📎 Evidence</span>' : ''}
-                        ${st.mandatory ? '<span class="step-tag" style="background:var(--danger-light);color:var(--danger)">✱ Mandatory</span>' : ''}
+                        ${st.note ? '<span class="step-tag">📝 Note required</span>' : ''}
+                        ${st.evidence ? '<span class="step-tag">📎 Evidence needed</span>' : ''}
+                        ${st.mandatory ? '<span class="step-tag" style="background:var(--danger-light);color:var(--danger); border-color:var(--danger-light);">✱ Mandatory</span>' : ''}
                     </div>
                 </div>
             </div>
@@ -834,30 +978,59 @@ function viewProcessPreview(id) {
     }).join('');
 
     document.getElementById('processDetailContent').innerHTML = `
-        <div style="margin-bottom:15px; display:flex; gap:10px;">
-            <button class="btn btn-outline" onclick="navigateTo('prospectus')">← ফিরে যান</button>
+        <div style="margin-bottom:24px; display:flex; gap:16px;">
+            <button class="btn btn-outline" style="background:var(--bg-card); padding:12px 24px; border-radius:var(--radius-full); font-size:14px;" onclick="navigateTo('prospectus')">← Return to Prospectus</button>
+            <button class="btn btn-primary" style="padding:12px 24px; border-radius:var(--radius-full); font-size:14px;" onclick="navigateTo('all-processes')">📋 View All Processes</button>
         </div>
-        <div class="card">
-            <div class="card-header" style="background:var(--hover);">
-                <div>
-                    <h2 style="font-size:20px; margin-bottom:5px;">${p.icon} ${p.title}</h2>
-                    <div style="font-size:12px; color:var(--text-muted); display:flex; gap:15px;">
-                        <span>⏰ SLA: <strong>${p.sla||'-'}</strong></span>
-                        <span>📂 ${p.category}</span>
+        <div class="card" style="border:none; box-shadow:var(--shadow-lg);">
+            <div class="card-header" style="background:var(--bg-card); padding:32px; flex-direction:column; align-items:flex-start; border-bottom:2px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:20px;">
+                    <span class="badge-priority ${p.priority}" style="font-size:12px; padding:6px 16px;">${p.priority} Priority</span>
+                    <span style="font-size:13px; font-weight:700; color:var(--success); background:var(--success-light); padding:6px 16px; border-radius:var(--radius-full);">Status: ${p.status}</span>
+                </div>
+                
+                <h2 style="font-size:32px; font-weight:800; margin-bottom:20px; color:var(--text-main); letter-spacing:-0.5px; display:flex; align-items:center; gap:16px;">
+                    <span style="background:var(--primary-light); width:56px; height:56px; display:flex; align-items:center; justify-content:center; border-radius:16px; font-size:32px;">${p.icon || '📋'}</span>
+                    ${p.title}
+                </h2>
+                
+                <div style="display:flex; gap:16px; flex-wrap:wrap; width:100%;">
+                    <div style="flex:1; min-width:200px; background:var(--hover); padding:16px 20px; border-radius:12px; border:1px solid var(--border);">
+                        <p style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">Category</p>
+                        <p style="font-size:15px; font-weight:700; color:var(--text-main);">📂 ${p.category}</p>
+                    </div>
+                    <div style="flex:1; min-width:200px; background:var(--hover); padding:16px 20px; border-radius:12px; border:1px solid var(--border);">
+                        <p style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">Pillar</p>
+                        <p style="font-size:15px; font-weight:700; color:var(--text-main);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</p>
+                    </div>
+                    <div style="flex:1; min-width:200px; background:var(--hover); padding:16px 20px; border-radius:12px; border:1px solid var(--border);">
+                        <p style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">SLA (Resolution Time)</p>
+                        <p style="font-size:15px; font-weight:800; color:var(--primary);">⏰ ${p.sla || 'Not defined'}</p>
                     </div>
                 </div>
-                <span class="badge-priority ${p.priority}">${p.priority}</span>
             </div>
-            <div class="card-body">
-                ${p.description ? `<p style="font-size:13px; margin-bottom:20px; padding:10px; background:var(--hover); border-radius:6px;">${p.description}</p>` : ''}
-                <h3 style="font-size:15px; margin-bottom:15px;">✅ ধাপসমূহ (${p.steps?.length||0}টি)</h3>
-                ${stepsHtml}
+            
+            <div class="card-body" style="padding:40px 32px;">
+                ${p.description ? `
+                    <div style="margin-bottom:32px;">
+                        <h4 style="font-size:14px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Description</h4>
+                        <p style="font-size:15.5px; line-height:1.8; padding:20px 24px; background:var(--primary-light); color:var(--primary-dark); border-radius:12px; border-left:4px solid var(--primary); font-weight:500;">${p.description}</p>
+                    </div>
+                ` : ''}
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3 style="font-size:20px; font-weight:800; color:var(--text-main);">✅ Resolution Checklist</h3>
+                    <span style="font-size:13px; font-weight:700; color:white; background:var(--text-main); padding:6px 16px; border-radius:var(--radius-full);">Total ${p.steps?.length||0} Steps</span>
+                </div>
+                
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    ${stepsHtml || '<div style="text-align:center; padding:40px; background:var(--hover); border-radius:12px; border:2px dashed var(--border);"><span style="font-size:32px; display:block; margin-bottom:10px;">📝</span><span style="font-size:15px; font-weight:600; color:var(--text-muted);">No steps have been added yet.</span></div>'}
+                </div>
             </div>
         </div>
     `;
 }
 
-// Local toggle for public checklist preview
 function toggleCheck(id, index, el) {
     const localKey = 'sf_check_' + id;
     let comp = JSON.parse(localStorage.getItem(localKey)) || [];
@@ -875,35 +1048,28 @@ function toggleCheck(id, index, el) {
     localStorage.setItem(localKey, JSON.stringify(comp));
 }
 
-// ==========================================
-// CRUD: PROCESSES
-// ==========================================
+// PROCESS CRUD
 function saveProcess() {
-    if(!isAdmin) return toast('Admin Login প্রয়োজন!', 'error');
+    if(!isAdmin) return toast('Admin Access Required!', 'error');
     
     const eid = document.getElementById('editProcessId').value;
     const title = document.getElementById('processTitle').value.trim();
+    if(!title) return toast('Process Title is required!', 'error');
     
-    if(!title) return toast('Process-এর নাম দিন!', 'error');
+    const btn = document.querySelector('#page-add-process .btn-primary');
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:10px;"></div> Saving to Database...';
     
     const id = eid || 'p_' + Date.now();
-    
     const steps = [];
     document.querySelectorAll('.step-builder-item').forEach(it => {
         const t = it.querySelector('input[type="text"]').value.trim();
         if(!t) return;
         const checks = it.querySelectorAll('input[type="checkbox"]');
-        steps.push({
-            text: t,
-            note: checks[0]?.checked || false,
-            evidence: checks[1]?.checked || false,
-            mandatory: checks[2]?.checked || false
-        });
+        steps.push({ text: t, note: checks[0]?.checked||false, evidence: checks[1]?.checked||false, mandatory: checks[2]?.checked||false });
     });
 
     const obj = {
-        id: id,
-        title: title,
+        id: id, title: title,
         pillar: document.getElementById('processPillar').value,
         category: document.getElementById('processCategory').value,
         priority: document.getElementById('processPriority').value,
@@ -915,7 +1081,8 @@ function saveProcess() {
     };
 
     db.ref('processes/' + id).set(obj).then(() => {
-        toast('✅ Process Database-এ সেভ হয়েছে!', 'success');
+        toast('Process Saved Successfully!', 'success');
+        btn.innerHTML = '💾 Save to Database';
         navigateTo('all-processes');
     });
 }
@@ -925,7 +1092,7 @@ function editProcess(id) {
     if(!p) return;
     
     navigateTo('add-process');
-    document.getElementById('formTitle').textContent = '✏️ Process Edit করুন';
+    document.getElementById('formTitle').textContent = 'Edit Process';
     document.getElementById('editProcessId').value = p.id;
     document.getElementById('processTitle').value = p.title;
     document.getElementById('processPillar').value = p.pillar;
@@ -946,43 +1113,42 @@ function addBuilderStep(text='', note=true, evidence=false, mandatory=true) {
     const div = document.createElement('div');
     div.className = 'step-builder-item';
     div.innerHTML = `
-        <span style="color:var(--text-muted); cursor:grab">☰</span>
-        <input type="text" placeholder="Step: কী করতে হবে..." value="${text}">
-        <div class="step-builder-options">
-            <label><input type="checkbox" ${note ? 'checked' : ''}> 📝 Note</label>
-            <label><input type="checkbox" ${evidence ? 'checked' : ''}> 📎 Evi</label>
-            <label><input type="checkbox" ${mandatory ? 'checked' : ''}> ✱ Man</label>
+        <span style="color:var(--text-muted); cursor:grab; font-size:18px; margin:0 8px;">☰</span>
+        <input type="text" placeholder="Enter step instruction..." value="${text}">
+        <div style="display:flex; gap:12px; background:var(--bg-card); padding:8px 16px; border-radius:8px; border:1px solid var(--border);">
+            <label style="font-size:12px; font-weight:600; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px;height:16px;" ${note ? 'checked' : ''}> Note</label>
+            <label style="font-size:12px; font-weight:600; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px;height:16px;" ${evidence ? 'checked' : ''}> Evidence</label>
+            <label style="font-size:12px; font-weight:600; cursor:pointer; color:var(--danger); display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px;height:16px;" ${mandatory ? 'checked' : ''}> Mandatory</label>
         </div>
-        <button class="btn btn-outline" style="border:none; color:var(--danger)" onclick="this.parentElement.remove()">✕</button>
+        <button class="btn btn-outline" style="border:none; color:var(--text-muted); font-size:20px; width:44px; height:44px; padding:0; border-radius:50%; margin-left:8px; background:transparent;" onclick="this.parentElement.remove()" onmouseover="this.style.color='var(--danger)'; this.style.background='var(--danger-light)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='transparent';">✕</button>
     `;
     builder.appendChild(div);
 }
 
 function resetProcessForm() {
-    document.getElementById('formTitle').textContent = '➕ নতুন Process তৈরি করুন';
+    document.getElementById('formTitle').textContent = 'Create New Process';
     document.getElementById('editProcessId').value = '';
     document.getElementById('processTitle').value = '';
     document.getElementById('processDesc').value = '';
     document.getElementById('processSla').value = '';
+    document.getElementById('processIcon').value = '📋';
     document.getElementById('stepsBuilder').innerHTML = '';
 }
 
-// ==========================================
-// CRUD: CATEGORIES
-// ==========================================
+// CATEGORY CRUD
 function renderCategoryTable() {
     document.getElementById('categoryTableBody').innerHTML = globalCategories.map(c => {
         const count = globalProcesses.filter(p => p.category === c.name).length;
         return `
         <tr>
-            <td style="font-size:20px">${c.icon}</td>
-            <td><strong>${c.name}</strong></td>
-            <td>${c.pillar}</td>
-            <td>${count}টি Process</td>
+            <td style="font-size:24px; text-align:center;">${c.icon}</td>
+            <td><strong style="font-size:14.5px; color:var(--text-main);">${c.name}</strong></td>
+            <td><span style="background:var(--hover); padding:6px 12px; border-radius:8px; font-size:12.5px; font-weight:600; border:1px solid var(--border);">${c.pillar}</span></td>
+            <td style="font-weight:700; color:var(--primary);">${count} Processes</td>
             <td>
                 <div class="actions">
-                    <button class="btn btn-warning btn-sm" onclick="openCategoryModal('${c.id}')">✏️</button>
-                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('category', '${c.id}', '${c.name}')">🗑️</button>
+                    <button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="openCategoryModal('${c.id}')">✏️ Edit</button>
+                    <button class="btn btn-outline btn-sm" style="border-color:var(--danger); color:var(--danger)" onclick="confirmDelete('category', '${c.id}', '${c.name}')">🗑️ Del</button>
                 </div>
             </td>
         </tr>`;
@@ -991,31 +1157,28 @@ function renderCategoryTable() {
 
 function openCategoryModal(editId = null) {
     const c = editId ? globalCategories.find(x => x.id === editId) : null;
-    
-    document.getElementById('catModalTitle').textContent = c ? '✏️ Edit Category' : '➕ নতুন Category';
+    document.getElementById('catModalTitle').textContent = c ? 'Edit Category' : 'Add New Category';
     document.getElementById('editCatId').value = c ? c.id : '';
     document.getElementById('catName').value = c ? c.name : '';
     document.getElementById('catPillar').value = c ? c.pillar : 'Work Process';
     document.getElementById('catIcon').value = c ? c.icon : '📂';
-    
     document.getElementById('categoryModal').classList.add('active');
 }
 
 function saveCategory() {
     const eid = document.getElementById('editCatId').value;
     const name = document.getElementById('catName').value.trim();
-    if(!name) return toast('Category Name দিন!', 'error');
+    if(!name) return toast('Category Name is required!', 'error');
+
+    const btn = document.querySelector('#categoryModal .btn-primary');
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:16px;height:16px;margin-right:8px;"></div> Saving...';
 
     const id = eid || 'c_' + Date.now();
-    const obj = {
-        id: id,
-        name: name,
-        pillar: document.getElementById('catPillar').value,
-        icon: document.getElementById('catIcon').value || '📂'
-    };
+    const obj = { id: id, name: name, pillar: document.getElementById('catPillar').value, icon: document.getElementById('catIcon').value || '📂' };
 
     db.ref('categories/' + id).set(obj).then(() => {
-        toast('✅ Category Saved!', 'success');
+        toast('Category Saved!', 'success');
+        btn.innerHTML = 'Save Category';
         closeModal('categoryModal');
     });
 }
@@ -1028,26 +1191,35 @@ function populateCategoryDropdowns() {
     if(fSel) fSel.innerHTML = '<option value="all">সব Category</option>' + opts;
 }
 
-// ==========================================
-// CONFIRMATION MODAL & DELETE
-// ==========================================
+// DELETE CONFIRMATION
 let deleteTarget = { type: null, id: null };
-
 function confirmDelete(type, id, title) {
     deleteTarget = { type, id };
-    document.getElementById('confirmTitle').textContent = `"${title}" মুছে ফেলবেন?`;
-    document.getElementById('confirmDesc').textContent = type === 'category' ? 'এর ভেতরের Process গুলোও এতিম হয়ে যাবে!' : 'এই কাজটি ফেরানো যাবে না!';
+    document.getElementById('confirmTitle').textContent = `Delete "${title}"?`;
+    document.getElementById('confirmDesc').textContent = type === 'category' ? 'This category and its link to processes will be lost!' : 'This action cannot be undone!';
     document.getElementById('confirmModal').classList.add('active');
 }
 
-document.getElementById('confirmBtn').addEventListener('click', () => {
+document.getElementById('confirmBtn').addEventListener('click', function() {
+    this.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:8px;"></div> Deleting...';
+    
     if(deleteTarget.type === 'process') {
-        db.ref('processes/' + deleteTarget.id).remove().then(() => toast('🗑️ Process Deleted!', 'success'));
+        db.ref('processes/' + deleteTarget.id).remove().then(() => {
+            toast('Process Deleted!', 'success');
+            finishDelete();
+        });
     } else if(deleteTarget.type === 'category') {
-        db.ref('categories/' + deleteTarget.id).remove().then(() => toast('🗑️ Category Deleted!', 'success'));
+        db.ref('categories/' + deleteTarget.id).remove().then(() => {
+            toast('Category Deleted!', 'success');
+            finishDelete();
+        });
     }
-    closeModal('confirmModal');
 });
+
+function finishDelete() {
+    document.getElementById('confirmBtn').innerHTML = 'Yes, Delete';
+    closeModal('confirmModal');
+}
 
 function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('active');
@@ -1058,17 +1230,14 @@ function toast(msg, type) {
     const t = document.createElement('div');
     t.className = 'toast';
     const icons = { success:'✅', error:'❌', warning:'⚠️' };
-    t.innerHTML = `${icons[type] || '📌'} ${msg}`;
+    t.innerHTML = `<span style="font-size:18px;">${icons[type] || '📌'}</span> ${msg}`;
     b.appendChild(t);
-    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100%)'; setTimeout(()=>t.remove(), 300); }, 3000);
+    setTimeout(() => { t.style.transform='translateX(120%)'; t.style.opacity='0'; setTimeout(()=>t.remove(), 400); }, 3000);
 }
 
-// ENTER KEY LOGIN
-document.addEventListener('keydown', e => {
-    if(e.key === 'Enter' && document.getElementById('loginModal').classList.contains('active')) doLogin();
-});
+document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.getElementById('loginModal').classList.contains('active')) doLogin(); });
 
-// Seed Initial Categories if Database is totally empty
+// SEED DB IF EMPTY
 db.ref('categories').once('value', snap => {
     if(!snap.exists()) {
         const initialCats = [
