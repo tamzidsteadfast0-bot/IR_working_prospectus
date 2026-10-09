@@ -8,7 +8,7 @@
     <!-- Google Fonts for Premium Look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -16,40 +16,49 @@
 
     <style>
         /* ========================================================
-           PREMIUM THEME VARIABLES & RESET
+           PREMIUM "EMERALD & CHARCOAL" THEME VARIABLES
         ======================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --primary: #4f46e5; --primary-dark: #4338ca; --primary-light: #e0e7ff;
-            --success: #10b981; --success-light: #d1fae5;
-            --warning: #f59e0b; --warning-light: #fef3c7;
-            --danger: #ef4444; --danger-light: #fee2e2;
+            /* Steadfast Green Brand Colors */
+            --primary: #059669; --primary-dark: #047857; --primary-light: #d1fae5;
+            --success: #10b981; --success-light: #ecfdf5;
+            --warning: #f59e0b; --warning-light: #fffbeb;
+            --danger: #ef4444; --danger-light: #fef2f2;
             
-            --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-sidebar: #ffffff;
-            --text-main: #111827; --text-muted: #64748b;
-            --border: #e2e8f0; --hover: #f8fafc;
-            --input-bg: #ffffff;
+            /* Light Mode Colors */
+            --bg-body: #f1f5f9; 
+            --bg-card: #ffffff; 
+            --bg-sidebar: #0f172a; /* Dark Sidebar */
+            --text-main: #0f172a; 
+            --text-muted: #64748b;
+            --border: #e2e8f0; 
+            --hover: #f8fafc;
+            --input-bg: #f8fafc;
             
-            --radius-sm: 8px; --radius: 12px; --radius-lg: 20px; --radius-full: 9999px;
+            --radius-sm: 8px; --radius: 14px; --radius-lg: 24px; --radius-full: 9999px;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             
-            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body.dark-mode {
-            --primary: #6366f1; --primary-light: #1e1b4b;
-            --success-light: #064e3b; --warning-light: #78350f; --danger-light: #7f1d1d;
+            --primary: #10b981; --primary-light: rgba(16, 185, 129, 0.15);
             
-            --bg-body: #0f172a; --bg-card: #1e293b; --bg-sidebar: #1e293b;
-            --text-main: #f8fafc; --text-muted: #94a3b8;
-            --border: #334155; --hover: #334155;
+            --bg-body: #020617; 
+            --bg-card: #0f172a; 
+            --bg-sidebar: #020617;
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8;
+            --border: #1e293b; 
+            --hover: #1e293b;
             --input-bg: #0f172a;
             
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
         body { font-family: 'Inter', 'Noto Sans Bengali', sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; transition: background var(--transition), color var(--transition); overflow-x: hidden; }
@@ -57,48 +66,53 @@
         /* ========================================================
            ANIMATIONS
         ======================================================== */
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes swiftUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes flipCheck {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ========================================================
-           LAYOUT & SIDEBAR (MODERN PILL DESIGN)
+           DARK SIDEBAR & LOGO HOVER ANIMATION
         ======================================================== */
         .app-container { display: flex; min-height: 100vh; }
         
-        .sidebar { width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all var(--transition); }
+        .sidebar { width: 280px; background: var(--bg-sidebar); border-right: 1px solid rgba(255,255,255,0.05); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all var(--transition); box-shadow: 4px 0 24px rgba(0,0,0,0.05); }
         
-        /* Logo Hover Animation Added Here */
-        .sidebar-header { padding: 20px 18px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); }
-        .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: default; }
-        .logo-wrap svg { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .logo-wrap:hover svg { transform: scale(1.1); }
+        .sidebar-header { padding: 20px 18px; background: var(--bg-sidebar); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         
-        .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+        /* LOGO HOVER ANIMATION CODE */
+        .logo-wrap img {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+        }
+        .logo-wrap:hover img {
+            transform: scale(1.08);
+        }
+        
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 20px 12px; }
         .sidebar-nav::-webkit-scrollbar { width: 4px; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
         
-        .nav-section-title { padding: 14px 12px 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: color 0.2s; }
-        .nav-section-title:hover { color: var(--primary); }
+        .nav-section-title { padding: 14px 12px 8px; font-size: 14px !important; font-weight: 800 !important; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: color 0.2s; }
+        .nav-section-title:hover { color: #f8fafc; }
         .nav-section-title .chevron { transition: transform 0.3s; font-size: 10px; }
         
-        .nav-item { display: flex; align-items: center; padding: 10px 14px; cursor: pointer; font-size: 13.5px; font-weight: 500; color: var(--text-muted); transition: all 0.2s; border-radius: var(--radius); margin-bottom: 4px; }
-        .nav-item:hover { background: var(--hover); color: var(--primary); transform: translateX(4px); }
-        .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; box-shadow: inset 3px 0 0 var(--primary); }
-        .nav-item .icon { margin-right: 12px; font-size: 18px; width: 24px; text-align: center; transition: transform 0.2s; }
-        .nav-item:hover .icon { transform: scale(1.1); }
-        .nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); font-weight: 600; box-shadow: var(--shadow-sm); }
+        .nav-item { display: flex; align-items: center; padding: 11px 16px !important; cursor: pointer; font-size: 14.5px !important; font-weight: 600 !important; color: #cbd5e1; transition: all 0.2s; border-radius: 10px; margin-bottom: 6px; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #f8fafc; transform: translateX(4px); }
+        .nav-item.active { background: rgba(5, 150, 105, 0.15); color: var(--primary); box-shadow: inset 3px 0 0 var(--primary); }
+        .nav-item .icon { margin-right: 12px; font-size: 20px !important; width: 24px; text-align: center; transition: transform 0.2s; }
+        .nav-item:hover .icon { transform: scale(1.15) rotate(5deg); }
+        .nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); font-weight: 700; box-shadow: 0 2px 4px rgba(5,150,105,0.3); }
         
-        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); background: var(--bg-sidebar); }
-        .sidebar-footer button { width: 100%; padding: 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 600; border: 1px solid var(--border); transition: all 0.2s; background: var(--hover); color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .sidebar-footer button:hover { border-color: var(--text-muted); background: var(--bg-sidebar); }
+        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-sidebar); }
+        .sidebar-footer button { width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13.5px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s; background: rgba(255,255,255,0.03); color: #f8fafc; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .sidebar-footer button:hover { border-color: var(--primary); background: rgba(5, 150, 105, 0.1); color: var(--primary); }
 
         .admin-only { display: none !important; }
         .is-admin .admin-only { display: flex !important; }
@@ -106,179 +120,177 @@
         .admin-only-table { display: none !important; }
 
         /* ========================================================
-           MAIN & TOPBAR (GLASSMORPHISM)
+           FLOATING MAIN & TOPBAR
         ======================================================== */
-        .main-content { flex: 1; margin-left: 280px; display: flex; flex-direction: column; background: var(--bg-body); }
+        .main-content { flex: 1; margin-left: 280px; display: flex; flex-direction: column; background: var(--bg-body); padding: 20px; }
         
-        .top-bar { height: 72px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
-        body.dark-mode .top-bar { background: rgba(30, 41, 59, 0.7); }
+        .top-bar { height: 72px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm); transition: background var(--transition); margin-bottom: 24px; }
         
-        .search-box { display: flex; align-items: center; background: var(--bg-card); border-radius: var(--radius-full); padding: 10px 20px; width: 400px; border: 1px solid var(--border); transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light), var(--shadow); transform: translateY(-1px); }
-        .search-box input { border: none; background: none; outline: none; width: 100%; font-size: 14px; margin-left: 10px; color: var(--text-main); font-family: inherit; }
+        .search-box { display: flex; align-items: center; background: var(--input-bg); border-radius: var(--radius-full); padding: 10px 20px; width: 400px; border: 1px solid var(--border); transition: all 0.3s; }
+        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); transform: translateY(-1px); }
+        .search-box input { border: none; background: none; outline: none; width: 100%; font-size: 14.5px; margin-left: 12px; color: var(--text-main); font-family: inherit; font-weight: 500; }
         
         .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
-        .theme-btn { background: var(--bg-card); border: 1px solid var(--border); font-size: 18px; cursor: pointer; color: var(--text-main); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .theme-btn:hover { transform: rotate(15deg); border-color: var(--primary); color: var(--primary); }
+        .theme-btn { background: var(--input-bg); border: 1px solid var(--border); font-size: 18px; cursor: pointer; color: var(--text-main); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+        .theme-btn:hover { transform: rotate(20deg) scale(1.1); border-color: var(--primary); color: var(--primary); box-shadow: 0 4px 10px var(--primary-light); }
         
-        .role-badge { padding: 8px 16px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; color: white; letter-spacing: 0.5px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 6px; }
+        .role-badge { padding: 8px 16px; border-radius: var(--radius-full); font-size: 12px; font-weight: 800; color: white; letter-spacing: 0.5px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 6px; }
         .role-public { background: linear-gradient(135deg, #10b981, #059669); }
         .role-admin { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
         /* ========================================================
            PAGE, CARDS & STATS
         ======================================================== */
-        .page-content { flex: 1; padding: 32px; overflow-y: auto; display: none; animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .page-content { flex: 1; padding: 10px; overflow-y: auto; display: none; animation: swiftUp 0.5s forwards; }
         .page-content.active { display: block; }
         
         .page-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .page-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
-        .page-header p { color: var(--text-muted); font-size: 14.5px; margin-top: 6px; font-weight: 500; }
+        .page-header h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+        .page-header p { color: var(--text-muted); font-size: 15px; margin-top: 4px; font-weight: 500; }
         
-        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); transition: box-shadow 0.3s; }
-        .card:hover { box-shadow: var(--shadow-lg); }
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
         .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); }
-        .card-header h3 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .card-header h3 { font-size: 16px; font-weight: 800; color: var(--text-main); }
         .card-body { padding: 24px; }
 
+        /* Stats Cards */
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
-        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; }
-        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); opacity: 0; transition: 0.3s; }
+        .stat-card:hover::before { opacity: 1; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
         .stat-info { display: flex; flex-direction: column; }
-        .stat-label { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .stat-value { font-size: 32px; font-weight: 800; color: var(--text-main); line-height: 1; }
-        .stat-icon-wrap { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .stat-value { font-size: 36px; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .stat-icon-wrap { width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
 
+        /* Pillar Cards */
         .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px; }
-        .pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
-        .pillar-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
-        .pillar-card.wp::before { background: var(--success); }
-        .pillar-card.tw::before { background: var(--primary); }
-        .pillar-card.we::before { background: var(--warning); }
-        .pillar-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px 24px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; text-align: center; }
+        .pillar-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow-hover); border-color: var(--primary); }
         .pillar-card h3 { font-size: 18px; font-weight: 800; margin: 16px 0 8px; color: var(--text-main); }
-        .pillar-card p { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-        .pillar-card .p-icon { font-size: 32px; background: var(--hover); display: inline-block; padding: 12px; border-radius: 16px; }
+        .pillar-card p { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+        .pillar-card .p-icon { font-size: 36px; display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; background: var(--input-bg); border-radius: 24px; box-shadow: var(--shadow-sm); transition: transform 0.3s; }
+        .pillar-card:hover .p-icon { transform: rotate(10deg) scale(1.1); }
 
         /* ========================================================
            TABLES & BADGES
         ======================================================== */
         .process-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
-        .process-table th { background: var(--hover); padding: 16px 20px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border); letter-spacing: 0.5px; }
+        .process-table th { background: var(--bg-body); padding: 16px 20px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; border-bottom: 2px solid var(--border); letter-spacing: 0.5px; }
         .process-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); transition: background 0.2s; color: var(--text-main); }
-        .process-table tr { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+        .process-table tr { transition: all 0.2s; cursor: pointer; }
         .process-table tr:hover td { background: var(--primary-light); }
         
-        .badge-priority, .badge-status { padding: 6px 12px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; }
-        .badge-priority.high { background: var(--danger-light); color: var(--danger); }
-        .badge-priority.medium { background: var(--warning-light); color: var(--warning); }
-        .badge-priority.low { background: var(--success-light); color: var(--success); }
-        .badge-status.active { background: var(--success-light); color: var(--success); }
-        .badge-status.draft { background: var(--hover); color: var(--text-muted); }
+        .badge-priority, .badge-status { padding: 6px 14px; border-radius: var(--radius-full); font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; box-shadow: var(--shadow-sm); }
+        .badge-priority.high { background: var(--danger); color: white; }
+        .badge-priority.medium { background: var(--warning); color: white; }
+        .badge-priority.low { background: var(--success); color: white; }
+        .badge-status.active { background: var(--success-light); color: var(--success); border: 1px solid var(--success); }
+        .badge-status.draft { background: var(--hover); color: var(--text-muted); border: 1px solid var(--border); }
 
         /* ========================================================
            BUTTONS & FORMS
         ======================================================== */
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; font-family: inherit; }
-        .btn:active { transform: scale(0.96); box-shadow: none; }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); } 
-        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; font-family: inherit; }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); } 
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 6px 15px rgba(5, 150, 105, 0.4); transform: translateY(-2px); }
         .btn-success { background: var(--success); color: white; } 
         .btn-danger { background: var(--danger); color: white; } 
         .btn-warning { background: var(--warning); color: white; }
-        .btn-outline { background: transparent; color: var(--text-main); border-color: var(--border); } 
-        .btn-outline:hover { background: var(--hover); border-color: var(--text-muted); }
-        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 6px; }
+        .btn-outline { background: var(--bg-card); color: var(--text-main); border-color: var(--border); box-shadow: var(--shadow-sm); } 
+        .btn-outline:hover { background: var(--hover); border-color: var(--text-muted); transform: translateY(-2px); }
+        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
 
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
-        .form-control { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14.5px; outline: none; background: var(--input-bg); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+        .form-group label { display: block; font-size: 13.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; font-weight: 500; outline: none; background: var(--input-bg); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); background: var(--bg-card); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-        .step-builder-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--hover); transition: all 0.2s; }
-        .step-builder-item:focus-within { border-color: var(--primary); background: var(--bg-card); box-shadow: var(--shadow-sm); }
-        .step-builder-item input[type="text"] { flex: 1; border: none; background: transparent; font-size: 14px; outline: none; color: var(--text-main); font-family: inherit; }
+        .step-builder-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; border: 2px dashed var(--border); border-radius: 10px; background: var(--hover); transition: all 0.2s; }
+        .step-builder-item:focus-within { border-style: solid; border-color: var(--primary); background: var(--bg-card); box-shadow: var(--shadow-sm); }
+        .step-builder-item input[type="text"] { flex: 1; border: none; background: transparent; font-size: 14.5px; font-weight: 500; outline: none; color: var(--text-main); font-family: inherit; }
 
         /* ========================================================
            CHECKLIST & PROSPECTUS
         ======================================================== */
-        .prospectus-cover { background: linear-gradient(135deg, #1e1b4b, #4f46e5); color: white; border-radius: var(--radius-lg); padding: 60px 40px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
-        .prospectus-cover::after { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; top: -100px; right: -100px; filter: blur(40px); pointer-events: none; }
-        .prospectus-cover h1 { font-size: 36px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; position: relative; z-index: 1; }
+        .prospectus-cover { background: linear-gradient(135deg, #0f172a, #059669); color: white; border-radius: var(--radius-lg); padding: 80px 40px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .prospectus-cover::after { content: ''; position: absolute; width: 400px; height: 400px; background: rgba(255,255,255,0.05); border-radius: 50%; top: -150px; right: -100px; filter: blur(40px); pointer-events: none; }
+        .prospectus-cover h1 { font-size: 40px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .prospectus-cover h2 { font-size: 18px; font-weight: 500; opacity: 0.9; margin-bottom: 24px; position: relative; z-index: 1; }
         
-        .checklist-step { display: flex; align-items: flex-start; padding: 16px 20px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .checklist-step:hover { border-color: var(--primary); transform: translateX(4px); box-shadow: var(--shadow); }
+        .checklist-step { display: flex; align-items: flex-start; padding: 16px 20px; margin-bottom: 12px; border: 2px solid var(--border); border-radius: 12px; background: var(--bg-card); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+        .checklist-step:hover { border-color: var(--primary); transform: translateX(6px); box-shadow: var(--shadow); }
         .checklist-step.done { background: var(--success-light); border-color: var(--success); }
         
-        .step-checkbox { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border); margin-right: 16px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--text-main); flex-shrink: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--input-bg); }
-        .checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; animation: popIn 0.4s forwards; }
+        .step-checkbox { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); margin-right: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: transparent; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--input-bg); }
+        .checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; animation: flipCheck 0.4s forwards; }
         
-        .step-tags { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-        .step-tag { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: var(--hover); color: var(--text-muted); font-weight: 600; border: 1px solid var(--border); }
+        .step-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .step-tag { font-size: 11px; padding: 4px 12px; border-radius: var(--radius-full); background: var(--hover); color: var(--text-muted); font-weight: 700; border: 1px solid var(--border); }
 
         /* ========================================================
            MODALS, SPINNER & TOAST
         ======================================================== */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         
-        .modal-box { background: var(--bg-card); border-radius: var(--radius-lg); width: 480px; max-width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); border: 1px solid var(--border); transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-box { background: var(--bg-card); border-radius: 24px; width: 480px; max-width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid var(--border); transform: scale(0.95) translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
         
-        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-header h3 { font-size: 18px; font-weight: 700; }
-        .modal-close { background: var(--hover); border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .modal-close:hover { background: var(--danger-light); color: var(--danger); }
-        .modal-body { padding: 24px; }
-        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--hover); }
+        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-header h3 { font-size: 20px; font-weight: 800; }
+        .modal-close { background: var(--hover); border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .modal-close:hover { background: var(--danger-light); color: var(--danger); transform: rotate(90deg); }
+        .modal-body { padding: 32px 24px; }
+        .modal-footer { padding: 20px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--hover); border-radius: 0 0 24px 24px; }
 
         .spinner { border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
-        
+
         .toast-container { position: fixed; bottom: 32px; right: 32px; z-index: 99999; }
-        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius-sm); margin-top: 12px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-left: 4px solid var(--success); }
-        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius); margin-top: 12px; font-size: 14.5px; font-weight: 600; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); animation: swiftUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-left: 5px solid var(--success); }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-        <!-- OFFICIAL LOGO ADDED HERE -->
-                        <div class="sidebar-header">
-            <div class="logo-wrap" style="display:flex; align-items:center; gap:12px;">
-                <img src="steadfast-logo.png" alt="Steadfast" 
-                     style="width:44px; height:44px; object-fit:contain; border-radius:6px;">
+        <!-- OFFICIAL LOGO WITH IMAGE & HOVER ANIMATION -->
+        <div class="sidebar-header">
+            <div class="logo-wrap" onclick="navigateTo('dashboard', document.querySelector('.nav-item'))">
+                <img src="steadfast-logo.png" alt="Steadfast Logo" style="width:44px; height:44px; object-fit:contain; border-radius:8px; background:#ffffff; padding:4px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
                 <div>
-                    <h2 style="font-size:15px; font-weight:800; color:var(--text-main); line-height:1.2; margin:0;">Steadfast Courier</h2>
-                    <p style="font-size:11px; color:var(--text-muted); font-weight:500; margin:0;">Issue Resolution Prospectus</p>
+                    <h2 style="font-size:15px; font-weight:800; color:#f8fafc; line-height:1.2; margin:0;">Steadfast Courier</h2>
+                    <p style="font-size:11px; color:#94a3b8; font-weight:500; margin:0;">Issue Resolution Prospectus</p>
                 </div>
             </div>
         </div>
 
         <nav class="sidebar-nav">
-            <div style="padding: 12px 12px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Main Menu</div>
+            <div class="nav-section-title" style="cursor:default;"><span>Main Menu</span></div>
             <div class="nav-item active" onclick="navigateTo('dashboard', this)"><span class="icon">📊</span> Dashboard</div>
             <div class="nav-item" onclick="navigateTo('prospectus', this)"><span class="icon">📖</span> Prospectus</div>
             <div class="nav-item" onclick="navigateTo('all-processes', this)"><span class="icon">📋</span> All Processes <span class="badge" id="bTotal">0</span></div>
 
-            <div class="nav-section-title" onclick="toggleNavGroup('navWP', this)">
+            <div class="nav-section-title" onclick="toggleNavGroup('navWP', this)" style="margin-top:10px;">
                 <span>📗 কাজের প্রক্রিয়া</span> <span class="chevron" style="transition:0.3s">▼</span>
             </div>
             <div id="navWP" class="nav-group"></div>
 
-            <div class="nav-section-title" onclick="toggleNavGroup('navTW', this)">
+            <div class="nav-section-title" onclick="toggleNavGroup('navTW', this)" style="margin-top:10px;">
                 <span>📘 টেকনিক্যাল</span> <span class="chevron" style="transition:0.3s">▼</span>
             </div>
             <div id="navTW" class="nav-group"></div>
 
-            <div class="nav-section-title" onclick="toggleNavGroup('navWE', this)">
+            <div class="nav-section-title" onclick="toggleNavGroup('navWE', this)" style="margin-top:10px;">
                 <span>📙 পরিবেশ</span> <span class="chevron" style="transition:0.3s">▼</span>
             </div>
             <div id="navWE" class="nav-group"></div>
 
-            <div style="padding: 16px 12px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;" class="admin-only">Admin Controls</div>
+            <div class="nav-section-title admin-only" style="margin-top:16px; cursor:default;"><span>Admin Controls</span></div>
             <div class="nav-item admin-only" onclick="navigateTo('add-process', this)"><span class="icon">➕</span> Add Process</div>
             <div class="nav-item admin-only" onclick="navigateTo('manage-categories', this)"><span class="icon">📂</span> Categories</div>
             <div class="nav-item admin-only" onclick="navigateTo('settings', this)"><span class="icon">⚙️</span> Settings</div>
@@ -290,7 +302,7 @@
 
     <main class="main-content">
         <header class="top-bar">
-            <!-- FIXED GLOBAL SEARCH -->
+            <!-- Search Box -->
             <div class="search-box">
                 <span style="font-size:16px; color:var(--text-muted)">🔍</span>
                 <input type="text" placeholder="Process বা Category খুঁজুন..." id="searchInput" oninput="handleGlobalSearch()">
@@ -311,8 +323,8 @@
             </div>
             <div class="stats-row" id="dashboardStats">
                 <div class="stat-card">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="spinner"></div> <span style="font-size:16px; font-weight:600;">Connecting Database...</span>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div class="spinner"></div> <span style="font-size:18px; font-weight:700;">Connecting Database...</span>
                     </div>
                 </div>
             </div>
@@ -341,8 +353,8 @@
                 <h1>STEADFAST COURIER</h1>
                 <h2>Operations Prospectus & Standard Operating Procedures (SOP)</h2>
                 <div class="cover-meta">
-                    <span style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:var(--radius-full); font-weight:600;">📅 Updated: 2026</span>
-                    <span style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:var(--radius-full); font-weight:600;">✅ Workable Guidelines</span>
+                    <span style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:var(--radius-full); font-weight:700; backdrop-filter:blur(5px);">📅 Updated: 2025</span>
+                    <span style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:var(--radius-full); font-weight:700; backdrop-filter:blur(5px);">✅ Official Guidelines</span>
                 </div>
             </div>
             <div id="prospectusContent"></div>
@@ -358,15 +370,15 @@
                 <button class="btn btn-primary admin-only" onclick="navigateTo('add-process')">➕ Create Process</button>
             </div>
             <div class="card">
-                <div class="card-header">
-                    <div style="display:flex;gap:12px;">
-                        <select class="form-control" style="width:200px;" id="filterPillar" onchange="renderProcessTable()">
+                <div class="card-header" style="background:var(--bg-body); border-bottom:none; padding:16px 24px;">
+                    <div style="display:flex;gap:16px;">
+                        <select class="form-control" style="width:220px; box-shadow:var(--shadow-sm); border:none;" id="filterPillar" onchange="renderProcessTable()">
                             <option value="all">সব Pillar</option>
                             <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
                             <option value="Technical">📘 টেকনিক্যাল</option>
                             <option value="Environment">📙 পরিবেশ</option>
                         </select>
-                        <select class="form-control" style="width:200px;" id="filterCategory" onchange="renderProcessTable()">
+                        <select class="form-control" style="width:220px; box-shadow:var(--shadow-sm); border:none;" id="filterCategory" onchange="renderProcessTable()">
                             <option value="all">সব Category</option>
                         </select>
                     </div>
@@ -399,12 +411,12 @@
                 </div>
             </div>
             <div class="card">
-                <div class="card-body" style="padding:32px;">
+                <div class="card-body" style="padding:40px;">
                     <input type="hidden" id="editProcessId" value="">
                     
                     <div class="form-group">
                         <label>Process Title *</label>
-                        <input type="text" class="form-control" id="processTitle" placeholder="যেমন: পার্সেল নিখোঁজ হলে করণীয়" style="font-size:16px; padding:14px 16px;">
+                        <input type="text" class="form-control" id="processTitle" placeholder="যেমন: পার্সেল নিখোঁজ হলে করণীয়" style="font-size:18px; padding:16px 20px; font-weight:700;">
                     </div>
                     
                     <div class="form-row">
@@ -434,21 +446,21 @@
                         <div class="form-group"><label>Icon (Emoji)</label><input type="text" class="form-control" id="processIcon" value="📋"></div>
                     </div>
                     
-                    <div class="form-group"><label>Description (বিবরণ)</label><textarea class="form-control" rows="3" id="processDesc" placeholder="প্রসেস সম্পর্কে বিস্তারিত লিখুন..."></textarea></div>
+                    <div class="form-group"><label>Description (বিবরণ)</label><textarea class="form-control" rows="4" id="processDesc" placeholder="প্রসেস সম্পর্কে বিস্তারিত লিখুন... (লাইন ব্রেক কাজ করবে)"></textarea></div>
 
-                    <hr style="margin:32px 0; border:none; border-top:1px solid var(--border);">
+                    <hr style="margin:40px 0; border:none; border-top:2px dashed var(--border);">
                     
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                        <h3 style="font-size:18px; font-weight:700;">📝 Steps / Checklist</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h3 style="font-size:20px; font-weight:800;">📝 Steps / Checklist</h3>
                     </div>
                     
                     <div id="stepsBuilder"></div>
-                    <button class="btn btn-outline" style="width:100%; border:2px dashed var(--border); margin-top:10px; padding:14px; background:transparent;" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
+                    <button class="btn btn-outline" style="width:100%; border:2px dashed var(--primary); color:var(--primary); margin-top:12px; padding:16px; background:transparent; font-size:15px;" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
                     
-                    <hr style="margin:32px 0; border:none; border-top:1px solid var(--border);">
+                    <hr style="margin:40px 0; border:none; border-top:1px solid var(--border);">
                     <div style="display:flex;gap:16px; justify-content:flex-end;">
                         <button class="btn btn-outline" onclick="navigateTo('all-processes')">Cancel</button>
-                        <button class="btn btn-primary" style="padding-left:32px; padding-right:32px;" onclick="saveProcess()">💾 Save to Database</button>
+                        <button class="btn btn-primary" style="padding:12px 40px; font-size:16px;" onclick="saveProcess()">💾 Save to Database</button>
                     </div>
                 </div>
             </div>
@@ -509,10 +521,10 @@
 
 <!-- ================= MODALS ================= -->
 <div class="modal-overlay" id="loginModal">
-    <div class="modal-box" style="width:420px">
+    <div class="modal-box" style="width:420px; border:none;">
         <div class="modal-body" style="text-align:center; padding: 48px 40px;">
-            <div style="font-size:56px; margin-bottom:16px; background:var(--primary-light); width:96px; height:96px; line-height:96px; border-radius:50%; margin:0 auto 24px;">🔐</div>
-            <h2 style="font-size:24px; font-weight:800; margin-bottom:8px;">Admin Login</h2>
+            <div style="font-size:56px; margin-bottom:16px; background:var(--primary-light); color:var(--primary); width:96px; height:96px; line-height:96px; border-radius:24px; margin:0 auto 24px; box-shadow:var(--shadow);">🔐</div>
+            <h2 style="font-size:26px; font-weight:800; margin-bottom:8px;">Admin Login</h2>
             <p style="font-size:14px; color:var(--text-muted); margin-bottom:32px;">Secure Authentication Required</p>
             
             <div class="form-group" style="text-align:left;">
@@ -524,10 +536,10 @@
                 <input type="password" class="form-control" id="loginPass" placeholder="••••••">
             </div>
             
-            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:var(--radius-full);" onclick="doLogin()">Authenticate</button>
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:14px; margin-top:12px; border-radius:var(--radius-full); border:none;" onclick="closeModal('loginModal')">Return to Public View</button>
+            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:16px; border-radius:var(--radius-lg);" onclick="doLogin()">Authenticate</button>
+            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:14px; margin-top:12px; border-radius:var(--radius-lg); border:none; background:transparent; box-shadow:none;" onclick="closeModal('loginModal')" onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background='transparent'">Return to Public View</button>
             
-            <p id="loginError" style="color:var(--danger); font-size:13px; font-weight:600; margin-top:16px; display:none;">❌ Invalid Credentials!</p>
+            <p id="loginError" style="color:var(--danger); font-size:14px; font-weight:700; margin-top:16px; display:none; padding:10px; background:var(--danger-light); border-radius:8px;">❌ Invalid Credentials!</p>
         </div>
     </div>
 </div>
@@ -535,7 +547,7 @@
 <div class="modal-overlay" id="categoryModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3 id="catModalTitle" style="font-size:18px;">➕ Add Category</h3>
+            <h3 id="catModalTitle" style="font-size:20px;">➕ Add Category</h3>
             <button class="modal-close" onclick="closeModal('categoryModal')">✕</button>
         </div>
         <div class="modal-body">
@@ -567,15 +579,15 @@
 </div>
 
 <div class="modal-overlay" id="confirmModal">
-    <div class="modal-box" style="width:400px; text-align:center;">
+    <div class="modal-box" style="width:400px; text-align:center; border:none;">
         <div class="modal-body" style="padding:48px 32px 32px;">
             <div style="font-size:64px; margin-bottom:16px;">⚠️</div>
-            <h3 style="font-size:22px; font-weight:800; margin-bottom:12px;" id="confirmTitle">Are you sure?</h3>
-            <p style="font-size:14.5px; color:var(--text-muted); line-height:1.5;" id="confirmDesc">This action cannot be undone!</p>
+            <h3 style="font-size:24px; font-weight:800; margin-bottom:12px; color:var(--text-main);" id="confirmTitle">Are you sure?</h3>
+            <p style="font-size:15px; color:var(--text-muted); line-height:1.6;" id="confirmDesc">This action cannot be undone!</p>
         </div>
         <div class="modal-footer" style="justify-content:center; padding:24px; background:transparent; border:none; gap:16px;">
-            <button class="btn btn-outline" style="flex:1; border-radius:var(--radius-full)" onclick="closeModal('confirmModal')">Cancel</button>
-            <button class="btn btn-danger" style="flex:1; border-radius:var(--radius-full)" id="confirmBtn">Yes, Delete</button>
+            <button class="btn btn-outline" style="flex:1; border-radius:var(--radius-lg); padding:14px;" onclick="closeModal('confirmModal')">Cancel</button>
+            <button class="btn btn-danger" style="flex:1; border-radius:var(--radius-lg); padding:14px;" id="confirmBtn">Yes, Delete</button>
         </div>
     </div>
 </div>
@@ -680,7 +692,7 @@ function doLogin() {
     const pass = document.getElementById('loginPass').value.trim();
     
     const btn = document.querySelector('#loginModal .btn-primary');
-    btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;border-top-color:#fff;margin-right:8px"></div> Authenticating...';
+    btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;border-top-color:#fff;margin-right:8px"></div> Authenticating...';
     
     db.ref('settings/admin_credentials').once('value').then(snap => {
         let dbCreds = { username: 'admin', password: 'admin123' }; 
@@ -745,7 +757,6 @@ function navigateTo(page, el) {
     if(page === 'prospectus') renderProspectus();
 }
 
-// FIXED: GLOBAL SEARCH Redirects to Table and Filters correctly
 function handleGlobalSearch() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
     
@@ -766,7 +777,7 @@ function renderSidebarNav() {
         const cats = globalCategories.filter(c => c.pillar === pil);
         document.getElementById(id).innerHTML = cats.map(c => {
             const count = globalProcesses.filter(p => p.category === c.name).length;
-            return `<div class="nav-item" style="padding-left:36px; font-size:12.5px" onclick="filterBySideCat('${c.name}', this)">
+            return `<div class="nav-item" style="padding-left:40px; font-size:13.5px;" onclick="filterBySideCat('${c.name}', this)">
                 <span class="icon">${c.icon}</span>${c.name} ${count ? `<span class="badge">${count}</span>` : ''}
             </div>`;
         }).join('');
@@ -817,7 +828,7 @@ function renderDashboard() {
     document.getElementById('cWE').textContent = globalProcesses.filter(p=>p.pillar==='Environment').length + ' Process';
 }
 
-// Table (FIXED: Row is clickable)
+// Table (Clickable Rows)
 function renderProcessTable() {
     const fp = document.getElementById('filterPillar').value;
     const fc = document.getElementById('filterCategory').value;
@@ -838,24 +849,24 @@ function renderProcessTable() {
 
     const tb = document.getElementById('processTableBody');
     if(f.length === 0) {
-        tb.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:80px 20px; color:var(--text-muted);">
-            <div style="font-size:48px; margin-bottom:16px;">🔍</div>
-            <div style="font-size:16px; font-weight:600;">${q ? `"${q}" সম্পর্কিত কোনো ফলাফল পাওয়া যায়নি` : 'কোনো Process নেই'}</div>
+        tb.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:80px 20px; color:var(--text-muted); background:transparent;">
+            <div style="font-size:56px; margin-bottom:16px;">🔍</div>
+            <div style="font-size:18px; font-weight:700;">${q ? `"${q}" সম্পর্কিত কোনো ফলাফল পাওয়া যায়নি` : 'কোনো Process নেই'}</div>
         </td></tr>`;
         return;
     }
     
     tb.innerHTML = f.map(p => `
         <tr onclick="viewProcessPreview('${p.id}')" style="cursor: pointer;" title="ক্লিক করে বিস্তারিত দেখুন">
-            <td><div style="display:flex; align-items:center; gap:12px;">
-                <span style="font-size:20px; background:var(--hover); width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;">${p.icon || '📋'}</span>
-                <strong style="color:var(--text-main); font-size:14.5px;">${p.title}</strong>
+            <td><div style="display:flex; align-items:center; gap:16px;">
+                <span style="font-size:24px; background:var(--hover); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm);">${p.icon || '📋'}</span>
+                <strong style="color:var(--text-main); font-size:15px;">${p.title}</strong>
             </div></td>
-            <td><span style="display:inline-flex; align-items:center; gap:6px; background:var(--hover); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; color:var(--text-main); border:1px solid var(--border);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</span></td>
-            <td><span style="font-weight:600; color:var(--text-muted);">${p.category}</span></td>
+            <td><span style="display:inline-flex; align-items:center; gap:6px; background:var(--hover); padding:6px 14px; border-radius:10px; font-size:12.5px; font-weight:700; color:var(--text-main); border:1px solid var(--border);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</span></td>
+            <td><span style="font-weight:700; color:var(--text-muted); font-size:14px;">${p.category}</span></td>
             <td><span class="badge-priority ${p.priority}">${p.priority}</span></td>
             <td><span class="badge-status ${p.status}">${p.status}</span></td>
-            <td><span style="font-weight:700; color:var(--primary); background:var(--primary-light); padding:4px 10px; border-radius:20px; font-size:12px;">${p.steps ? p.steps.length : 0} Steps</span></td>
+            <td><span style="font-weight:800; color:var(--primary); background:var(--primary-light); padding:6px 14px; border-radius:var(--radius-full); font-size:12.5px;">${p.steps ? p.steps.length : 0} Steps</span></td>
             <td class="admin-only-table" onclick="event.stopPropagation()">
                 <div style="display:flex; gap:8px;">
                     <button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="editProcess('${p.id}')">✏️ Edit</button>
@@ -866,7 +877,7 @@ function renderProcessTable() {
     `).join('');
 }
 
-// Prospectus (FIXED: Chapters closed by default)
+// Prospectus
 function renderProspectus() {
     const pillars = [
         { name: 'Work Process', label: '📗 অধ্যায় ১: কাজের প্রক্রিয়া', c: 'var(--success)' },
@@ -884,24 +895,24 @@ function renderProspectus() {
             
             const processListHtml = procs.length ? procs.map(p => `
                 <div onclick="viewProcessPreview('${p.id}')" 
-                     style="display:flex; align-items:center; padding:12px 16px; background:var(--bg-card); border-radius:8px; margin-bottom:6px; cursor:pointer; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:transform 0.2s, box-shadow 0.2s;"
-                     onmouseover="this.style.transform='translateX(4px)'; this.style.borderColor='var(--primary)';" 
+                     style="display:flex; align-items:center; padding:16px 20px; background:var(--bg-card); border-radius:12px; margin-bottom:8px; cursor:pointer; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:all 0.2s;"
+                     onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='var(--primary)';" 
                      onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='var(--border)';">
-                    <span style="width:10px; height:10px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:12px;"></span>
-                    <span style="flex:1; font-size:14px; font-weight:600; color:var(--text-main);">${p.icon || '📋'} ${p.title}</span>
-                    <span style="font-size:11px; color:var(--text-muted); font-weight:600; background:var(--hover); padding:4px 10px; border-radius:20px;">SLA: ${p.sla || '-'}</span>
+                    <span style="width:12px; height:12px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:16px; box-shadow: 0 0 0 3px var(--${p.priority==='high'?'danger-light':p.priority==='medium'?'warning-light':'success-light'});"></span>
+                    <span style="flex:1; font-size:15px; font-weight:700; color:var(--text-main);">${p.icon || '📋'} ${p.title}</span>
+                    <span style="font-size:12px; color:var(--text-muted); font-weight:700; background:var(--hover); padding:6px 14px; border-radius:var(--radius-full); border:1px solid var(--border);">SLA: ${p.sla || '-'}</span>
                 </div>
-            `).join('') : `<div style="padding:12px 16px; border-radius:8px; background:var(--hover); font-size:13px; color:var(--text-muted); font-style:italic;">এই ক্যাটাগরিতে কোনো Process নেই</div>`;
+            `).join('') : `<div style="padding:16px 20px; border-radius:12px; background:var(--hover); font-size:14px; color:var(--text-muted); font-weight:500; font-style:italic; border:1px dashed var(--border);">এই ক্যাটাগরিতে কোনো Process নেই</div>`;
 
             return `
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:16px;">
                     <div onclick="toggleCategory('${catId}', this)" 
-                         style="display:flex; align-items:center; padding:12px 16px; cursor:pointer; border-radius:8px; background:var(--hover); border:1px solid var(--border); transition:background 0.2s;">
-                        <span class="cat-chevron" style="margin-right:10px; font-size:12px; transition:transform 0.3s; color:var(--text-muted);">▶</span>
-                        <span style="font-size:15px; font-weight:700; color:var(--text-main);">${cat.icon} ${cat.name}</span>
-                        <span style="margin-left:auto; font-size:12px; font-weight:600; color:var(--primary); background:var(--primary-light); padding:2px 10px; border-radius:20px;">${procs.length}টি Process</span>
+                         style="display:flex; align-items:center; padding:16px 20px; cursor:pointer; border-radius:12px; background:var(--hover); border:1px solid var(--border); transition:all 0.2s;">
+                        <span class="cat-chevron" style="margin-right:16px; font-size:12px; transition:transform 0.3s; color:var(--text-muted);">▶</span>
+                        <span style="font-size:16.5px; font-weight:800; color:var(--text-main);">${cat.icon} ${cat.name}</span>
+                        <span style="margin-left:auto; font-size:13px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:4px 14px; border-radius:var(--radius-full);">${procs.length}টি Process</span>
                     </div>
-                    <div id="${catId}" style="display:none; margin-top:8px; padding-left:12px;">
+                    <div id="${catId}" style="display:none; margin-top:12px; padding-left:30px; border-left:3px solid var(--border); margin-left:16px;">
                         ${processListHtml}
                     </div>
                 </div>
@@ -911,17 +922,17 @@ function renderProspectus() {
         const chapterId = `chapter-${pIndex}`;
         
         return `
-            <div class="card" style="margin-bottom:24px; border:none; box-shadow:var(--shadow-lg);">
-                <div class="card-header" style="border-left:6px solid ${pil.c}; cursor:pointer; background:var(--bg-card); padding:24px 32px;" 
+            <div class="card" style="margin-bottom:32px; border:none; box-shadow:var(--shadow-lg);">
+                <div class="card-header" style="border-left:8px solid ${pil.c}; cursor:pointer; background:var(--bg-card); padding:28px 32px;" 
                      onclick="toggleChapter('${chapterId}', this)">
-                    <h3 style="font-size:18px; display:flex; align-items:center; gap:12px; color:var(--text-main);">
-                        <span class="chapter-chevron" style="font-size:14px; color:var(--text-muted); transition:transform 0.3s;">▶</span>
+                    <h3 style="font-size:22px; font-weight:800; display:flex; align-items:center; gap:16px; color:var(--text-main);">
+                        <span class="chapter-chevron" style="font-size:16px; color:var(--text-muted); transition:transform 0.3s;">▶</span>
                         ${pil.label}
                     </h3>
-                    <span style="font-size:13px; font-weight:600; color:var(--text-muted); background:var(--bg-body); padding:4px 12px; border-radius:20px;">মোট: ${totalProcs}টি</span>
+                    <span style="font-size:14.5px; font-weight:800; color:var(--text-main); background:var(--hover); padding:8px 20px; border-radius:var(--radius-full); border:1px solid var(--border);">মোট: ${totalProcs}টি</span>
                 </div>
-                <div id="${chapterId}" class="card-body" style="display:none; padding:24px; background:var(--bg-body);">
-                    ${catHtml || '<p style="color:var(--text-muted); font-size:14px; text-align:center;">কোনো ক্যাটাগরি নেই</p>'}
+                <div id="${chapterId}" class="card-body" style="display:none; padding:32px; background:var(--bg-body);">
+                    ${catHtml || '<p style="color:var(--text-muted); font-size:15px; text-align:center;">কোনো ক্যাটাগরি নেই</p>'}
                 </div>
             </div>
         `;
@@ -966,7 +977,7 @@ function viewProcessPreview(id) {
             <div class="checklist-step ${isDone?'done':''}" onclick="toggleCheck('${id}', ${i}, this)">
                 <div class="step-checkbox">${isDone?'✓':(i+1)}</div>
                 <div style="flex:1;">
-                    <div style="font-size:15px; font-weight:600; color:var(--text-main); margin-bottom:6px; line-height:1.5;">${st.text}</div>
+                    <div style="font-size:15.5px; font-weight:600; color:var(--text-main); margin-bottom:8px; line-height:1.6;">${st.text}</div>
                     <div class="step-tags">
                         ${st.note ? '<span class="step-tag">📝 Note required</span>' : ''}
                         ${st.evidence ? '<span class="step-tag">📎 Evidence needed</span>' : ''}
@@ -979,52 +990,53 @@ function viewProcessPreview(id) {
 
     document.getElementById('processDetailContent').innerHTML = `
         <div style="margin-bottom:24px; display:flex; gap:16px;">
-            <button class="btn btn-outline" style="background:var(--bg-card); padding:12px 24px; border-radius:var(--radius-full); font-size:14px;" onclick="navigateTo('prospectus')">← Return to Prospectus</button>
-            <button class="btn btn-primary" style="padding:12px 24px; border-radius:var(--radius-full); font-size:14px;" onclick="navigateTo('all-processes')">📋 View All Processes</button>
+            <button class="btn btn-outline" style="background:var(--bg-card); padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="navigateTo('prospectus')">← Return to Prospectus</button>
+            <button class="btn btn-primary" style="padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="navigateTo('all-processes')">📋 View All Processes</button>
         </div>
         <div class="card" style="border:none; box-shadow:var(--shadow-lg);">
-            <div class="card-header" style="background:var(--bg-card); padding:32px; flex-direction:column; align-items:flex-start; border-bottom:2px solid var(--border);">
-                <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:20px;">
-                    <span class="badge-priority ${p.priority}" style="font-size:12px; padding:6px 16px;">${p.priority} Priority</span>
-                    <span style="font-size:13px; font-weight:700; color:var(--success); background:var(--success-light); padding:6px 16px; border-radius:var(--radius-full);">Status: ${p.status}</span>
+            <div class="card-header" style="background:var(--hover); padding:40px; flex-direction:column; align-items:flex-start; border-bottom:2px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:24px;">
+                    <span class="badge-priority ${p.priority}" style="font-size:13px; padding:8px 20px;">${p.priority} Priority</span>
+                    <span style="font-size:14px; font-weight:800; color:var(--success); background:var(--success-light); padding:8px 20px; border-radius:var(--radius-full); border:1px solid var(--success);">Status: ${p.status}</span>
                 </div>
                 
-                <h2 style="font-size:32px; font-weight:800; margin-bottom:20px; color:var(--text-main); letter-spacing:-0.5px; display:flex; align-items:center; gap:16px;">
-                    <span style="background:var(--primary-light); width:56px; height:56px; display:flex; align-items:center; justify-content:center; border-radius:16px; font-size:32px;">${p.icon || '📋'}</span>
+                <h2 style="font-size:32px; font-weight:800; margin-bottom:24px; color:var(--text-main); letter-spacing:-0.5px; display:flex; align-items:center; gap:20px;">
+                    <span style="background:var(--bg-card); border:1px solid var(--border); box-shadow:var(--shadow); width:72px; height:72px; display:flex; align-items:center; justify-content:center; border-radius:20px; font-size:40px;">${p.icon || '📋'}</span>
                     ${p.title}
                 </h2>
                 
-                <div style="display:flex; gap:16px; flex-wrap:wrap; width:100%;">
-                    <div style="flex:1; min-width:200px; background:var(--hover); padding:16px 20px; border-radius:12px; border:1px solid var(--border);">
-                        <p style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">Category</p>
-                        <p style="font-size:15px; font-weight:700; color:var(--text-main);">📂 ${p.category}</p>
+                <div style="display:flex; gap:20px; flex-wrap:wrap; width:100%;">
+                    <div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Category</p>
+                        <p style="font-size:16px; font-weight:800; color:var(--text-main);">📂 ${p.category}</p>
                     </div>
-                    <div style="flex:1; min-width:200px; background:var(--hover); padding:16px 20px; border-radius:12px; border:1px solid var(--border);">
-                        <p style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">Pillar</p>
-                        <p style="font-size:15px; font-weight:700; color:var(--text-main);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</p>
+                    <div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Pillar</p>
+                        <p style="font-size:16px; font-weight:800; color:var(--text-main);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</p>
                     </div>
-                    <div style="flex:1; min-width:200px; background:var(--hover); padding:16px 20px; border-radius:12px; border:1px solid var(--border);">
-                        <p style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">SLA (Resolution Time)</p>
-                        <p style="font-size:15px; font-weight:800; color:var(--primary);">⏰ ${p.sla || 'Not defined'}</p>
+                    <div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">SLA (Resolution Time)</p>
+                        <p style="font-size:16px; font-weight:800; color:var(--primary);">⏰ ${p.sla || 'Not defined'}</p>
                     </div>
                 </div>
             </div>
             
-            <div class="card-body" style="padding:40px 32px;">
+            <div class="card-body" style="padding:48px 40px;">
+                <!-- DESCRIPTION PRE-WRAP FIX -->
                 ${p.description ? `
-    <div style="margin-bottom:32px;">
-        <h4 style="font-size:14px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Description</h4>
-        <div style="font-size:15px; line-height:1.8; padding:20px 24px; background:var(--primary-light); color:var(--primary-dark); border-radius:12px; border-left:4px solid var(--primary); font-weight:500; white-space: pre-wrap; word-wrap: break-word;">${p.description}</div>
-    </div>
-` : ''}
+                    <div style="margin-bottom:40px;">
+                        <h4 style="font-size:15px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:16px; letter-spacing:1px;">Description</h4>
+                        <div style="font-size:16px; line-height:1.8; padding:24px 32px; background:var(--primary-light); color:var(--primary-dark); border-radius:16px; border-left:6px solid var(--primary); font-weight:500; white-space: pre-wrap; word-wrap: break-word;">${p.description}</div>
+                    </div>
+                ` : ''}
                 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="font-size:20px; font-weight:800; color:var(--text-main);">✅ Resolution Checklist</h3>
-                    <span style="font-size:13px; font-weight:700; color:white; background:var(--text-main); padding:6px 16px; border-radius:var(--radius-full);">Total ${p.steps?.length||0} Steps</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                    <h3 style="font-size:24px; font-weight:800; color:var(--text-main);">✅ Resolution Checklist</h3>
+                    <span style="font-size:14px; font-weight:800; color:white; background:var(--text-main); padding:8px 20px; border-radius:var(--radius-full); box-shadow:var(--shadow-sm);">Total ${p.steps?.length||0} Steps</span>
                 </div>
                 
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    ${stepsHtml || '<div style="text-align:center; padding:40px; background:var(--hover); border-radius:12px; border:2px dashed var(--border);"><span style="font-size:32px; display:block; margin-bottom:10px;">📝</span><span style="font-size:15px; font-weight:600; color:var(--text-muted);">No steps have been added yet.</span></div>'}
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    ${stepsHtml || '<div style="text-align:center; padding:60px; background:var(--hover); border-radius:16px; border:2px dashed var(--border);"><span style="font-size:48px; display:block; margin-bottom:16px;">📝</span><span style="font-size:16px; font-weight:700; color:var(--text-muted);">No steps have been added yet.</span></div>'}
                 </div>
             </div>
         </div>
@@ -1057,7 +1069,7 @@ function saveProcess() {
     if(!title) return toast('Process Title is required!', 'error');
     
     const btn = document.querySelector('#page-add-process .btn-primary');
-    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:10px;"></div> Saving to Database...';
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:20px;height:20px;margin-right:12px;"></div> Saving to Database...';
     
     const id = eid || 'p_' + Date.now();
     const steps = [];
@@ -1113,14 +1125,14 @@ function addBuilderStep(text='', note=true, evidence=false, mandatory=true) {
     const div = document.createElement('div');
     div.className = 'step-builder-item';
     div.innerHTML = `
-        <span style="color:var(--text-muted); cursor:grab; font-size:18px; margin:0 8px;">☰</span>
+        <span style="color:var(--text-muted); cursor:grab; font-size:20px; margin:0 12px;">☰</span>
         <input type="text" placeholder="Enter step instruction..." value="${text}">
-        <div style="display:flex; gap:12px; background:var(--bg-card); padding:8px 16px; border-radius:8px; border:1px solid var(--border);">
-            <label style="font-size:12px; font-weight:600; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px;height:16px;" ${note ? 'checked' : ''}> Note</label>
-            <label style="font-size:12px; font-weight:600; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px;height:16px;" ${evidence ? 'checked' : ''}> Evidence</label>
-            <label style="font-size:12px; font-weight:600; cursor:pointer; color:var(--danger); display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px;height:16px;" ${mandatory ? 'checked' : ''}> Mandatory</label>
+        <div style="display:flex; gap:16px; background:var(--bg-card); padding:10px 20px; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+            <label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--primary);" ${note ? 'checked' : ''}> Note</label>
+            <label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--primary);" ${evidence ? 'checked' : ''}> Evidence</label>
+            <label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--danger); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--danger);" ${mandatory ? 'checked' : ''}> Mandatory</label>
         </div>
-        <button class="btn btn-outline" style="border:none; color:var(--text-muted); font-size:20px; width:44px; height:44px; padding:0; border-radius:50%; margin-left:8px; background:transparent;" onclick="this.parentElement.remove()" onmouseover="this.style.color='var(--danger)'; this.style.background='var(--danger-light)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='transparent';">✕</button>
+        <button class="btn btn-outline" style="border:none; color:var(--text-muted); font-size:22px; width:48px; height:48px; padding:0; border-radius:50%; margin-left:12px; background:transparent;" onclick="this.parentElement.remove()" onmouseover="this.style.color='var(--danger)'; this.style.background='var(--danger-light)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='transparent';">✕</button>
     `;
     builder.appendChild(div);
 }
@@ -1141,10 +1153,10 @@ function renderCategoryTable() {
         const count = globalProcesses.filter(p => p.category === c.name).length;
         return `
         <tr>
-            <td style="font-size:24px; text-align:center;">${c.icon}</td>
-            <td><strong style="font-size:14.5px; color:var(--text-main);">${c.name}</strong></td>
-            <td><span style="background:var(--hover); padding:6px 12px; border-radius:8px; font-size:12.5px; font-weight:600; border:1px solid var(--border);">${c.pillar}</span></td>
-            <td style="font-weight:700; color:var(--primary);">${count} Processes</td>
+            <td style="font-size:28px; text-align:center;">${c.icon}</td>
+            <td><strong style="font-size:15.5px; color:var(--text-main);">${c.name}</strong></td>
+            <td><span style="background:var(--hover); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--border);">${c.pillar}</span></td>
+            <td style="font-weight:800; color:var(--primary); font-size:14.5px;">${count} Processes</td>
             <td>
                 <div class="actions">
                     <button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="openCategoryModal('${c.id}')">✏️ Edit</button>
@@ -1171,7 +1183,7 @@ function saveCategory() {
     if(!name) return toast('Category Name is required!', 'error');
 
     const btn = document.querySelector('#categoryModal .btn-primary');
-    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:16px;height:16px;margin-right:8px;"></div> Saving...';
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:8px;"></div> Saving...';
 
     const id = eid || 'c_' + Date.now();
     const obj = { id: id, name: name, pillar: document.getElementById('catPillar').value, icon: document.getElementById('catIcon').value || '📂' };
@@ -1196,12 +1208,12 @@ let deleteTarget = { type: null, id: null };
 function confirmDelete(type, id, title) {
     deleteTarget = { type, id };
     document.getElementById('confirmTitle').textContent = `Delete "${title}"?`;
-    document.getElementById('confirmDesc').textContent = type === 'category' ? 'This category and its link to processes will be lost!' : 'This action cannot be undone!';
+    document.getElementById('confirmDesc').textContent = type === 'category' ? 'This category and its link to processes will be lost forever.' : 'This action cannot be undone!';
     document.getElementById('confirmModal').classList.add('active');
 }
 
 document.getElementById('confirmBtn').addEventListener('click', function() {
-    this.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:8px;"></div> Deleting...';
+    this.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:20px;height:20px;margin-right:10px;"></div> Deleting...';
     
     if(deleteTarget.type === 'process') {
         db.ref('processes/' + deleteTarget.id).remove().then(() => {
@@ -1230,25 +1242,13 @@ function toast(msg, type) {
     const t = document.createElement('div');
     t.className = 'toast';
     const icons = { success:'✅', error:'❌', warning:'⚠️' };
-    t.innerHTML = `<span style="font-size:18px;">${icons[type] || '📌'}</span> ${msg}`;
+    t.innerHTML = `<span style="font-size:20px;">${icons[type] || '📌'}</span> ${msg}`;
     b.appendChild(t);
     setTimeout(() => { t.style.transform='translateX(120%)'; t.style.opacity='0'; setTimeout(()=>t.remove(), 400); }, 3000);
 }
 
 document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.getElementById('loginModal').classList.contains('active')) doLogin(); });
 
-// SEED DB IF EMPTY
-db.ref('categories').once('value', snap => {
-    if(!snap.exists()) {
-        const initialCats = [
-            {id:'c1', name:'পার্সেল সমস্যা', pillar:'Work Process', icon:'📦'},
-            {id:'c2', name:'ডেলিভারি সমস্যা', pillar:'Work Process', icon:'🚚'},
-            {id:'c12', name:'সফটওয়্যার গাইড', pillar:'Technical', icon:'💻'},
-            {id:'c15', name:'হাব সেটআপ', pillar:'Environment', icon:'🏗️'}
-        ];
-        initialCats.forEach(cat => db.ref('categories/' + cat.id).set(cat));
-    }
-});
 </script>
 </body>
 </html>
