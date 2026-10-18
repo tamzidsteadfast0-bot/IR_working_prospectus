@@ -1,595 +1,639 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steadfast Courier - Operations Portal</title>
-    
-    <!-- Google Fonts for Premium Look -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steadfast Courier - Operations Portal</title>
 
-    <style>
-        /* ========================================================
-           PREMIUM "EMERALD & CHARCOAL" THEME VARIABLES
-        ======================================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            /* Steadfast Green Brand Colors */
-            --primary: #059669; --primary-dark: #047857; --primary-light: #d1fae5;
-            --success: #10b981; --success-light: #ecfdf5;
-            --warning: #f59e0b; --warning-light: #fffbeb;
-            --danger: #ef4444; --danger-light: #fef2f2;
-            
-            /* Light Mode Colors */
-            --bg-body: #f1f5f9; 
-            --bg-card: #ffffff; 
-            --bg-sidebar: #0f172a; /* Dark Sidebar */
-            --text-main: #0f172a; 
-            --text-muted: #64748b;
-            --border: #e2e8f0; 
-            --hover: #f8fafc;
-            --input-bg: #f8fafc;
-            
-            --radius-sm: 8px; --radius: 14px; --radius-lg: 24px; --radius-full: 9999px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            
-            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+<!-- Google Fonts for Premium Look -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        body.dark-mode {
-            --primary: #10b981; --primary-light: rgba(16, 185, 129, 0.15);
-            
-            --bg-body: #020617; 
-            --bg-card: #0f172a; 
-            --bg-sidebar: #020617;
-            --text-main: #f8fafc; 
-            --text-muted: #94a3b8;
-            --border: #1e293b; 
-            --hover: #1e293b;
-            --input-bg: #0f172a;
-            
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-        }
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-        body { font-family: 'Inter', 'Noto Sans Bengali', sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; transition: background var(--transition), color var(--transition); overflow-x: hidden; }
+<style>
+/* ========================================================
+PREMIUM "EMERALD & CHARCOAL" THEME VARIABLES
+======================================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* ========================================================
-           ANIMATIONS
-        ======================================================== */
-        @keyframes swiftUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.99); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes flipCheck {
-            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
-            100% { transform: scale(1) rotate(0); opacity: 1; }
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+:root {
+/* Steadfast Green Brand Colors */
+--primary: #059669; --primary-dark: #047857; --primary-light: #d1fae5;
+--success: #10b981; --success-light: #ecfdf5;
+--warning: #f59e0b; --warning-light: #fffbeb;
+--danger: #ef4444; --danger-light: #fef2f2;
 
-        /* ========================================================
-           DARK SIDEBAR & LOGO HOVER ANIMATION
-        ======================================================== */
-        .app-container { display: flex; min-height: 100vh; }
-        
-        .sidebar { width: 280px; background: var(--bg-sidebar); border-right: 1px solid rgba(255,255,255,0.05); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all var(--transition); box-shadow: 4px 0 24px rgba(0,0,0,0.05); }
-        
-        .sidebar-header { padding: 20px 18px; background: var(--bg-sidebar); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        
-        /* LOGO HOVER ANIMATION CODE */
-        .logo-wrap img {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            flex-shrink: 0;
-        }
-        .logo-wrap:hover img {
-            transform: scale(1.08);
-        }
-        
-        .sidebar-nav { flex: 1; overflow-y: auto; padding: 20px 12px; }
-        .sidebar-nav::-webkit-scrollbar { width: 4px; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-        
-        .nav-section-title { padding: 14px 12px 8px; font-size: 14px !important; font-weight: 800 !important; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: color 0.2s; }
-        .nav-section-title:hover { color: #f8fafc; }
-        .nav-section-title .chevron { transition: transform 0.3s; font-size: 10px; }
-        
-        .nav-item { display: flex; align-items: center; padding: 11px 16px !important; cursor: pointer; font-size: 14.5px !important; font-weight: 600 !important; color: #cbd5e1; transition: all 0.2s; border-radius: 10px; margin-bottom: 6px; }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: #f8fafc; transform: translateX(4px); }
-        .nav-item.active { background: rgba(5, 150, 105, 0.15); color: var(--primary); box-shadow: inset 3px 0 0 var(--primary); }
-        .nav-item .icon { margin-right: 12px; font-size: 20px !important; width: 24px; text-align: center; transition: transform 0.2s; }
-        .nav-item:hover .icon { transform: scale(1.15) rotate(5deg); }
-        .nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); font-weight: 700; box-shadow: 0 2px 4px rgba(5,150,105,0.3); }
-        
-        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-sidebar); }
-        .sidebar-footer button { width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13.5px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s; background: rgba(255,255,255,0.03); color: #f8fafc; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .sidebar-footer button:hover { border-color: var(--primary); background: rgba(5, 150, 105, 0.1); color: var(--primary); }
+/* Light Mode Colors */
+--bg-body: #f1f5f9;
+--bg-card: #ffffff;
+--bg-sidebar: #0f172a; /* Dark Sidebar */
+--text-main: #0f172a;
+--text-muted: #64748b;
+--border: #e2e8f0;
+--hover: #f8fafc;
+--input-bg: #f8fafc;
 
-        .admin-only { display: none !important; }
-        .is-admin .admin-only { display: flex !important; }
-        .is-admin .admin-only-table { display: table-cell !important; }
-        .admin-only-table { display: none !important; }
+--radius-sm: 8px; --radius: 14px; --radius-lg: 24px; --radius-full: 9999px;
+--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+--shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+--shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.12);
 
-        /* ========================================================
-           FLOATING MAIN & TOPBAR
-        ======================================================== */
-        .main-content { flex: 1; margin-left: 280px; display: flex; flex-direction: column; background: var(--bg-body); padding: 20px; }
-        
-        .top-bar { height: 72px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm); transition: background var(--transition); margin-bottom: 24px; }
-        
-        .search-box { display: flex; align-items: center; background: var(--input-bg); border-radius: var(--radius-full); padding: 10px 20px; width: 400px; border: 1px solid var(--border); transition: all 0.3s; }
-        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); transform: translateY(-1px); }
-        .search-box input { border: none; background: none; outline: none; width: 100%; font-size: 14.5px; margin-left: 12px; color: var(--text-main); font-family: inherit; font-weight: 500; }
-        
-        .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
-        .theme-btn { background: var(--input-bg); border: 1px solid var(--border); font-size: 18px; cursor: pointer; color: var(--text-main); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .theme-btn:hover { transform: rotate(20deg) scale(1.1); border-color: var(--primary); color: var(--primary); box-shadow: 0 4px 10px var(--primary-light); }
-        
-        .role-badge { padding: 8px 16px; border-radius: var(--radius-full); font-size: 12px; font-weight: 800; color: white; letter-spacing: 0.5px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 6px; }
-        .role-public { background: linear-gradient(135deg, #10b981, #059669); }
-        .role-admin { background: linear-gradient(135deg, #ef4444, #dc2626); }
+--transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-        /* ========================================================
-           PAGE, CARDS & STATS
-        ======================================================== */
-        .page-content { flex: 1; padding: 10px; overflow-y: auto; display: none; animation: swiftUp 0.5s forwards; }
-        .page-content.active { display: block; }
-        
-        .page-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .page-header h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
-        .page-header p { color: var(--text-muted); font-size: 15px; margin-top: 4px; font-weight: 500; }
-        
-        .card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-        .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); }
-        .card-header h3 { font-size: 16px; font-weight: 800; color: var(--text-main); }
-        .card-body { padding: 24px; }
+body.dark-mode {
+--primary: #10b981; --primary-light: rgba(16, 185, 129, 0.15);
 
-        /* Stats Cards */
-        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
-        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; position: relative; overflow: hidden; }
-        .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); opacity: 0; transition: 0.3s; }
-        .stat-card:hover::before { opacity: 1; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
-        .stat-info { display: flex; flex-direction: column; }
-        .stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .stat-value { font-size: 36px; font-weight: 800; color: var(--text-main); line-height: 1; }
-        .stat-icon-wrap { width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+--bg-body: #020617;
+--bg-card: #0f172a;
+--bg-sidebar: #020617;
+--text-main: #f8fafc;
+--text-muted: #94a3b8;
+--border: #1e293b;
+--hover: #1e293b;
+--input-bg: #0f172a;
 
-        /* Pillar Cards */
-        .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px; }
-        .pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px 24px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; text-align: center; }
-        .pillar-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow-hover); border-color: var(--primary); }
-        .pillar-card h3 { font-size: 18px; font-weight: 800; margin: 16px 0 8px; color: var(--text-main); }
-        .pillar-card p { font-size: 14px; color: var(--text-muted); font-weight: 600; }
-        .pillar-card .p-icon { font-size: 36px; display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; background: var(--input-bg); border-radius: 24px; box-shadow: var(--shadow-sm); transition: transform 0.3s; }
-        .pillar-card:hover .p-icon { transform: rotate(10deg) scale(1.1); }
+--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+--shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
 
-        /* ========================================================
-           TABLES & BADGES
-        ======================================================== */
-        .process-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
-        .process-table th { background: var(--bg-body); padding: 16px 20px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; border-bottom: 2px solid var(--border); letter-spacing: 0.5px; }
-        .process-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); transition: background 0.2s; color: var(--text-main); }
-        .process-table tr { transition: all 0.2s; cursor: pointer; }
-        .process-table tr:hover td { background: var(--primary-light); }
-        
-        .badge-priority, .badge-status { padding: 6px 14px; border-radius: var(--radius-full); font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; box-shadow: var(--shadow-sm); }
-        .badge-priority.high { background: var(--danger); color: white; }
-        .badge-priority.medium { background: var(--warning); color: white; }
-        .badge-priority.low { background: var(--success); color: white; }
-        .badge-status.active { background: var(--success-light); color: var(--success); border: 1px solid var(--success); }
-        .badge-status.draft { background: var(--hover); color: var(--text-muted); border: 1px solid var(--border); }
+body { font-family: 'Inter', 'Noto Sans Bengali', sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; transition: background var(--transition), color var(--transition); overflow-x: hidden; }
 
-        /* ========================================================
-           BUTTONS & FORMS
-        ======================================================== */
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; font-family: inherit; }
-        .btn:active { transform: scale(0.95); }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); } 
-        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 6px 15px rgba(5, 150, 105, 0.4); transform: translateY(-2px); }
-        .btn-success { background: var(--success); color: white; } 
-        .btn-danger { background: var(--danger); color: white; } 
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-outline { background: var(--bg-card); color: var(--text-main); border-color: var(--border); box-shadow: var(--shadow-sm); } 
-        .btn-outline:hover { background: var(--hover); border-color: var(--text-muted); transform: translateY(-2px); }
-        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+/* ========================================================
+ANIMATIONS
+======================================================== */
+@keyframes swiftUp {
+from { opacity: 0; transform: translateY(20px) scale(0.99); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes flipCheck {
+0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
-        .form-control { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; font-weight: 500; outline: none; background: var(--input-bg); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); background: var(--bg-card); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+/* ========================================================
+DARK SIDEBAR & LOGO HOVER ANIMATION
+======================================================== */
+.app-container { display: flex; min-height: 100vh; }
 
-        .step-builder-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; border: 2px dashed var(--border); border-radius: 10px; background: var(--hover); transition: all 0.2s; }
-        .step-builder-item:focus-within { border-style: solid; border-color: var(--primary); background: var(--bg-card); box-shadow: var(--shadow-sm); }
-        .step-builder-item input[type="text"] { flex: 1; border: none; background: transparent; font-size: 14.5px; font-weight: 500; outline: none; color: var(--text-main); font-family: inherit; }
+.sidebar { width: 280px; background: var(--bg-sidebar); border-right: 1px solid rgba(255,255,255,0.05); position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: all var(--transition); box-shadow: 4px 0 24px rgba(0,0,0,0.05); }
 
-        /* ========================================================
-           CHECKLIST & PROSPECTUS
-        ======================================================== */
-        .prospectus-cover { background: linear-gradient(135deg, #0f172a, #059669); color: white; border-radius: var(--radius-lg); padding: 80px 40px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
-        .prospectus-cover::after { content: ''; position: absolute; width: 400px; height: 400px; background: rgba(255,255,255,0.05); border-radius: 50%; top: -150px; right: -100px; filter: blur(40px); pointer-events: none; }
-        .prospectus-cover h1 { font-size: 40px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .prospectus-cover h2 { font-size: 18px; font-weight: 500; opacity: 0.9; margin-bottom: 24px; position: relative; z-index: 1; }
-        
-        .checklist-step { display: flex; align-items: flex-start; padding: 16px 20px; margin-bottom: 12px; border: 2px solid var(--border); border-radius: 12px; background: var(--bg-card); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .checklist-step:hover { border-color: var(--primary); transform: translateX(6px); box-shadow: var(--shadow); }
-        .checklist-step.done { background: var(--success-light); border-color: var(--success); }
-        
-        .step-checkbox { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); margin-right: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: transparent; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--input-bg); }
-        .checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; animation: flipCheck 0.4s forwards; }
-        
-        .step-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        .step-tag { font-size: 11px; padding: 4px 12px; border-radius: var(--radius-full); background: var(--hover); color: var(--text-muted); font-weight: 700; border: 1px solid var(--border); }
+.sidebar-header { padding: 20px 18px; background: var(--bg-sidebar); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
 
-        /* ========================================================
-           MODALS, SPINNER & TOAST
-        ======================================================== */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        
-        .modal-box { background: var(--bg-card); border-radius: 24px; width: 480px; max-width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid var(--border); transform: scale(0.95) translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
-        
-        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-header h3 { font-size: 20px; font-weight: 800; }
-        .modal-close { background: var(--hover); border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .modal-close:hover { background: var(--danger-light); color: var(--danger); transform: rotate(90deg); }
-        .modal-body { padding: 32px 24px; }
-        .modal-footer { padding: 20px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--hover); border-radius: 0 0 24px 24px; }
+/* LOGO HOVER ANIMATION CODE */
+.logo-wrap img {
+transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+flex-shrink: 0;
+}
+.logo-wrap:hover img {
+transform: scale(1.08);
+}
 
-        .spinner { border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 20px 12px; }
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
-        .toast-container { position: fixed; bottom: 32px; right: 32px; z-index: 99999; }
-        .toast { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius); margin-top: 12px; font-size: 14.5px; font-weight: 600; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); animation: swiftUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-left: 5px solid var(--success); }
-    </style>
+.nav-section-title { padding: 14px 12px 8px; font-size: 14px !important; font-weight: 800 !important; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: color 0.2s; }
+.nav-section-title:hover { color: #f8fafc; }
+.nav-section-title .chevron { transition: transform 0.3s; font-size: 10px; }
+
+.nav-item { display: flex; align-items: center; padding: 11px 16px !important; cursor: pointer; font-size: 14.5px !important; font-weight: 600 !important; color: #cbd5e1; transition: all 0.2s; border-radius: 10px; margin-bottom: 6px; }
+.nav-item:hover { background: rgba(255,255,255,0.05); color: #f8fafc; transform: translateX(4px); }
+.nav-item.active { background: rgba(5, 150, 105, 0.15); color: var(--primary); box-shadow: inset 3px 0 0 var(--primary); }
+.nav-item .icon { margin-right: 12px; font-size: 20px !important; width: 24px; text-align: center; transition: transform 0.2s; }
+.nav-item:hover .icon { transform: scale(1.15) rotate(5deg); }
+.nav-item .badge { margin-left: auto; background: var(--primary); color: white; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); font-weight: 700; box-shadow: 0 2px 4px rgba(5,150,105,0.3); }
+
+.sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-sidebar); }
+.sidebar-footer button { width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13.5px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s; background: rgba(255,255,255,0.03); color: #f8fafc; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.sidebar-footer button:hover { border-color: var(--primary); background: rgba(5, 150, 105, 0.1); color: var(--primary); }
+
+.admin-only { display: none !important; }
+.is-admin .admin-only { display: flex !important; }
+.is-admin .admin-only-table { display: table-cell !important; }
+.admin-only-table { display: none !important; }
+/* Admin-only পেজগুলো শুধু active থাকলেই দেখাবে */
+.is-admin .page-content.admin-only:not(.active) { display: none !important; }
+.is-admin .page-content.admin-only.active { display: block !important; }
+
+/* ========================================================
+FLOATING MAIN & TOPBAR
+======================================================== */
+.main-content { flex: 1; margin-left: 280px; display: flex; flex-direction: column; background: var(--bg-body); padding: 20px; }
+
+.top-bar { height: 72px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm); transition: background var(--transition); margin-bottom: 24px; }
+
+.search-box { display: flex; align-items: center; background: var(--input-bg); border-radius: var(--radius-full); padding: 10px 20px; width: 400px; border: 1px solid var(--border); transition: all 0.3s; }
+.search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); transform: translateY(-1px); }
+.search-box input { border: none; background: none; outline: none; width: 100%; font-size: 14.5px; margin-left: 12px; color: var(--text-main); font-family: inherit; font-weight: 500; }
+
+.top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.theme-btn { background: var(--input-bg); border: 1px solid var(--border); font-size: 18px; cursor: pointer; color: var(--text-main); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+.theme-btn:hover { transform: rotate(20deg) scale(1.1); border-color: var(--primary); color: var(--primary); box-shadow: 0 4px 10px var(--primary-light); }
+
+.role-badge { padding: 8px 16px; border-radius: var(--radius-full); font-size: 12px; font-weight: 800; color: white; letter-spacing: 0.5px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 6px; }
+.role-public { background: linear-gradient(135deg, #10b981, #059669); }
+.role-admin { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+/* ========================================================
+PAGE, CARDS & STATS
+======================================================== */
+.page-content { flex: 1; padding: 10px; overflow-y: auto; display: none; animation: swiftUp 0.5s forwards; }
+.page-content.active { display: block; }
+
+.page-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
+.page-header h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+.page-header p { color: var(--text-muted); font-size: 15px; margin-top: 4px; font-weight: 500; }
+
+.card { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); }
+.card-header h3 { font-size: 16px; font-weight: 800; color: var(--text-main); }
+.card-body { padding: 24px; }
+
+/* Stats Cards */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
+.stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); opacity: 0; transition: 0.3s; }
+.stat-card:hover::before { opacity: 1; }
+.stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+.stat-info { display: flex; flex-direction: column; }
+.stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.stat-value { font-size: 36px; font-weight: 800; color: var(--text-main); line-height: 1; }
+.stat-icon-wrap { width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+
+/* Pillar Cards (এখন ২টি) */
+.pillar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 32px; }
+.pillar-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px 24px; box-shadow: var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; text-align: center; }
+.pillar-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+.pillar-card h3 { font-size: 18px; font-weight: 800; margin: 16px 0 8px; color: var(--text-main); }
+.pillar-card p { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+.pillar-card .p-icon { font-size: 36px; display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; background: var(--input-bg); border-radius: 24px; box-shadow: var(--shadow-sm); transition: transform 0.3s; }
+.pillar-card:hover .p-icon { transform: rotate(10deg) scale(1.1); }
+
+/* ========================================================
+TABLES & BADGES
+======================================================== */
+.process-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+.process-table th { background: var(--bg-body); padding: 16px 20px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; border-bottom: 2px solid var(--border); letter-spacing: 0.5px; }
+.process-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); transition: background 0.2s; color: var(--text-main); }
+.process-table tr { transition: all 0.2s; cursor: pointer; }
+.process-table tr:hover td { background: var(--primary-light); }
+
+.badge-priority, .badge-status { padding: 6px 14px; border-radius: var(--radius-full); font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; box-shadow: var(--shadow-sm); }
+.badge-priority.high { background: var(--danger); color: white; }
+.badge-priority.medium { background: var(--warning); color: white; }
+.badge-priority.low { background: var(--success); color: white; }
+.badge-status.active { background: var(--success-light); color: var(--success); border: 1px solid var(--success); }
+.badge-status.draft { background: var(--hover); color: var(--text-muted); border: 1px solid var(--border); }
+
+/* ========================================================
+BUTTONS & FORMS
+======================================================== */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; font-family: inherit; }
+.btn:active { transform: scale(0.95); }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); }
+.btn-primary:hover { background: var(--primary-dark); box-shadow: 0 6px 15px rgba(5, 150, 105, 0.4); transform: translateY(-2px); }
+.btn-success { background: var(--success); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-warning { background: var(--warning); color: white; }
+.btn-outline { background: var(--bg-card); color: var(--text-main); border-color: var(--border); box-shadow: var(--shadow-sm); }
+.btn-outline:hover { background: var(--hover); border-color: var(--text-muted); transform: translateY(-2px); }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 13.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
+.form-control { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; font-weight: 500; outline: none; background: var(--input-bg); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
+.form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); background: var(--bg-card); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.step-builder-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; border: 2px dashed var(--border); border-radius: 10px; background: var(--hover); transition: all 0.2s; }
+.step-builder-item:focus-within { border-style: solid; border-color: var(--primary); background: var(--bg-card); box-shadow: var(--shadow-sm); }
+.step-builder-item input[type="text"] { flex: 1; border: none; background: transparent; font-size: 14.5px; font-weight: 500; outline: none; color: var(--text-main); font-family: inherit; }
+
+/* ========================================================
+CHECKLIST & PROSPECTUS
+======================================================== */
+.prospectus-cover { background: linear-gradient(135deg, #0f172a, #059669); color: white; border-radius: var(--radius-lg); padding: 80px 40px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+.prospectus-cover::after { content: ''; position: absolute; width: 400px; height: 400px; background: rgba(255,255,255,0.05); border-radius: 50%; top: -150px; right: -100px; filter: blur(40px); pointer-events: none; }
+.prospectus-cover h1 { font-size: 40px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.prospectus-cover h2 { font-size: 18px; font-weight: 500; opacity: 0.9; margin-bottom: 24px; position: relative; z-index: 1; }
+
+.checklist-step { display: flex; align-items: flex-start; padding: 16px 20px; margin-bottom: 12px; border: 2px solid var(--border); border-radius: 12px; background: var(--bg-card); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+.checklist-step:hover { border-color: var(--primary); transform: translateX(6px); box-shadow: var(--shadow); }
+.checklist-step.done { background: var(--success-light); border-color: var(--success); }
+
+.step-checkbox { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); margin-right: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: transparent; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--input-bg); }
+.checklist-step.done .step-checkbox { background: var(--success); border-color: var(--success); color: white; animation: flipCheck 0.4s forwards; }
+
+.step-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.step-tag { font-size: 11px; padding: 4px 12px; border-radius: var(--radius-full); background: var(--hover); color: var(--text-muted); font-weight: 700; border: 1px solid var(--border); }
+
+/* ========================================================
+MODALS, SPINNER & TOAST
+======================================================== */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+.modal-overlay.active { display: flex; opacity: 1; }
+
+.modal-box { background: var(--bg-card); border-radius: 24px; width: 480px; max-width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid var(--border); transform: scale(0.95) translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+
+.modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-header h3 { font-size: 20px; font-weight: 800; }
+.modal-close { background: var(--hover); border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.modal-close:hover { background: var(--danger-light); color: var(--danger); transform: rotate(90deg); }
+.modal-body { padding: 32px 24px; }
+.modal-footer { padding: 20px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--hover); border-radius: 0 0 24px 24px; }
+
+.spinner { border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+
+.toast-container { position: fixed; bottom: 32px; right: 32px; z-index: 99999; }
+.toast { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--text-main); color: var(--bg-body); border-radius: var(--radius); margin-top: 12px; font-size: 14.5px; font-weight: 600; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); animation: swiftUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-left: 5px solid var(--success); }
+/* ========================================================
+WELCOME GATE (সাইটে ঢুকলে প্রথম পর্দা)
+======================================================== */
+.gate { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at 20% 20%, #065f46 0%, transparent 45%), radial-gradient(circle at 85% 80%, #047857 0%, transparent 40%), #0f172a; transition: opacity 0.5s ease, transform 0.5s ease; overflow-y: auto; }
+.gate.hide { opacity: 0; transform: scale(1.03); pointer-events: none; }
+.gate-inner { width: 100%; max-width: 860px; text-align: center; animation: swiftUp 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+.gate-logo { width: 84px; height: 84px; object-fit: contain; background: #fff; border-radius: 22px; padding: 8px; box-shadow: 0 12px 30px rgba(0,0,0,0.35); margin-bottom: 20px; }
+.gate-title { font-size: 38px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; line-height: 1.2; }
+.gate-sub { font-size: 16px; color: #a7f3d0; font-weight: 500; margin: 10px 0 40px; }
+.gate-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.gate-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 28px; padding: 40px 28px; cursor: pointer; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); color: #f8fafc; }
+.gate-card:hover { transform: translateY(-8px); background: rgba(255,255,255,0.12); border-color: #34d399; box-shadow: 0 24px 50px rgba(0,0,0,0.35); }
+.gate-card.admin:hover { border-color: #f87171; }
+.gate-card .g-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 40px; transition: transform 0.3s; }
+.gate-card:hover .g-icon { transform: scale(1.1) rotate(6deg); }
+.gate-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.gate-card p { font-size: 14px; color: #cbd5e1; font-weight: 500; line-height: 1.6; }
+.gate-card .g-cta { display: inline-block; margin-top: 22px; padding: 10px 26px; border-radius: 9999px; font-size: 14px; font-weight: 700; color: #fff; }
+.gate-admin-form { max-width: 420px; margin: 0 auto; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 28px; padding: 36px 32px; text-align: left; display: none; animation: swiftUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.gate-admin-form label { display: block; font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px; }
+.gate-admin-form input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.15); background: rgba(15,23,42,0.6); color: #f8fafc; font-size: 15px; font-family: inherit; outline: none; margin-bottom: 18px; transition: all 0.2s; }
+.gate-admin-form input:focus { border-color: #34d399; box-shadow: 0 0 0 4px rgba(52,211,153,0.2); }
+.gate-err { display: none; color: #fecaca; background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+@media (max-width: 700px) { .gate-choices { grid-template-columns: 1fr; } .gate-title { font-size: 28px; } }
+</style>
 </head>
 <body>
 
-    <aside class="sidebar" id="sidebar">
-        <!-- OFFICIAL LOGO WITH IMAGE & HOVER ANIMATION -->
-        <div class="sidebar-header">
-            <div class="logo-wrap" onclick="navigateTo('dashboard', document.querySelector('.nav-item'))">
-                <img src="steadfast-logo.png" alt="Steadfast Logo" style="width:44px; height:44px; object-fit:contain; border-radius:8px; background:#ffffff; padding:4px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
-                <div>
-                    <h2 style="font-size:15px; font-weight:800; color:#f8fafc; line-height:1.2; margin:0;">Steadfast Courier</h2>
-                    <p style="font-size:11px; color:#94a3b8; font-weight:500; margin:0;">Issue Resolution Prospectus</p>
-                </div>
-            </div>
-        </div>
+<!-- ================= WELCOME GATE ================= -->
+<div class="gate" id="gate">
+<div class="gate-inner">
+<img class="gate-logo" src="steadfast-logo.png" alt="Steadfast Logo" onerror="this.style.display='none'">
+<h1 class="gate-title">Steadfast Courier</h1>
+<p class="gate-sub">Operations Prospectus Portal-এ স্বাগতম</p>
 
-        <nav class="sidebar-nav">
-            <div class="nav-section-title" style="cursor:default;"><span>Main Menu</span></div>
-            <div class="nav-item active" onclick="navigateTo('dashboard', this)"><span class="icon">📊</span> Dashboard</div>
-            <div class="nav-item" onclick="navigateTo('prospectus', this)"><span class="icon">📖</span> Prospectus</div>
-            <div class="nav-item" onclick="navigateTo('all-processes', this)"><span class="icon">📋</span> All Processes <span class="badge" id="bTotal">0</span></div>
+<div class="gate-choices" id="gateChoices">
+<div class="gate-card" onclick="enterPortal()">
+<div class="g-icon" style="background:rgba(16,185,129,0.2);">👋</div>
+<h3>Welcome</h3>
+<p>Prospectus ও সব Process দেখুন এবং চেকলিস্ট অনুসরণ করুন</p>
+<span class="g-cta" style="background:linear-gradient(135deg,#10b981,#059669);">পোর্টালে প্রবেশ করুন →</span>
+</div>
+<div class="gate-card admin" onclick="gateShowAdmin()">
+<div class="g-icon" style="background:rgba(239,68,68,0.2);">🛡️</div>
+<h3>Admin Login</h3>
+<p>Process, Category ও Settings ম্যানেজ করতে Admin হিসেবে প্রবেশ করুন</p>
+<span class="g-cta" style="background:linear-gradient(135deg,#ef4444,#dc2626);">লগইন করুন →</span>
+</div>
+</div>
 
-            <div class="nav-section-title" onclick="toggleNavGroup('navWP', this)" style="margin-top:10px;">
-                <span>📗 কাজের প্রক্রিয়া</span> <span class="chevron" style="transition:0.3s">▼</span>
-            </div>
-            <div id="navWP" class="nav-group"></div>
+<div class="gate-admin-form" id="gateAdminForm">
+<h2 style="font-size:24px; font-weight:800; color:#f8fafc; margin-bottom:6px; text-align:center;">🔐 Admin Login</h2>
+<p style="font-size:14px; color:#94a3b8; margin-bottom:26px; text-align:center;">Secure Authentication Required</p>
+<div class="gate-err" id="gateErr">❌ Username বা Password ভুল!</div>
+<label>Username</label>
+<input type="text" id="gateUser" placeholder="Enter username" autocomplete="username">
+<label>Password</label>
+<input type="password" id="gatePass" placeholder="••••••" autocomplete="current-password">
+<button class="btn btn-primary" id="gateLoginBtn" style="width:100%; padding:14px; font-size:16px; border-radius:14px;" onclick="gateLogin()">🔐 Login & Enter</button>
+<button class="btn" style="width:100%; margin-top:10px; padding:12px; background:transparent; color:#cbd5e1;" onclick="gateBack()">← Back</button>
+</div>
+</div>
+</div>
 
-            <div class="nav-section-title" onclick="toggleNavGroup('navTW', this)" style="margin-top:10px;">
-                <span>📘 টেকনিক্যাল</span> <span class="chevron" style="transition:0.3s">▼</span>
-            </div>
-            <div id="navTW" class="nav-group"></div>
+<aside class="sidebar" id="sidebar">
+<!-- OFFICIAL LOGO WITH IMAGE & HOVER ANIMATION -->
+<div class="sidebar-header">
+<div class="logo-wrap" onclick="navigateTo('dashboard', document.querySelector('.nav-item'))">
+<img src="steadfast-logo.png" alt="Steadfast Logo" style="width:44px; height:44px; object-fit:contain; border-radius:8px; background:#ffffff; padding:4px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+<div>
+<h2 style="font-size:15px; font-weight:800; color:#f8fafc; line-height:1.2; margin:0;">Steadfast Courier</h2>
+<p style="font-size:11px; color:#94a3b8; font-weight:500; margin:0;">Issue Resolution Prospectus</p>
+</div>
+</div>
+</div>
 
-            <div class="nav-section-title" onclick="toggleNavGroup('navWE', this)" style="margin-top:10px;">
-                <span>📙 পরিবেশ</span> <span class="chevron" style="transition:0.3s">▼</span>
-            </div>
-            <div id="navWE" class="nav-group"></div>
+<nav class="sidebar-nav">
+<div class="nav-section-title" style="cursor:default;"><span>Main Menu</span></div>
+<div class="nav-item active" onclick="navigateTo('dashboard', this)"><span class="icon">📊</span> Dashboard</div>
+<div class="nav-item" onclick="navigateTo('prospectus', this)"><span class="icon">📖</span> Prospectus</div>
+<div class="nav-item" onclick="navigateTo('all-processes', this)"><span class="icon">📋</span> All Processes <span class="badge" id="bTotal">0</span></div>
 
-            <div class="nav-section-title admin-only" style="margin-top:16px; cursor:default;"><span>Admin Controls</span></div>
-            <div class="nav-item admin-only" onclick="navigateTo('add-process', this)"><span class="icon">➕</span> Add Process</div>
-            <div class="nav-item admin-only" onclick="navigateTo('manage-categories', this)"><span class="icon">📂</span> Categories</div>
-            <div class="nav-item admin-only" onclick="navigateTo('settings', this)"><span class="icon">⚙️</span> Settings</div>
-        </nav>
-        <div class="sidebar-footer">
-            <button id="authBtn" onclick="toggleAuth()">🔐 Admin Login</button>
-        </div>
-    </aside>
+<div class="nav-section-title" onclick="toggleNavGroup('navWP', this)" style="margin-top:10px;">
+<span>📗 কাজের প্রক্রিয়া</span> <span class="chevron" style="transition:0.3s">▼</span>
+</div>
+<div id="navWP" class="nav-group"></div>
 
-    <main class="main-content">
-        <header class="top-bar">
-            <!-- Search Box -->
-            <div class="search-box">
-                <span style="font-size:16px; color:var(--text-muted)">🔍</span>
-                <input type="text" placeholder="Process বা Category খুঁজুন..." id="searchInput" oninput="handleGlobalSearch()">
-            </div>
-            <div class="top-bar-right">
-                <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
-                <span class="role-badge role-public" id="roleBadge">👁️ PUBLIC VIEW</span>
-            </div>
-        </header>
+<div class="nav-section-title" onclick="toggleNavGroup('navTW', this)" style="margin-top:10px;">
+<span>📘 টেকনিক্যাল</span> <span class="chevron" style="transition:0.3s">▼</span>
+</div>
+<div id="navTW" class="nav-group"></div>
 
-        <!-- DASHBOARD -->
-        <div class="page-content active" id="page-dashboard">
-            <div class="page-header">
-                <div>
-                    <h1>Overview Dashboard</h1>
-                    <p>লাইভ ডেটা ও প্রস্পেক্টাস স্ট্যাটাস</p>
-                </div>
-            </div>
-            <div class="stats-row" id="dashboardStats">
-                <div class="stat-card">
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <div class="spinner"></div> <span style="font-size:18px; font-weight:700;">Connecting Database...</span>
-                    </div>
-                </div>
-            </div>
-            <div class="pillar-grid">
-                <div class="pillar-card wp" onclick="navigateTo('all-processes')">
-                    <div class="p-icon" style="color:var(--success); background:var(--success-light)">📗</div>
-                    <h3>কাজের প্রক্রিয়া</h3>
-                    <p id="cWP">0টি Process</p>
-                </div>
-                <div class="pillar-card tw" onclick="navigateTo('all-processes')">
-                    <div class="p-icon" style="color:var(--primary); background:var(--primary-light)">📘</div>
-                    <h3>টেকনিক্যাল কাজ</h3>
-                    <p id="cTW">0টি Process</p>
-                </div>
-                <div class="pillar-card we" onclick="navigateTo('all-processes')">
-                    <div class="p-icon" style="color:var(--warning); background:var(--warning-light)">📙</div>
-                    <h3>কাজের পরিবেশ</h3>
-                    <p id="cWE">0টি Process</p>
-                </div>
-            </div>
-        </div>
+<div class="nav-section-title admin-only" style="margin-top:16px; cursor:default;"><span>Admin Controls</span></div>
+<div class="nav-item admin-only" onclick="navigateTo('add-process', this)"><span class="icon">➕</span> Add Process</div>
+<div class="nav-item admin-only" onclick="navigateTo('manage-categories', this)"><span class="icon">📂</span> Categories</div>
+<div class="nav-item admin-only" onclick="navigateTo('settings', this)"><span class="icon">⚙️</span> Settings</div>
+</nav>
+<div class="sidebar-footer">
+<button id="authBtn" onclick="toggleAuth()">🔐 Admin Login</button>
+</div>
+</aside>
 
-        <!-- PROSPECTUS VIEW -->
-        <div class="page-content" id="page-prospectus">
-            <div class="prospectus-cover">
-                <h1>STEADFAST COURIER</h1>
-                <h2>Operations Prospectus & Standard Operating Procedures (SOP)</h2>
-                <div class="cover-meta">
-                    <span style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:var(--radius-full); font-weight:700; backdrop-filter:blur(5px);">📅 Updated: 2026</span>
-                    <span style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:var(--radius-full); font-weight:700; backdrop-filter:blur(5px);">✅ Official Guidelines</span>
-                </div>
-            </div>
-            <div id="prospectusContent"></div>
-        </div>
+<main class="main-content">
+<header class="top-bar">
+<!-- Search Box -->
+<div class="search-box">
+<span style="font-size:16px; color:var(--text-muted)">🔍</span>
+<input type="text" placeholder="Process বা Category খুঁজুন..." id="searchInput" oninput="handleGlobalSearch()">
+</div>
+<div class="top-bar-right">
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
+<span class="role-badge role-public" id="roleBadge">👁️ PUBLIC VIEW</span>
+</div>
+</header>
 
-        <!-- ALL PROCESSES -->
-        <div class="page-content" id="page-all-processes">
-            <div class="page-header">
-                <div>
-                    <h1>All Processes</h1>
-                    <p>সম্পূর্ণ লাইভ তালিকা (যেকোনো লাইনে ক্লিক করে বিস্তারিত দেখুন)</p>
-                </div>
-                <button class="btn btn-primary admin-only" onclick="navigateTo('add-process')">➕ Create Process</button>
-            </div>
-            <div class="card">
-                <div class="card-header" style="background:var(--bg-body); border-bottom:none; padding:16px 24px;">
-                    <div style="display:flex;gap:16px;">
-                        <select class="form-control" style="width:220px; box-shadow:var(--shadow-sm); border:none;" id="filterPillar" onchange="renderProcessTable()">
-                            <option value="all">সব Pillar</option>
-                            <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
-                            <option value="Technical">📘 টেকনিক্যাল</option>
-                            <option value="Environment">📙 পরিবেশ</option>
-                        </select>
-                        <select class="form-control" style="width:220px; box-shadow:var(--shadow-sm); border:none;" id="filterCategory" onchange="renderProcessTable()">
-                            <option value="all">সব Category</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="card-body" style="padding:0;overflow-x:auto;">
-                    <table class="process-table">
-                        <thead>
-                            <tr>
-                                <th>Process Title</th>
-                                <th>Pillar</th>
-                                <th>Category</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Steps</th>
-                                <th class="admin-only-table">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="processTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<!-- DASHBOARD -->
+<div class="page-content active" id="page-dashboard">
+<div class="page-header">
+<div>
+<h1>Overview Dashboard</h1>
+<p>লাইভ ডেটা ও প্রস্পেক্টাস স্ট্যাটাস</p>
+</div>
+</div>
+<div class="stats-row" id="dashboardStats">
+<div class="stat-card">
+<div style="display:flex; align-items:center; gap:16px;">
+<div class="spinner"></div> <span style="font-size:18px; font-weight:700;">Connecting Database...</span>
+</div>
+</div>
+</div>
+<div class="pillar-grid">
+<div class="pillar-card wp" onclick="navigateTo('all-processes')">
+<div class="p-icon" style="color:var(--success); background:var(--success-light)">📗</div>
+<h3>কাজের প্রক্রিয়া</h3>
+<p id="cWP">0টি Process</p>
+</div>
+<div class="pillar-card tw" onclick="navigateTo('all-processes')">
+<div class="p-icon" style="color:var(--primary); background:var(--primary-light)">📘</div>
+<h3>টেকনিক্যাল কাজ</h3>
+<p id="cTW">0টি Process</p>
+</div>
+</div>
+</div>
 
-        <!-- ADD/EDIT PROCESS -->
-        <div class="page-content admin-only" id="page-add-process">
-            <div class="page-header">
-                <div>
-                    <h1 id="formTitle">Create New Process</h1>
-                    <p>প্রয়োজনীয় ফিল্ড ও স্টেপস পূরণ করুন</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body" style="padding:40px;">
-                    <input type="hidden" id="editProcessId" value="">
-                    
-                    <div class="form-group">
-                        <label>Process Title *</label>
-                        <input type="text" class="form-control" id="processTitle" placeholder="যেমন: পার্সেল নিখোঁজ হলে করণীয়" style="font-size:18px; padding:16px 20px; font-weight:700;">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Pillar *</label>
-                            <select class="form-control" id="processPillar">
-                                <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
-                                <option value="Technical">📘 টেকনিক্যাল কাজ</option>
-                                <option value="Environment">📙 কাজের পরিবেশ</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Category *</label>
-                            <select class="form-control" id="processCategory"></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Priority</label>
-                            <select class="form-control" id="processPriority">
-                                <option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group"><label>Status</label><select class="form-control" id="processStatus"><option value="active">✅ Active</option><option value="draft">📝 Draft</option></select></div>
-                        <div class="form-group"><label>SLA (সময়সীমা)</label><input type="text" class="form-control" id="processSla" placeholder="যেমন: ২৪ ঘণ্টা"></div>
-                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" class="form-control" id="processIcon" value="📋"></div>
-                    </div>
-                    
-                    <div class="form-group"><label>Description (বিবরণ)</label><textarea class="form-control" rows="4" id="processDesc" placeholder="প্রসেস সম্পর্কে বিস্তারিত লিখুন... (লাইন ব্রেক কাজ করবে)"></textarea></div>
+<!-- PROSPECTUS VIEW -->
+<div class="page-content" id="page-prospectus">
+<div class="prospectus-cover">
+<h1>STEADFAST COURIER</h1>
+<h2>Operations Prospectus & Standard Operating Procedures (SOP)</h2>
+<div class="cover-meta">
+<span style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:var(--radius-full); font-weight:700; backdrop-filter:blur(5px);">📅 Updated: 2026</span>
+<span style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:var(--radius-full); font-weight:700; backdrop-filter:blur(5px);">✅ Official Guidelines</span>
+</div>
+</div>
+<div id="prospectusContent"></div>
+</div>
 
-                    <hr style="margin:40px 0; border:none; border-top:2px dashed var(--border);">
-                    
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <h3 style="font-size:20px; font-weight:800;">📝 Steps / Checklist</h3>
-                    </div>
-                    
-                    <div id="stepsBuilder"></div>
-                    <button class="btn btn-outline" style="width:100%; border:2px dashed var(--primary); color:var(--primary); margin-top:12px; padding:16px; background:transparent; font-size:15px;" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
-                    
-                    <hr style="margin:40px 0; border:none; border-top:1px solid var(--border);">
-                    <div style="display:flex;gap:16px; justify-content:flex-end;">
-                        <button class="btn btn-outline" onclick="navigateTo('all-processes')">Cancel</button>
-                        <button class="btn btn-primary" style="padding:12px 40px; font-size:16px;" onclick="saveProcess()">💾 Save to Database</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- ALL PROCESSES -->
+<div class="page-content" id="page-all-processes">
+<div class="page-header">
+<div>
+<h1>All Processes</h1>
+<p>সম্পূর্ণ লাইভ তালিকা (যেকোনো লাইনে ক্লিক করে বিস্তারিত দেখুন)</p>
+</div>
+<button class="btn btn-primary admin-only" onclick="navigateTo('add-process')">➕ Create Process</button>
+</div>
+<div class="card">
+<div class="card-header" style="background:var(--bg-body); border-bottom:none; padding:16px 24px;">
+<div style="display:flex;gap:16px;">
+<select class="form-control" style="width:220px; box-shadow:var(--shadow-sm); border:none;" id="filterPillar" onchange="renderProcessTable()">
+<option value="all">সব Pillar</option>
+<option value="Work Process">📗 কাজের প্রক্রিয়া</option>
+<option value="Technical">📘 টেকনিক্যাল</option>
+</select>
+<select class="form-control" style="width:220px; box-shadow:var(--shadow-sm); border:none;" id="filterCategory" onchange="renderProcessTable()">
+<option value="all">সব Category</option>
+</select>
+</div>
+</div>
+<div class="card-body" style="padding:0;overflow-x:auto;">
+<table class="process-table">
+<thead>
+<tr>
+<th>Process Title</th>
+<th>Pillar</th>
+<th>Category</th>
+<th>Status</th>
+<th>Steps</th>
+<th class="admin-only-table">Actions</th>
+</tr>
+</thead>
+<tbody id="processTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
 
-        <!-- PROCESS DETAIL (Preview) -->
-        <div class="page-content" id="page-process-detail">
-            <div id="processDetailContent"></div>
-        </div>
+<!-- ADD/EDIT PROCESS -->
+<div class="page-content admin-only" id="page-add-process">
+<div class="page-header">
+<div>
+<h1 id="formTitle">Create New Process</h1>
+<p>প্রয়োজনীয় ফিল্ড ও স্টেপস পূরণ করুন</p>
+</div>
+</div>
+<div class="card">
+<div class="card-body" style="padding:40px;">
+<input type="hidden" id="editProcessId" value="">
 
-        <!-- MANAGE CATEGORIES -->
-        <div class="page-content admin-only" id="page-manage-categories">
-            <div class="page-header">
-                <div>
-                    <h1>Manage Categories</h1>
-                    <p>লাইভ ক্যাটাগরি তৈরি ও সাজান</p>
-                </div>
-                <button class="btn btn-primary" onclick="openCategoryModal()">➕ Add Category</button>
-            </div>
-            <div class="card">
-                <div class="card-body" style="padding:0;overflow-x:auto;">
-                    <table class="process-table">
-                        <thead><tr><th>Icon</th><th>Category Name</th><th>Pillar</th><th>Total Processes</th><th>Actions</th></tr></thead>
-                        <tbody id="categoryTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="form-group">
+<label>Process Title *</label>
+<input type="text" class="form-control" id="processTitle" placeholder="যেমন: পার্সেল নিখোঁজ হলে করণীয়" style="font-size:18px; padding:16px 20px; font-weight:700;">
+</div>
 
-        <!-- SETTINGS -->
-        <div class="page-content admin-only" id="page-settings">
-            <div class="page-header">
-                <div>
-                    <h1>Settings</h1>
-                    <p>Admin Credentials পরিবর্তন করুন</p>
-                </div>
-            </div>
-            <div class="card" style="max-width: 600px;">
-                <div class="card-header">
-                    <h3>🔑 Security Settings</h3>
-                </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label>নতুন Username</label>
-                        <input type="text" class="form-control" id="newUsername" placeholder="admin">
-                    </div>
-                    <div class="form-group">
-                        <label>নতুন Password</label>
-                        <input type="password" class="form-control" id="newPassword" placeholder="••••••">
-                    </div>
-                    <button class="btn btn-primary" style="margin-top:10px; width:100%" onclick="changeAdminCredentials()">💾 Update Credentials</button>
-                </div>
-            </div>
-        </div>
+<div class="form-row-2">
+<div class="form-group">
+<label>Pillar *</label>
+<select class="form-control" id="processPillar" onchange="populateCategoryDropdowns(true)">
+<option value="Work Process">📗 কাজের প্রক্রিয়া</option>
+<option value="Technical">📘 টেকনিক্যাল কাজ</option>
+</select>
+</div>
+<div class="form-group">
+<label>Category *</label>
+<select class="form-control" id="processCategory"></select>
+</div>
+</div>
 
-    </main>
+<div class="form-row">
+<div class="form-group"><label>Status</label><select class="form-control" id="processStatus"><option value="active">✅ Active</option><option value="draft">📝 Draft</option></select></div>
+<div class="form-group"><label>SLA (সময়সীমা)</label><input type="text" class="form-control" id="processSla" placeholder="যেমন: ২৪ ঘণ্টা"></div>
+<div class="form-group"><label>Icon (Emoji)</label><input type="text" class="form-control" id="processIcon" value="📋"></div>
+</div>
+
+<div class="form-group"><label>Description (বিবরণ)</label><textarea class="form-control" rows="4" id="processDesc" placeholder="প্রসেস সম্পর্কে বিস্তারিত লিখুন... (লাইন ব্রেক কাজ করবে)"></textarea></div>
+
+<hr style="margin:40px 0; border:none; border-top:2px dashed var(--border);">
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+<h3 style="font-size:20px; font-weight:800;">📝 Steps / Checklist</h3>
+</div>
+
+<div id="stepsBuilder"></div>
+<button class="btn btn-outline" style="width:100%; border:2px dashed var(--primary); color:var(--primary); margin-top:12px; padding:16px; background:transparent; font-size:15px;" onclick="addBuilderStep()">➕ নতুন Step যোগ করুন</button>
+
+<hr style="margin:40px 0; border:none; border-top:1px solid var(--border);">
+<div style="display:flex;gap:16px; justify-content:flex-end;">
+<button class="btn btn-outline" onclick="navigateTo('all-processes')">Cancel</button>
+<button class="btn btn-primary" style="padding:12px 40px; font-size:16px;" onclick="saveProcess()">💾 Save to Database</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PROCESS DETAIL (Preview) -->
+<div class="page-content" id="page-process-detail">
+<div id="processDetailContent"></div>
+</div>
+
+<!-- MANAGE CATEGORIES -->
+<div class="page-content admin-only" id="page-manage-categories">
+<div class="page-header">
+<div>
+<h1>Manage Categories</h1>
+<p>লাইভ ক্যাটাগরি তৈরি ও সাজান</p>
+</div>
+<button class="btn btn-primary" onclick="openCategoryModal()">➕ Add Category</button>
+</div>
+<div class="card">
+<div class="card-body" style="padding:0;overflow-x:auto;">
+<table class="process-table">
+<thead><tr><th>Icon</th><th>Category Name</th><th>Pillar</th><th>Total Processes</th><th>Actions</th></tr></thead>
+<tbody id="categoryTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page-content admin-only" id="page-settings">
+<div class="page-header">
+<div>
+<h1>Settings</h1>
+<p>Admin Credentials পরিবর্তন করুন</p>
+</div>
+</div>
+<div class="card" style="max-width: 600px;">
+<div class="card-header">
+<h3>🔑 Security Settings</h3>
+</div>
+<div class="card-body">
+<div class="form-group">
+<label>নতুন Username</label>
+<input type="text" class="form-control" id="newUsername" placeholder="admin">
+</div>
+<div class="form-group">
+<label>নতুন Password</label>
+<input type="password" class="form-control" id="newPassword" placeholder="••••••">
+</div>
+<button class="btn btn-primary" style="margin-top:10px; width:100%" onclick="changeAdminCredentials()">💾 Update Credentials</button>
+</div>
+</div>
+</div>
+
+</main>
 </div>
 
 <!-- ================= MODALS ================= -->
 <div class="modal-overlay" id="loginModal">
-    <div class="modal-box" style="width:420px; border:none;">
-        <div class="modal-body" style="text-align:center; padding: 48px 40px;">
-            <div style="font-size:56px; margin-bottom:16px; background:var(--primary-light); color:var(--primary); width:96px; height:96px; line-height:96px; border-radius:24px; margin:0 auto 24px; box-shadow:var(--shadow);">🔐</div>
-            <h2 style="font-size:26px; font-weight:800; margin-bottom:8px;">Admin Login</h2>
-            <p style="font-size:14px; color:var(--text-muted); margin-bottom:32px;">Secure Authentication Required</p>
-            
-            <div class="form-group" style="text-align:left;">
-                <label>Username</label>
-                <input type="text" class="form-control" id="loginUser" placeholder="Enter username">
-            </div>
-            <div class="form-group" style="text-align:left; margin-bottom:32px;">
-                <label>Password</label>
-                <input type="password" class="form-control" id="loginPass" placeholder="••••••">
-            </div>
-            
-            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:16px; border-radius:var(--radius-lg);" onclick="doLogin()">Authenticate</button>
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:14px; margin-top:12px; border-radius:var(--radius-lg); border:none; background:transparent; box-shadow:none;" onclick="closeModal('loginModal')" onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background='transparent'">Return to Public View</button>
-            
-            <p id="loginError" style="color:var(--danger); font-size:14px; font-weight:700; margin-top:16px; display:none; padding:10px; background:var(--danger-light); border-radius:8px;">❌ Invalid Credentials!</p>
-        </div>
-    </div>
+<div class="modal-box" style="width:420px; border:none;">
+<div class="modal-body" style="text-align:center; padding: 48px 40px;">
+<div style="font-size:56px; margin-bottom:16px; background:var(--primary-light); color:var(--primary); width:96px; height:96px; line-height:96px; border-radius:24px; margin:0 auto 24px; box-shadow:var(--shadow);">🔐</div>
+<h2 style="font-size:26px; font-weight:800; margin-bottom:8px;">Admin Login</h2>
+<p style="font-size:14px; color:var(--text-muted); margin-bottom:32px;">Secure Authentication Required</p>
+
+<div class="form-group" style="text-align:left;">
+<label>Username</label>
+<input type="text" class="form-control" id="loginUser" placeholder="Enter username">
+</div>
+<div class="form-group" style="text-align:left; margin-bottom:32px;">
+<label>Password</label>
+<input type="password" class="form-control" id="loginPass" placeholder="••••••">
+</div>
+
+<button class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:16px; border-radius:var(--radius-lg);" onclick="doLogin()">Authenticate</button>
+<button class="btn btn-outline" style="width:100%; justify-content:center; padding:14px; margin-top:12px; border-radius:var(--radius-lg); border:none; background:transparent; box-shadow:none;" onclick="closeModal('loginModal')" onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background='transparent'">Return to Public View</button>
+
+<p id="loginError" style="color:var(--danger); font-size:14px; font-weight:700; margin-top:16px; display:none; padding:10px; background:var(--danger-light); border-radius:8px;">❌ Invalid Credentials!</p>
+</div>
+</div>
 </div>
 
 <div class="modal-overlay" id="categoryModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3 id="catModalTitle" style="font-size:20px;">➕ Add Category</h3>
-            <button class="modal-close" onclick="closeModal('categoryModal')">✕</button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="editCatId">
-            <div class="form-group">
-                <label>Category Name *</label>
-                <input type="text" class="form-control" id="catName" placeholder="e.g. পার্সেল সমস্যা">
-            </div>
-            <div class="form-row-2">
-                <div class="form-group">
-                    <label>Pillar *</label>
-                    <select class="form-control" id="catPillar">
-                        <option value="Work Process">📗 কাজের প্রক্রিয়া</option>
-                        <option value="Technical">📘 টেকনিক্যাল</option>
-                        <option value="Environment">📙 পরিবেশ</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Icon (Emoji)</label>
-                    <input type="text" class="form-control" id="catIcon" placeholder="📂" value="📂">
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('categoryModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="saveCategory()">Save Category</button>
-        </div>
-    </div>
+<div class="modal-box">
+<div class="modal-header">
+<h3 id="catModalTitle" style="font-size:20px;">➕ Add Category</h3>
+<button class="modal-close" onclick="closeModal('categoryModal')">✕</button>
+</div>
+<div class="modal-body">
+<input type="hidden" id="editCatId">
+<div class="form-group">
+<label>Category Name *</label>
+<input type="text" class="form-control" id="catName" placeholder="e.g. পার্সেল সমস্যা">
+</div>
+<div class="form-row-2">
+<div class="form-group">
+<label>Pillar *</label>
+<select class="form-control" id="catPillar">
+<option value="Work Process">📗 কাজের প্রক্রিয়া</option>
+<option value="Technical">📘 টেকনিক্যাল</option>
+</select>
+</div>
+<div class="form-group">
+<label>Icon (Emoji)</label>
+<input type="text" class="form-control" id="catIcon" placeholder="📂" value="📂">
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-outline" onclick="closeModal('categoryModal')">Cancel</button>
+<button class="btn btn-primary" onclick="saveCategory()">Save Category</button>
+</div>
+</div>
 </div>
 
 <div class="modal-overlay" id="confirmModal">
-    <div class="modal-box" style="width:400px; text-align:center; border:none;">
-        <div class="modal-body" style="padding:48px 32px 32px;">
-            <div style="font-size:64px; margin-bottom:16px;">⚠️</div>
-            <h3 style="font-size:24px; font-weight:800; margin-bottom:12px; color:var(--text-main);" id="confirmTitle">Are you sure?</h3>
-            <p style="font-size:15px; color:var(--text-muted); line-height:1.6;" id="confirmDesc">This action cannot be undone!</p>
-        </div>
-        <div class="modal-footer" style="justify-content:center; padding:24px; background:transparent; border:none; gap:16px;">
-            <button class="btn btn-outline" style="flex:1; border-radius:var(--radius-lg); padding:14px;" onclick="closeModal('confirmModal')">Cancel</button>
-            <button class="btn btn-danger" style="flex:1; border-radius:var(--radius-lg); padding:14px;" id="confirmBtn">Yes, Delete</button>
-        </div>
-    </div>
+<div class="modal-box" style="width:400px; text-align:center; border:none;">
+<div class="modal-body" style="padding:48px 32px 32px;">
+<div style="font-size:64px; margin-bottom:16px;">⚠️</div>
+<h3 style="font-size:24px; font-weight:800; margin-bottom:12px; color:var(--text-main);" id="confirmTitle">Are you sure?</h3>
+<p style="font-size:15px; color:var(--text-muted); line-height:1.6;" id="confirmDesc">This action cannot be undone!</p>
+</div>
+<div class="modal-footer" style="justify-content:center; padding:24px; background:transparent; border:none; gap:16px;">
+<button class="btn btn-outline" style="flex:1; border-radius:var(--radius-lg); padding:14px;" onclick="closeModal('confirmModal')">Cancel</button>
+<button class="btn btn-danger" style="flex:1; border-radius:var(--radius-lg); padding:14px;" id="confirmBtn">Yes, Delete</button>
+</div>
+</div>
 </div>
 
 <div class="toast-container" id="toastBox"></div>
@@ -600,21 +644,108 @@
 <script>
 // Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyDljJin3ud3xj-EUIYN5p4MJUPmNZekuZE",
-  authDomain: "operations-prospectus-portal.firebaseapp.com",
-  databaseURL: "https://operations-prospectus-portal-default-rtdb.firebaseio.com",
-  projectId: "operations-prospectus-portal",
-  storageBucket: "operations-prospectus-portal.firebasestorage.app",
-  messagingSenderId: "939292299466",
-  appId: "1:939292299466:web:c24d3f7aca4fc75725e433"
+apiKey: "AIzaSyDljJin3ud3xj-EUIYN5p4MJUPmNZekuZE",
+authDomain: "operations-prospectus-portal.firebaseapp.com",
+databaseURL: "https://operations-prospectus-portal-default-rtdb.firebaseio.com",
+projectId: "operations-prospectus-portal",
+storageBucket: "operations-prospectus-portal.firebasestorage.app",
+messagingSenderId: "939292299466",
+appId: "1:939292299466:web:c24d3f7aca4fc75725e433"
 };
 
+// Firebase লোড না হলেও (নেটওয়ার্ক/প্রিভিউ সমস্যা) পেজ যেন ভেঙে না পড়ে
+let db;
+try {
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+db = firebase.database();
+} catch (err) {
+console.error('Firebase লোড হয়নি:', err);
+window.__dbOffline = true;
+const offlineRef = { on() {}, once() { return Promise.reject(new Error('offline')); }, set() { return Promise.reject(new Error('offline')); }, remove() { return Promise.reject(new Error('offline')); } };
+db = { ref() { return offlineRef; } };
+}
+
+// "Environment" (কাজের পরিবেশ) UI থেকে লুকানো আছে।
+// Firebase-এর ডেটা মোছা হয়নি, শুধু এখানে ফিল্টার করে দেখানো বন্ধ করা হয়েছে।
+const HIDDEN_PILLARS = ['Environment'];
 
 let globalCategories = [];
 let globalProcesses = [];
 let isAdmin = sessionStorage.getItem('sf_admin') === '1';
+
+// ===== WELCOME GATE =====
+const gateEl = document.getElementById('gate');
+
+// আগে ঢুকে থাকলে (একই ট্যাবে) বা Admin লগইন থাকলে গেট দেখাবে না
+if(isAdmin || sessionStorage.getItem('sf_entered') === '1') gateEl.style.display = 'none';
+
+function hideGate() {
+gateEl.classList.add('hide');
+setTimeout(() => { gateEl.style.display = 'none'; }, 500);
+}
+
+function showGate() {
+gateBack();
+gateEl.style.display = 'flex';
+requestAnimationFrame(() => gateEl.classList.remove('hide'));
+}
+
+function enterPortal() {
+sessionStorage.setItem('sf_entered', '1');
+hideGate();
+navigateTo('dashboard', document.querySelector('.nav-item'));
+}
+
+function gateShowAdmin() {
+document.getElementById('gateChoices').style.display = 'none';
+document.getElementById('gateAdminForm').style.display = 'block';
+setTimeout(() => document.getElementById('gateUser').focus(), 50);
+}
+
+function gateBack() {
+document.getElementById('gateAdminForm').style.display = 'none';
+document.getElementById('gateChoices').style.display = 'grid';
+document.getElementById('gateUser').value = '';
+document.getElementById('gatePass').value = '';
+document.getElementById('gateErr').style.display = 'none';
+}
+
+function gateLogin() {
+const user = document.getElementById('gateUser').value.trim();
+const pass = document.getElementById('gatePass').value.trim();
+const btn = document.getElementById('gateLoginBtn');
+const err = document.getElementById('gateErr');
+btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;border-top-color:#fff;margin-right:8px"></div> Authenticating...';
+
+db.ref('settings/admin_credentials').once('value').then(snap => {
+let creds = { username: 'admin', password: 'admin123' };
+if(snap.exists()) creds = snap.val();
+else db.ref('settings/admin_credentials').set(creds);
+
+if(user === creds.username && pass === creds.password) {
+isAdmin = true;
+sessionStorage.setItem('sf_admin', '1');
+refreshUI();
+toast('Admin Access Granted!', 'success');
+enterPortal();
+} else {
+err.style.display = 'block';
+setTimeout(() => err.style.display = 'none', 3000);
+}
+btn.innerHTML = '🔐 Login & Enter';
+}).catch(() => {
+btn.innerHTML = '🔐 Login & Enter';
+toast('ডেটাবেসে সংযোগ হয়নি, আবার চেষ্টা করুন', 'error');
+});
+}
+
+document.getElementById('gatePass').addEventListener('keydown', e => { if(e.key === 'Enter') gateLogin(); });
+document.getElementById('gateUser').addEventListener('keydown', e => { if(e.key === 'Enter') gateLogin(); });
+
+// Helpers
+function pillarIcon(p) { return p === 'Work Process' ? '📗' : '📘'; }
+function jsq(s) { return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+function attr(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
 // Theme
 let isDark = localStorage.getItem('sf_theme') === 'dark';
@@ -622,632 +753,668 @@ if(isDark) document.body.classList.add('dark-mode');
 document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
 
 function toggleTheme() {
-    isDark = !isDark;
-    if(isDark) {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('sf_theme', 'dark');
-        document.getElementById('themeBtn').textContent = '☀️';
-    } else {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('sf_theme', 'light');
-        document.getElementById('themeBtn').textContent = '🌙';
-    }
+isDark = !isDark;
+if(isDark) {
+document.body.classList.add('dark-mode');
+localStorage.setItem('sf_theme', 'dark');
+document.getElementById('themeBtn').textContent = '☀️';
+} else {
+document.body.classList.remove('dark-mode');
+localStorage.setItem('sf_theme', 'light');
+document.getElementById('themeBtn').textContent = '🌙';
+}
 }
 
 function toggleNavGroup(id, el) {
-    const group = document.getElementById(id);
-    const chevron = el.querySelector('.chevron');
-    if(group.style.display === 'none' || group.style.display === '') {
-        group.style.display = 'block';
-        chevron.style.transform = 'rotate(180deg)';
-    } else {
-        group.style.display = 'none';
-        chevron.style.transform = 'rotate(0deg)';
-    }
+const group = document.getElementById(id);
+const chevron = el.querySelector('.chevron');
+if(group.style.display === 'none' || group.style.display === '') {
+group.style.display = 'block';
+chevron.style.transform = 'rotate(180deg)';
+} else {
+group.style.display = 'none';
+chevron.style.transform = 'rotate(0deg)';
+}
 }
 
-// DB Listeners
+// DB Listeners (Environment ডেটা শুধু দেখানো থেকে বাদ, ডেটাবেসে অক্ষত)
 db.ref('categories').on('value', snap => {
-    const data = snap.val();
-    globalCategories = data ? Object.values(data) : [];
-    refreshUI();
+const data = snap.val();
+globalCategories = (data ? Object.values(data) : []).filter(c => !HIDDEN_PILLARS.includes(c.pillar));
+refreshUI();
 });
 
 db.ref('processes').on('value', snap => {
-    const data = snap.val();
-    globalProcesses = data ? Object.values(data) : [];
-    refreshUI();
+const data = snap.val();
+globalProcesses = (data ? Object.values(data) : []).filter(p => !HIDDEN_PILLARS.includes(p.pillar));
+refreshUI();
 });
 
 function refreshUI() {
-    setAdminUI();
-    renderSidebarNav();
-    renderDashboard();
-    renderProcessTable();
-    renderCategoryTable();
-    populateCategoryDropdowns();
-    
-    if(document.getElementById('page-prospectus').classList.contains('active')) {
-        renderProspectus();
-    }
+setAdminUI();
+renderSidebarNav();
+renderDashboard();
+renderProcessTable();
+renderCategoryTable();
+// ফর্ম খোলা অবস্থায় ডেটা আপডেট হলে নির্বাচিত category হারিয়ে না যায়
+const keepCat = document.getElementById('processCategory').value;
+populateCategoryDropdowns();
+if(keepCat) document.getElementById('processCategory').value = keepCat;
+
+if(document.getElementById('page-prospectus').classList.contains('active')) {
+renderProspectus();
+}
 }
 
 // Auth
 function toggleAuth() {
-    if(isAdmin) {
-        isAdmin = false;
-        sessionStorage.removeItem('sf_admin');
-        toast('Logged out successfully', 'success');
-        refreshUI();
-        navigateTo('dashboard');
-    } else {
-        document.getElementById('loginModal').classList.add('active');
-        document.getElementById('loginPass').value = '';
-        document.getElementById('loginUser').value = '';
-    }
+if(isAdmin) {
+isAdmin = false;
+sessionStorage.removeItem('sf_admin');
+sessionStorage.removeItem('sf_entered');
+toast('Logged out successfully', 'success');
+refreshUI();
+navigateTo('dashboard', document.querySelector('.nav-item'));
+showGate();
+} else {
+document.getElementById('loginModal').classList.add('active');
+document.getElementById('loginPass').value = '';
+document.getElementById('loginUser').value = '';
+}
 }
 
 function doLogin() {
-    const user = document.getElementById('loginUser').value.trim();
-    const pass = document.getElementById('loginPass').value.trim();
-    
-    const btn = document.querySelector('#loginModal .btn-primary');
-    btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;border-top-color:#fff;margin-right:8px"></div> Authenticating...';
-    
-    db.ref('settings/admin_credentials').once('value').then(snap => {
-        let dbCreds = { username: 'admin', password: 'admin123' }; 
-        if(snap.exists()) dbCreds = snap.val();
-        else db.ref('settings/admin_credentials').set(dbCreds);
+const user = document.getElementById('loginUser').value.trim();
+const pass = document.getElementById('loginPass').value.trim();
 
-        if(user === dbCreds.username && pass === dbCreds.password) {
-            isAdmin = true;
-            sessionStorage.setItem('sf_admin', '1');
-            closeModal('loginModal');
-            toast('Admin Access Granted!', 'success');
-            refreshUI();
-        } else {
-            const err = document.getElementById('loginError');
-            err.style.display = 'block';
-            setTimeout(() => err.style.display = 'none', 3000);
-        }
-        btn.innerHTML = 'Authenticate';
-    });
+const btn = document.querySelector('#loginModal .btn-primary');
+btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;border-top-color:#fff;margin-right:8px"></div> Authenticating...';
+
+db.ref('settings/admin_credentials').once('value').then(snap => {
+let dbCreds = { username: 'admin', password: 'admin123' };
+if(snap.exists()) dbCreds = snap.val();
+else db.ref('settings/admin_credentials').set(dbCreds);
+
+if(user === dbCreds.username && pass === dbCreds.password) {
+isAdmin = true;
+sessionStorage.setItem('sf_admin', '1');
+closeModal('loginModal');
+toast('Admin Access Granted!', 'success');
+refreshUI();
+} else {
+const err = document.getElementById('loginError');
+err.style.display = 'block';
+setTimeout(() => err.style.display = 'none', 3000);
+}
+btn.innerHTML = 'Authenticate';
+});
 }
 
 function changeAdminCredentials() {
-    const u = document.getElementById('newUsername').value.trim();
-    const p = document.getElementById('newPassword').value.trim();
-    if(!u || !p) return toast('Username ও Password দিন!', 'error');
-    
-    db.ref('settings/admin_credentials').set({ username: u, password: p }).then(() => {
-        toast('Credentials Updated!', 'success');
-        document.getElementById('newUsername').value = '';
-        document.getElementById('newPassword').value = '';
-    });
+const u = document.getElementById('newUsername').value.trim();
+const p = document.getElementById('newPassword').value.trim();
+if(!u || !p) return toast('Username ও Password দিন!', 'error');
+
+db.ref('settings/admin_credentials').set({ username: u, password: p }).then(() => {
+toast('Credentials Updated!', 'success');
+document.getElementById('newUsername').value = '';
+document.getElementById('newPassword').value = '';
+});
 }
 
 function setAdminUI() {
-    const b = document.body;
-    const badge = document.getElementById('roleBadge');
-    const btn = document.getElementById('authBtn');
-    
-    if(isAdmin) {
-        b.classList.add('is-admin');
-        badge.className = 'role-badge role-admin';
-        badge.innerHTML = '🛡️ ADMIN MODE';
-        btn.innerHTML = '🚪 Logout Admin';
-    } else {
-        b.classList.remove('is-admin');
-        badge.className = 'role-badge role-public';
-        badge.innerHTML = '👁️ PUBLIC VIEW';
-        btn.innerHTML = '🔐 Admin Login';
-    }
+const b = document.body;
+const badge = document.getElementById('roleBadge');
+const btn = document.getElementById('authBtn');
+
+if(isAdmin) {
+b.classList.add('is-admin');
+badge.className = 'role-badge role-admin';
+badge.innerHTML = '🛡️ ADMIN MODE';
+btn.innerHTML = '🚪 Logout Admin';
+} else {
+b.classList.remove('is-admin');
+badge.className = 'role-badge role-public';
+badge.innerHTML = '👁️ PUBLIC VIEW';
+btn.innerHTML = '🔐 Admin Login';
+}
 }
 
 // Nav
 function navigateTo(page, el) {
-    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
-    
-    if(el) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    }
-    if(page === 'add-process') resetProcessForm();
-    if(page === 'prospectus') renderProspectus();
+document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+document.getElementById('page-' + page).classList.add('active');
+
+if(el) {
+document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+el.classList.add('active');
+}
+if(page === 'add-process') resetProcessForm();
+if(page === 'prospectus') renderProspectus();
 }
 
 function handleGlobalSearch() {
-    const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    
-    if(!q) { renderProcessTable(); return; }
-    
-    navigateTo('all-processes');
-    setTimeout(() => {
-        document.getElementById('filterPillar').value = 'all';
-        document.getElementById('filterCategory').value = 'all';
-        renderProcessTable();
-    }, 50);
+const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+if(!q) { renderProcessTable(); return; }
+
+navigateTo('all-processes');
+setTimeout(() => {
+document.getElementById('filterPillar').value = 'all';
+document.getElementById('filterCategory').value = 'all';
+renderProcessTable();
+}, 50);
 }
 
 function renderSidebarNav() {
-    const pils = {'Work Process':'navWP', 'Technical':'navTW', 'Environment':'navWE'};
-    
-    Object.entries(pils).forEach(([pil, id]) => {
-        const cats = globalCategories.filter(c => c.pillar === pil);
-        document.getElementById(id).innerHTML = cats.map(c => {
-            const count = globalProcesses.filter(p => p.category === c.name).length;
-            return `<div class="nav-item" style="padding-left:40px; font-size:13.5px;" onclick="filterBySideCat('${c.name}', this)">
-                <span class="icon">${c.icon}</span>${c.name} ${count ? `<span class="badge">${count}</span>` : ''}
-            </div>`;
-        }).join('');
-    });
-    document.getElementById('bTotal').textContent = globalProcesses.length;
+const pils = {'Work Process':'navWP', 'Technical':'navTW'};
+
+Object.entries(pils).forEach(([pil, id]) => {
+const cats = globalCategories.filter(c => c.pillar === pil);
+document.getElementById(id).innerHTML = cats.map(c => {
+const count = globalProcesses.filter(p => p.category === c.name).length;
+return `<div class="nav-item" style="padding-left:40px; font-size:13.5px;" onclick="filterBySideCat('${jsq(c.name)}', this)">
+<span class="icon">${c.icon}</span>${c.name} ${count ? `<span class="badge">${count}</span>` : ''}
+</div>`;
+}).join('');
+});
+document.getElementById('bTotal').textContent = globalProcesses.length;
 }
 
 function filterBySideCat(catName, el) {
-    document.getElementById('searchInput').value = ''; 
-    navigateTo('all-processes', el);
-    setTimeout(() => {
-        document.getElementById('filterCategory').value = catName;
-        renderProcessTable();
-    }, 50);
+document.getElementById('searchInput').value = '';
+navigateTo('all-processes', el);
+setTimeout(() => {
+document.getElementById('filterCategory').value = catName;
+renderProcessTable();
+}, 50);
 }
 
 // Dashboard
 function renderDashboard() {
-    const totalP = globalProcesses.length;
-    const totalC = globalCategories.length;
-    const activeP = globalProcesses.filter(p=>p.status==='active').length;
-    
-    document.getElementById('dashboardStats').innerHTML = `
-        <div class="stat-card">
-            <div class="stat-info">
-                <span class="stat-label">Total Processes</span>
-                <span class="stat-value">${totalP}</span>
-            </div>
-            <div class="stat-icon-wrap" style="background:var(--primary-light); color:var(--primary);">📋</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-info">
-                <span class="stat-label">Categories</span>
-                <span class="stat-value">${totalC}</span>
-            </div>
-            <div class="stat-icon-wrap" style="background:var(--warning-light); color:var(--warning);">📂</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-info">
-                <span class="stat-label">Active Processes</span>
-                <span class="stat-value">${activeP}</span>
-            </div>
-            <div class="stat-icon-wrap" style="background:var(--success-light); color:var(--success);">✅</div>
-        </div>
-    `;
-    document.getElementById('cWP').textContent = globalProcesses.filter(p=>p.pillar==='Work Process').length + ' Process';
-    document.getElementById('cTW').textContent = globalProcesses.filter(p=>p.pillar==='Technical').length + ' Process';
-    document.getElementById('cWE').textContent = globalProcesses.filter(p=>p.pillar==='Environment').length + ' Process';
+const totalP = globalProcesses.length;
+const totalC = globalCategories.length;
+const activeP = globalProcesses.filter(p=>p.status==='active').length;
+
+document.getElementById('dashboardStats').innerHTML = `
+<div class="stat-card">
+<div class="stat-info">
+<span class="stat-label">Total Processes</span>
+<span class="stat-value">${totalP}</span>
+</div>
+<div class="stat-icon-wrap" style="background:var(--primary-light); color:var(--primary);">📋</div>
+</div>
+<div class="stat-card">
+<div class="stat-info">
+<span class="stat-label">Categories</span>
+<span class="stat-value">${totalC}</span>
+</div>
+<div class="stat-icon-wrap" style="background:var(--warning-light); color:var(--warning);">📂</div>
+</div>
+<div class="stat-card">
+<div class="stat-info">
+<span class="stat-label">Active Processes</span>
+<span class="stat-value">${activeP}</span>
+</div>
+<div class="stat-icon-wrap" style="background:var(--success-light); color:var(--success);">✅</div>
+</div>
+`;
+document.getElementById('cWP').textContent = globalProcesses.filter(p=>p.pillar==='Work Process').length + ' Process';
+document.getElementById('cTW').textContent = globalProcesses.filter(p=>p.pillar==='Technical').length + ' Process';
 }
 
 // Table (Clickable Rows)
 function renderProcessTable() {
-    const fp = document.getElementById('filterPillar').value;
-    const fc = document.getElementById('filterCategory').value;
-    const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    
-    let f = globalProcesses;
-    if(fp !== 'all') f = f.filter(p => p.pillar === fp);
-    if(fc !== 'all') f = f.filter(p => p.category === fc);
-    
-    if(q) {
-        f = f.filter(p => 
-            (p.title || '').toLowerCase().includes(q) || 
-            (p.category || '').toLowerCase().includes(q) ||
-            (p.description || '').toLowerCase().includes(q) ||
-            (p.pillar || '').toLowerCase().includes(q)
-        );
-    }
+const fp = document.getElementById('filterPillar').value;
+const fc = document.getElementById('filterCategory').value;
+const q = document.getElementById('searchInput').value.trim().toLowerCase();
 
-    const tb = document.getElementById('processTableBody');
-    if(f.length === 0) {
-        tb.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:80px 20px; color:var(--text-muted); background:transparent;">
-            <div style="font-size:56px; margin-bottom:16px;">🔍</div>
-            <div style="font-size:18px; font-weight:700;">${q ? `"${q}" সম্পর্কিত কোনো ফলাফল পাওয়া যায়নি` : 'কোনো Process নেই'}</div>
-        </td></tr>`;
-        return;
-    }
-    
-    tb.innerHTML = f.map(p => `
-        <tr onclick="viewProcessPreview('${p.id}')" style="cursor: pointer;" title="ক্লিক করে বিস্তারিত দেখুন">
-            <td><div style="display:flex; align-items:center; gap:16px;">
-                <span style="font-size:24px; background:var(--hover); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm);">${p.icon || '📋'}</span>
-                <strong style="color:var(--text-main); font-size:15px;">${p.title}</strong>
-            </div></td>
-            <td><span style="display:inline-flex; align-items:center; gap:6px; background:var(--hover); padding:6px 14px; border-radius:10px; font-size:12.5px; font-weight:700; color:var(--text-main); border:1px solid var(--border);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</span></td>
-            <td><span style="font-weight:700; color:var(--text-muted); font-size:14px;">${p.category}</span></td>
-            <td><span class="badge-priority ${p.priority}">${p.priority}</span></td>
-            <td><span class="badge-status ${p.status}">${p.status}</span></td>
-            <td><span style="font-weight:800; color:var(--primary); background:var(--primary-light); padding:6px 14px; border-radius:var(--radius-full); font-size:12.5px;">${p.steps ? p.steps.length : 0} Steps</span></td>
-            <td class="admin-only-table" onclick="event.stopPropagation()">
-                <div style="display:flex; gap:8px;">
-                    <button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="editProcess('${p.id}')">✏️ Edit</button>
-                    <button class="btn btn-outline btn-sm" style="border-color:var(--danger); color:var(--danger)" onclick="confirmDelete('process', '${p.id}', '${p.title}')">🗑️ Del</button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
+let f = globalProcesses;
+if(fp !== 'all') f = f.filter(p => p.pillar === fp);
+if(fc !== 'all') f = f.filter(p => p.category === fc);
+
+if(q) {
+f = f.filter(p =>
+(p.title || '').toLowerCase().includes(q) ||
+(p.category || '').toLowerCase().includes(q) ||
+(p.description || '').toLowerCase().includes(q) ||
+(p.pillar || '').toLowerCase().includes(q)
+);
+}
+
+const tb = document.getElementById('processTableBody');
+if(f.length === 0) {
+tb.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:80px 20px; color:var(--text-muted); background:transparent;">
+<div style="font-size:56px; margin-bottom:16px;">🔍</div>
+<div style="font-size:18px; font-weight:700;">${q ? `"${attr(q)}" সম্পর্কিত কোনো ফলাফল পাওয়া যায়নি` : 'কোনো Process নেই'}</div>
+</td></tr>`;
+return;
+}
+
+tb.innerHTML = f.map(p => `
+<tr onclick="viewProcessPreview('${p.id}')" style="cursor: pointer;" title="ক্লিক করে বিস্তারিত দেখুন">
+<td><div style="display:flex; align-items:center; gap:16px;">
+<span style="font-size:24px; background:var(--hover); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm);">${p.icon || '📋'}</span>
+<strong style="color:var(--text-main); font-size:15px;">${p.title}</strong>
+</div></td>
+<td><span style="display:inline-flex; align-items:center; gap:6px; background:var(--hover); padding:6px 14px; border-radius:10px; font-size:12.5px; font-weight:700; color:var(--text-main); border:1px solid var(--border);">${pillarIcon(p.pillar)} ${p.pillar}</span></td>
+<td><span style="font-weight:700; color:var(--text-muted); font-size:14px;">${p.category}</span></td>
+<td><span class="badge-status ${p.status}">${p.status}</span></td>
+<td><span style="font-weight:800; color:var(--primary); background:var(--primary-light); padding:6px 14px; border-radius:var(--radius-full); font-size:12.5px;">${p.steps ? p.steps.length : 0} Steps</span></td>
+<td class="admin-only-table" onclick="event.stopPropagation()">
+<div style="display:flex; gap:8px;">
+<button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="editProcess('${p.id}')">✏️ Edit</button>
+<button class="btn btn-outline btn-sm" style="border-color:var(--danger); color:var(--danger)" onclick="confirmDelete('process', '${p.id}', '${jsq(p.title)}')">🗑️ Del</button>
+</div>
+</td>
+</tr>
+`).join('');
 }
 
 // Prospectus
 function renderProspectus() {
-    const pillars = [
-        { name: 'Work Process', label: '📗 অধ্যায় ১: কাজের প্রক্রিয়া', c: 'var(--success)' },
-        { name: 'Technical', label: '📘 অধ্যায় ২: টেকনিক্যাল কাজ', c: 'var(--primary)' },
-        { name: 'Environment', label: '📙 অধ্যায় ৩: কাজের পরিবেশ', c: 'var(--warning)' }
-    ];
+const pillars = [
+{ name: 'Work Process', label: '📗 অধ্যায় ১: কাজের প্রক্রিয়া', c: 'var(--success)' },
+{ name: 'Technical', label: '📘 অধ্যায় ২: টেকনিক্যাল কাজ', c: 'var(--primary)' }
+];
 
-    const html = pillars.map((pil, pIndex) => {
-        const cats = globalCategories.filter(c => c.pillar === pil.name);
-        const totalProcs = globalProcesses.filter(p => p.pillar === pil.name).length;
-        
-        const catHtml = cats.map((cat, cIndex) => {
-            const procs = globalProcesses.filter(p => p.category === cat.name && p.pillar === pil.name);
-            const catId = `cat-${pIndex}-${cIndex}`;
-            
-            const processListHtml = procs.length ? procs.map(p => `
-                <div onclick="viewProcessPreview('${p.id}')" 
-                     style="display:flex; align-items:center; padding:16px 20px; background:var(--bg-card); border-radius:12px; margin-bottom:8px; cursor:pointer; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:all 0.2s;"
-                     onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='var(--primary)';" 
-                     onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='var(--border)';">
-                    <span style="width:12px; height:12px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:16px; box-shadow: 0 0 0 3px var(--${p.priority==='high'?'danger-light':p.priority==='medium'?'warning-light':'success-light'});"></span>
-                    <span style="flex:1; font-size:15px; font-weight:700; color:var(--text-main);">${p.icon || '📋'} ${p.title}</span>
-                    <span style="font-size:12px; color:var(--text-muted); font-weight:700; background:var(--hover); padding:6px 14px; border-radius:var(--radius-full); border:1px solid var(--border);">SLA: ${p.sla || '-'}</span>
-                </div>
-            `).join('') : `<div style="padding:16px 20px; border-radius:12px; background:var(--hover); font-size:14px; color:var(--text-muted); font-weight:500; font-style:italic; border:1px dashed var(--border);">এই ক্যাটাগরিতে কোনো Process নেই</div>`;
+const html = pillars.map((pil, pIndex) => {
+const cats = globalCategories.filter(c => c.pillar === pil.name);
+const totalProcs = globalProcesses.filter(p => p.pillar === pil.name).length;
 
-            return `
-                <div style="margin-bottom:16px;">
-                    <div onclick="toggleCategory('${catId}', this)" 
-                         style="display:flex; align-items:center; padding:16px 20px; cursor:pointer; border-radius:12px; background:var(--hover); border:1px solid var(--border); transition:all 0.2s;">
-                        <span class="cat-chevron" style="margin-right:16px; font-size:12px; transition:transform 0.3s; color:var(--text-muted);">▶</span>
-                        <span style="font-size:16.5px; font-weight:800; color:var(--text-main);">${cat.icon} ${cat.name}</span>
-                        <span style="margin-left:auto; font-size:13px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:4px 14px; border-radius:var(--radius-full);">${procs.length}টি Process</span>
-                    </div>
-                    <div id="${catId}" style="display:none; margin-top:12px; padding-left:30px; border-left:3px solid var(--border); margin-left:16px;">
-                        ${processListHtml}
-                    </div>
-                </div>
-            `;
-        }).join('');
+const catHtml = cats.map((cat, cIndex) => {
+const procs = globalProcesses.filter(p => p.category === cat.name && p.pillar === pil.name);
+const catId = `cat-${pIndex}-${cIndex}`;
 
-        const chapterId = `chapter-${pIndex}`;
-        
-        return `
-            <div class="card" style="margin-bottom:32px; border:none; box-shadow:var(--shadow-lg);">
-                <div class="card-header" style="border-left:8px solid ${pil.c}; cursor:pointer; background:var(--bg-card); padding:28px 32px;" 
-                     onclick="toggleChapter('${chapterId}', this)">
-                    <h3 style="font-size:22px; font-weight:800; display:flex; align-items:center; gap:16px; color:var(--text-main);">
-                        <span class="chapter-chevron" style="font-size:16px; color:var(--text-muted); transition:transform 0.3s;">▶</span>
-                        ${pil.label}
-                    </h3>
-                    <span style="font-size:14.5px; font-weight:800; color:var(--text-main); background:var(--hover); padding:8px 20px; border-radius:var(--radius-full); border:1px solid var(--border);">মোট: ${totalProcs}টি</span>
-                </div>
-                <div id="${chapterId}" class="card-body" style="display:none; padding:32px; background:var(--bg-body);">
-                    ${catHtml || '<p style="color:var(--text-muted); font-size:15px; text-align:center;">কোনো ক্যাটাগরি নেই</p>'}
-                </div>
-            </div>
-        `;
-    }).join('');
+const processListHtml = procs.length ? procs.map(p => `
+<div onclick="viewProcessPreview('${p.id}')"
+style="display:flex; align-items:center; padding:16px 20px; background:var(--bg-card); border-radius:12px; margin-bottom:8px; cursor:pointer; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:all 0.2s;"
+onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='var(--primary)';"
+onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='var(--border)';">
+<span style="width:12px; height:12px; border-radius:50%; background:var(--${p.priority==='high'?'danger':p.priority==='medium'?'warning':'success'}); margin-right:16px; box-shadow: 0 0 0 3px var(--${p.priority==='high'?'danger-light':p.priority==='medium'?'warning-light':'success-light'});"></span>
+<span style="flex:1; font-size:15px; font-weight:700; color:var(--text-main);">${p.icon || '📋'} ${p.title}</span>
+<span style="font-size:12px; color:var(--text-muted); font-weight:700; background:var(--hover); padding:6px 14px; border-radius:var(--radius-full); border:1px solid var(--border);">SLA: ${p.sla || '-'}</span>
+</div>
+`).join('') : `<div style="padding:16px 20px; border-radius:12px; background:var(--hover); font-size:14px; color:var(--text-muted); font-weight:500; font-style:italic; border:1px dashed var(--border);">এই ক্যাটাগরিতে কোনো Process নেই</div>`;
 
-    document.getElementById('prospectusContent').innerHTML = html;
+return `
+<div style="margin-bottom:16px;">
+<div onclick="toggleCategory('${catId}', this)"
+style="display:flex; align-items:center; padding:16px 20px; cursor:pointer; border-radius:12px; background:var(--hover); border:1px solid var(--border); transition:all 0.2s;">
+<span class="cat-chevron" style="margin-right:16px; font-size:12px; transition:transform 0.3s; color:var(--text-muted);">▶</span>
+<span style="font-size:16.5px; font-weight:800; color:var(--text-main);">${cat.icon} ${cat.name}</span>
+<span style="margin-left:auto; font-size:13px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:4px 14px; border-radius:var(--radius-full);">${procs.length}টি Process</span>
+</div>
+<div id="${catId}" style="display:none; margin-top:12px; padding-left:30px; border-left:3px solid var(--border); margin-left:16px;">
+${processListHtml}
+</div>
+</div>
+`;
+}).join('');
+
+const chapterId = `chapter-${pIndex}`;
+
+return `
+<div class="card" style="margin-bottom:32px; border:none; box-shadow:var(--shadow-lg);">
+<div class="card-header" style="border-left:8px solid ${pil.c}; cursor:pointer; background:var(--bg-card); padding:28px 32px;"
+onclick="toggleChapter('${chapterId}', this)">
+<h3 style="font-size:22px; font-weight:800; display:flex; align-items:center; gap:16px; color:var(--text-main);">
+<span class="chapter-chevron" style="font-size:16px; color:var(--text-muted); transition:transform 0.3s;">▶</span>
+${pil.label}
+</h3>
+<span style="font-size:14.5px; font-weight:800; color:var(--text-main); background:var(--hover); padding:8px 20px; border-radius:var(--radius-full); border:1px solid var(--border);">মোট: ${totalProcs}টি</span>
+</div>
+<div id="${chapterId}" class="card-body" style="display:none; padding:32px; background:var(--bg-body);">
+${catHtml || '<p style="color:var(--text-muted); font-size:15px; text-align:center;">কোনো ক্যাটাগরি নেই</p>'}
+</div>
+</div>
+`;
+}).join('');
+
+document.getElementById('prospectusContent').innerHTML = html;
 }
 
 function toggleChapter(id, el) {
-    const body = document.getElementById(id);
-    const chevron = el.querySelector('.chapter-chevron');
-    if(body.style.display === 'none' || body.style.display === '') {
-        body.style.display = 'block'; chevron.style.transform = 'rotate(90deg)';
-    } else {
-        body.style.display = 'none'; chevron.style.transform = 'rotate(0deg)';
-    }
+const body = document.getElementById(id);
+const chevron = el.querySelector('.chapter-chevron');
+if(body.style.display === 'none' || body.style.display === '') {
+body.style.display = 'block'; chevron.style.transform = 'rotate(90deg)';
+} else {
+body.style.display = 'none'; chevron.style.transform = 'rotate(0deg)';
+}
 }
 
 function toggleCategory(id, el) {
-    const body = document.getElementById(id);
-    const chevron = el.querySelector('.cat-chevron');
-    if(body.style.display === 'none' || body.style.display === '') {
-        body.style.display = 'block'; chevron.style.transform = 'rotate(90deg)';
-    } else {
-        body.style.display = 'none'; chevron.style.transform = 'rotate(0deg)';
-    }
+const body = document.getElementById(id);
+const chevron = el.querySelector('.cat-chevron');
+if(body.style.display === 'none' || body.style.display === '') {
+body.style.display = 'block'; chevron.style.transform = 'rotate(90deg)';
+} else {
+body.style.display = 'none'; chevron.style.transform = 'rotate(0deg)';
+}
 }
 
 // PREVIEW & CHECKLIST
 function viewProcessPreview(id) {
-    const p = globalProcesses.find(x => x.id === id);
-    if(!p) return;
-    
-    navigateTo('process-detail');
-    
-    const localKey = 'sf_check_' + id;
-    let comp = JSON.parse(localStorage.getItem(localKey)) || [];
+const p = globalProcesses.find(x => x.id === id);
+if(!p) return;
 
-    const stepsHtml = (p.steps || []).map((st, i) => {
-        const isDone = comp.includes(i);
-        return `
-            <div class="checklist-step ${isDone?'done':''}" onclick="toggleCheck('${id}', ${i}, this)">
-                <div class="step-checkbox">${isDone?'✓':(i+1)}</div>
-                <div style="flex:1;">
-                    <div style="font-size:15.5px; font-weight:600; color:var(--text-main); margin-bottom:8px; line-height:1.6;">${st.text}</div>
-                    <div class="step-tags">
-                        ${st.note ? '<span class="step-tag">📝 Note required</span>' : ''}
-                        ${st.evidence ? '<span class="step-tag">📎 Evidence needed</span>' : ''}
-                        ${st.mandatory ? '<span class="step-tag" style="background:var(--danger-light);color:var(--danger); border-color:var(--danger-light);">✱ Mandatory</span>' : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
+navigateTo('process-detail');
 
-    document.getElementById('processDetailContent').innerHTML = `
-        <div style="margin-bottom:24px; display:flex; gap:16px;">
-            <button class="btn btn-outline" style="background:var(--bg-card); padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="navigateTo('prospectus')">← Return to Prospectus</button>
-            <button class="btn btn-primary" style="padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="navigateTo('all-processes')">📋 View All Processes</button>
-        </div>
-        <div class="card" style="border:none; box-shadow:var(--shadow-lg);">
-            <div class="card-header" style="background:var(--hover); padding:40px; flex-direction:column; align-items:flex-start; border-bottom:2px solid var(--border);">
-                <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:24px;">
-                    <span class="badge-priority ${p.priority}" style="font-size:13px; padding:8px 20px;">${p.priority} Priority</span>
-                    <span style="font-size:14px; font-weight:800; color:var(--success); background:var(--success-light); padding:8px 20px; border-radius:var(--radius-full); border:1px solid var(--success);">Status: ${p.status}</span>
-                </div>
-                
-                <h2 style="font-size:32px; font-weight:800; margin-bottom:24px; color:var(--text-main); letter-spacing:-0.5px; display:flex; align-items:center; gap:20px;">
-                    <span style="background:var(--bg-card); border:1px solid var(--border); box-shadow:var(--shadow); width:72px; height:72px; display:flex; align-items:center; justify-content:center; border-radius:20px; font-size:40px;">${p.icon || '📋'}</span>
-                    ${p.title}
-                </h2>
-                
-                <div style="display:flex; gap:20px; flex-wrap:wrap; width:100%;">
-                    <div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Category</p>
-                        <p style="font-size:16px; font-weight:800; color:var(--text-main);">📂 ${p.category}</p>
-                    </div>
-                    <div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Pillar</p>
-                        <p style="font-size:16px; font-weight:800; color:var(--text-main);">${p.pillar === 'Work Process' ? '📗' : p.pillar === 'Technical' ? '📘' : '📙'} ${p.pillar}</p>
-                    </div>
-                    <div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">SLA (Resolution Time)</p>
-                        <p style="font-size:16px; font-weight:800; color:var(--primary);">⏰ ${p.sla || 'Not defined'}</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card-body" style="padding:48px 40px;">
-                <!-- DESCRIPTION PRE-WRAP FIX -->
-                ${p.description ? `
-                    <div style="margin-bottom:40px;">
-                        <h4 style="font-size:15px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:16px; letter-spacing:1px;">Description</h4>
-                        <div style="font-size:16px; line-height:1.8; padding:24px 32px; background:var(--primary-light); color:var(--primary-dark); border-radius:16px; border-left:6px solid var(--primary); font-weight:500; white-space: pre-wrap; word-wrap: break-word;">${p.description}</div>
-                    </div>
-                ` : ''}
-                
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-                    <h3 style="font-size:24px; font-weight:800; color:var(--text-main);">✅ Resolution Checklist</h3>
-                    <span style="font-size:14px; font-weight:800; color:white; background:var(--text-main); padding:8px 20px; border-radius:var(--radius-full); box-shadow:var(--shadow-sm);">Total ${p.steps?.length||0} Steps</span>
-                </div>
-                
-                <div style="display:flex; flex-direction:column; gap:12px;">
-                    ${stepsHtml || '<div style="text-align:center; padding:60px; background:var(--hover); border-radius:16px; border:2px dashed var(--border);"><span style="font-size:48px; display:block; margin-bottom:16px;">📝</span><span style="font-size:16px; font-weight:700; color:var(--text-muted);">No steps have been added yet.</span></div>'}
-                </div>
-            </div>
-        </div>
-    `;
+const localKey = 'sf_check_' + id;
+let comp = JSON.parse(localStorage.getItem(localKey)) || [];
+
+const stepsHtml = (p.steps || []).map((st, i) => {
+const isDone = comp.includes(i);
+return `
+<div class="checklist-step ${isDone?'done':''}" onclick="toggleCheck('${id}', ${i}, this)">
+<div class="step-checkbox">${isDone?'✓':(i+1)}</div>
+<div style="flex:1;">
+<div style="font-size:15.5px; font-weight:600; color:var(--text-main); margin-bottom:8px; line-height:1.6;">${st.text}</div>
+<div class="step-tags">
+${st.note ? '<span class="step-tag">📝 Note required</span>' : ''}
+${st.evidence ? '<span class="step-tag">📎 Evidence needed</span>' : ''}
+${st.mandatory ? '<span class="step-tag" style="background:var(--danger-light);color:var(--danger); border-color:var(--danger-light);">✱ Mandatory</span>' : ''}
+</div>
+</div>
+</div>
+`;
+}).join('');
+
+document.getElementById('processDetailContent').innerHTML = `
+<div style="margin-bottom:24px; display:flex; gap:16px; flex-wrap:wrap;">
+<button class="btn btn-outline" style="background:var(--bg-card); padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="navigateTo('prospectus')">← Return to Prospectus</button>
+<button class="btn btn-primary" style="padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="navigateTo('all-processes')">📋 View All Processes</button>
+<!-- Admin-এর জন্য সরাসরি Edit / Delete -->
+<button class="btn btn-warning admin-only" style="padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="editProcess('${p.id}')">✏️ Edit This Process</button>
+<button class="btn btn-danger admin-only" style="padding:14px 28px; border-radius:var(--radius-full); font-size:15px; box-shadow:var(--shadow-sm);" onclick="confirmDelete('process', '${p.id}', '${jsq(p.title)}')">🗑️ Delete</button>
+</div>
+<div class="card" style="border:none; box-shadow:var(--shadow-lg);">
+<div class="card-header" style="background:var(--hover); padding:40px; flex-direction:column; align-items:flex-start; border-bottom:2px solid var(--border);">
+<div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:24px;">
+<span class="badge-priority ${p.priority}" style="font-size:13px; padding:8px 20px;">${p.priority} Priority</span>
+<span style="font-size:14px; font-weight:800; color:var(--success); background:var(--success-light); padding:8px 20px; border-radius:var(--radius-full); border:1px solid var(--success);">Status: ${p.status}</span>
+</div>
+
+<h2 style="font-size:32px; font-weight:800; margin-bottom:24px; color:var(--text-main); letter-spacing:-0.5px; display:flex; align-items:center; gap:20px;">
+<span style="background:var(--bg-card); border:1px solid var(--border); box-shadow:var(--shadow); width:72px; height:72px; display:flex; align-items:center; justify-content:center; border-radius:20px; font-size:40px;">${p.icon || '📋'}</span>
+${p.title}
+</h2>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap; width:100%;">
+<div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Category</p>
+<p style="font-size:16px; font-weight:800; color:var(--text-main);">📂 ${p.category}</p>
+</div>
+<div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Pillar</p>
+<p style="font-size:16px; font-weight:800; color:var(--text-main);">${pillarIcon(p.pillar)} ${p.pillar}</p>
+</div>
+<div style="flex:1; min-width:200px; background:var(--bg-card); padding:20px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<p style="font-size:13px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:6px;">SLA (Resolution Time)</p>
+<p style="font-size:16px; font-weight:800; color:var(--primary);">⏰ ${p.sla || 'Not defined'}</p>
+</div>
+</div>
+</div>
+
+<div class="card-body" style="padding:48px 40px;">
+<!-- DESCRIPTION PRE-WRAP FIX -->
+${p.description ? `
+<div style="margin-bottom:40px;">
+<h4 style="font-size:15px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:16px; letter-spacing:1px;">Description</h4>
+<div style="font-size:16px; line-height:1.8; padding:24px 32px; background:var(--primary-light); color:var(--primary-dark); border-radius:16px; border-left:6px solid var(--primary); font-weight:500; white-space: pre-wrap; word-wrap: break-word;">${p.description}</div>
+</div>
+` : ''}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+<h3 style="font-size:24px; font-weight:800; color:var(--text-main);">✅ Resolution Checklist</h3>
+<span style="font-size:14px; font-weight:800; color:white; background:var(--text-main); padding:8px 20px; border-radius:var(--radius-full); box-shadow:var(--shadow-sm);">Total ${p.steps?.length||0} Steps</span>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:12px;">
+${stepsHtml || '<div style="text-align:center; padding:60px; background:var(--hover); border-radius:16px; border:2px dashed var(--border);"><span style="font-size:48px; display:block; margin-bottom:16px;">📝</span><span style="font-size:16px; font-weight:700; color:var(--text-muted);">No steps have been added yet.</span></div>'}
+</div>
+</div>
+</div>
+`;
 }
 
 function toggleCheck(id, index, el) {
-    const localKey = 'sf_check_' + id;
-    let comp = JSON.parse(localStorage.getItem(localKey)) || [];
-    const idx = comp.indexOf(index);
-    
-    if(idx > -1) {
-        comp.splice(idx, 1);
-        el.classList.remove('done');
-        el.querySelector('.step-checkbox').innerHTML = (index+1);
-    } else {
-        comp.push(index);
-        el.classList.add('done');
-        el.querySelector('.step-checkbox').innerHTML = '✓';
-    }
-    localStorage.setItem(localKey, JSON.stringify(comp));
+const localKey = 'sf_check_' + id;
+let comp = JSON.parse(localStorage.getItem(localKey)) || [];
+const idx = comp.indexOf(index);
+
+if(idx > -1) {
+comp.splice(idx, 1);
+el.classList.remove('done');
+el.querySelector('.step-checkbox').innerHTML = (index+1);
+} else {
+comp.push(index);
+el.classList.add('done');
+el.querySelector('.step-checkbox').innerHTML = '✓';
+}
+localStorage.setItem(localKey, JSON.stringify(comp));
 }
 
 // PROCESS CRUD
 function saveProcess() {
-    if(!isAdmin) return toast('Admin Access Required!', 'error');
-    
-    const eid = document.getElementById('editProcessId').value;
-    const title = document.getElementById('processTitle').value.trim();
-    if(!title) return toast('Process Title is required!', 'error');
-    
-    const btn = document.querySelector('#page-add-process .btn-primary');
-    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:20px;height:20px;margin-right:12px;"></div> Saving to Database...';
-    
-    const id = eid || 'p_' + Date.now();
-    const steps = [];
-    document.querySelectorAll('.step-builder-item').forEach(it => {
-        const t = it.querySelector('input[type="text"]').value.trim();
-        if(!t) return;
-        const checks = it.querySelectorAll('input[type="checkbox"]');
-        steps.push({ text: t, note: checks[0]?.checked||false, evidence: checks[1]?.checked||false, mandatory: checks[2]?.checked||false });
-    });
+if(!isAdmin) return toast('Admin Access Required!', 'error');
 
-    const obj = {
-        id: id, title: title,
-        pillar: document.getElementById('processPillar').value,
-        category: document.getElementById('processCategory').value,
-        priority: document.getElementById('processPriority').value,
-        status: document.getElementById('processStatus').value,
-        sla: document.getElementById('processSla').value,
-        icon: document.getElementById('processIcon').value || '📋',
-        description: document.getElementById('processDesc').value,
-        steps: steps
-    };
+const eid = document.getElementById('editProcessId').value;
+const title = document.getElementById('processTitle').value.trim();
+if(!title) return toast('Process Title is required!', 'error');
 
-    db.ref('processes/' + id).set(obj).then(() => {
-        toast('Process Saved Successfully!', 'success');
-        btn.innerHTML = '💾 Save to Database';
-        navigateTo('all-processes');
-    });
+const btn = document.querySelector('#page-add-process .btn-primary');
+btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:20px;height:20px;margin-right:12px;"></div> Saving to Database...';
+
+const id = eid || 'p_' + Date.now();
+const steps = [];
+document.querySelectorAll('.step-builder-item').forEach(it => {
+const t = it.querySelector('input[type="text"]').value.trim();
+if(!t) return;
+const checks = it.querySelectorAll('input[type="checkbox"]');
+steps.push({ text: t, note: checks[0]?.checked||false, evidence: checks[1]?.checked||false, mandatory: checks[2]?.checked||false });
+});
+
+const obj = {
+id: id, title: title,
+pillar: document.getElementById('processPillar').value,
+category: document.getElementById('processCategory').value,
+priority: (globalProcesses.find(x => x.id === id) || {}).priority || 'medium', // ফর্মে নেই, আগের মান অক্ষত থাকে
+status: document.getElementById('processStatus').value,
+sla: document.getElementById('processSla').value,
+icon: document.getElementById('processIcon').value || '📋',
+description: document.getElementById('processDesc').value,
+steps: steps
+};
+
+db.ref('processes/' + id).set(obj).then(() => {
+toast('Process Saved Successfully!', 'success');
+btn.innerHTML = '💾 Save to Database';
+// এডিট করলে আবার সেই Process-এর ডিটেইল পেজেই ফিরে যাবে
+if(eid) { viewProcessPreview(id); } else { navigateTo('all-processes'); }
+});
 }
 
 function editProcess(id) {
-    const p = globalProcesses.find(x => x.id === id);
-    if(!p) return;
-    
-    navigateTo('add-process');
-    document.getElementById('formTitle').textContent = 'Edit Process';
-    document.getElementById('editProcessId').value = p.id;
-    document.getElementById('processTitle').value = p.title;
-    document.getElementById('processPillar').value = p.pillar;
-    populateCategoryDropdowns();
-    setTimeout(() => document.getElementById('processCategory').value = p.category, 50);
-    document.getElementById('processPriority').value = p.priority;
-    document.getElementById('processStatus').value = p.status;
-    document.getElementById('processSla').value = p.sla || '';
-    document.getElementById('processIcon').value = p.icon;
-    document.getElementById('processDesc').value = p.description || '';
-    
-    document.getElementById('stepsBuilder').innerHTML = '';
-    (p.steps || []).forEach(st => addBuilderStep(st.text, st.note, st.evidence, st.mandatory));
+const p = globalProcesses.find(x => x.id === id);
+if(!p) return;
+
+navigateTo('add-process');
+document.getElementById('formTitle').textContent = 'Edit Process';
+document.getElementById('editProcessId').value = p.id;
+document.getElementById('processTitle').value = p.title;
+document.getElementById('processPillar').value = p.pillar;
+populateCategoryDropdowns(true);
+// Process-এর আসল Category তালিকায় না থাকলেও যেন হারিয়ে না যায়
+const catSel = document.getElementById('processCategory');
+if(p.category && ![...catSel.options].some(o => o.value === p.category)) {
+catSel.insertAdjacentHTML('afterbegin', `<option value="${attr(p.category)}">📂 ${p.category}</option>`);
+}
+catSel.value = p.category || '';
+document.getElementById('processStatus').value = p.status;
+document.getElementById('processSla').value = p.sla || '';
+document.getElementById('processIcon').value = p.icon || '📋';
+document.getElementById('processDesc').value = p.description || '';
+
+document.getElementById('stepsBuilder').innerHTML = '';
+(p.steps || []).forEach(st => addBuilderStep(st.text, st.note, st.evidence, st.mandatory));
 }
 
 function addBuilderStep(text='', note=true, evidence=false, mandatory=true) {
-    const builder = document.getElementById('stepsBuilder');
-    const div = document.createElement('div');
-    div.className = 'step-builder-item';
-    div.innerHTML = `
-        <span style="color:var(--text-muted); cursor:grab; font-size:20px; margin:0 12px;">☰</span>
-        <input type="text" placeholder="Enter step instruction..." value="${text}">
-        <div style="display:flex; gap:16px; background:var(--bg-card); padding:10px 20px; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
-            <label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--primary);" ${note ? 'checked' : ''}> Note</label>
-            <label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--primary);" ${evidence ? 'checked' : ''}> Evidence</label>
-            <label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--danger); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--danger);" ${mandatory ? 'checked' : ''}> Mandatory</label>
-        </div>
-        <button class="btn btn-outline" style="border:none; color:var(--text-muted); font-size:22px; width:48px; height:48px; padding:0; border-radius:50%; margin-left:12px; background:transparent;" onclick="this.parentElement.remove()" onmouseover="this.style.color='var(--danger)'; this.style.background='var(--danger-light)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='transparent';">✕</button>
-    `;
-    builder.appendChild(div);
+const builder = document.getElementById('stepsBuilder');
+const div = document.createElement('div');
+div.className = 'step-builder-item';
+div.innerHTML = `
+<span style="color:var(--text-muted); cursor:grab; font-size:20px; margin:0 12px;">☰</span>
+<input type="text" placeholder="Enter step instruction..." value="${attr(text)}">
+<div style="display:flex; gap:16px; background:var(--bg-card); padding:10px 20px; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+<label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--primary);" ${note ? 'checked' : ''}> Note</label>
+<label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--text-main); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--primary);" ${evidence ? 'checked' : ''}> Evidence</label>
+<label style="font-size:13px; font-weight:700; cursor:pointer; color:var(--danger); display:flex; align-items:center; gap:8px;"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--danger);" ${mandatory ? 'checked' : ''}> Mandatory</label>
+</div>
+<button class="btn btn-outline" style="border:none; color:var(--text-muted); font-size:22px; width:48px; height:48px; padding:0; border-radius:50%; margin-left:12px; background:transparent;" onclick="this.parentElement.remove()" onmouseover="this.style.color='var(--danger)'; this.style.background='var(--danger-light)';" onmouseout="this.style.color='var(--text-muted)'; this.style.background='transparent';">✕</button>
+`;
+builder.appendChild(div);
 }
 
 function resetProcessForm() {
-    document.getElementById('formTitle').textContent = 'Create New Process';
-    document.getElementById('editProcessId').value = '';
-    document.getElementById('processTitle').value = '';
-    document.getElementById('processDesc').value = '';
-    document.getElementById('processSla').value = '';
-    document.getElementById('processIcon').value = '📋';
-    document.getElementById('stepsBuilder').innerHTML = '';
+document.getElementById('formTitle').textContent = 'Create New Process';
+document.getElementById('editProcessId').value = '';
+document.getElementById('processTitle').value = '';
+document.getElementById('processDesc').value = '';
+document.getElementById('processSla').value = '';
+document.getElementById('processIcon').value = '📋';
+document.getElementById('stepsBuilder').innerHTML = '';
+populateCategoryDropdowns(true);
 }
 
 // CATEGORY CRUD
 function renderCategoryTable() {
-    document.getElementById('categoryTableBody').innerHTML = globalCategories.map(c => {
-        const count = globalProcesses.filter(p => p.category === c.name).length;
-        return `
-        <tr>
-            <td style="font-size:28px; text-align:center;">${c.icon}</td>
-            <td><strong style="font-size:15.5px; color:var(--text-main);">${c.name}</strong></td>
-            <td><span style="background:var(--hover); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--border);">${c.pillar}</span></td>
-            <td style="font-weight:800; color:var(--primary); font-size:14.5px;">${count} Processes</td>
-            <td>
-                <div class="actions">
-                    <button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="openCategoryModal('${c.id}')">✏️ Edit</button>
-                    <button class="btn btn-outline btn-sm" style="border-color:var(--danger); color:var(--danger)" onclick="confirmDelete('category', '${c.id}', '${c.name}')">🗑️ Del</button>
-                </div>
-            </td>
-        </tr>`;
-    }).join('');
+document.getElementById('categoryTableBody').innerHTML = globalCategories.map(c => {
+const count = globalProcesses.filter(p => p.category === c.name).length;
+return `
+<tr>
+<td style="font-size:28px; text-align:center;">${c.icon}</td>
+<td><strong style="font-size:15.5px; color:var(--text-main);">${c.name}</strong></td>
+<td><span style="background:var(--hover); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--border);">${c.pillar}</span></td>
+<td style="font-weight:800; color:var(--primary); font-size:14.5px;">${count} Processes</td>
+<td>
+<div class="actions">
+<button class="btn btn-outline btn-sm" style="border-color:var(--warning); color:var(--warning)" onclick="openCategoryModal('${c.id}')">✏️ Edit</button>
+<button class="btn btn-outline btn-sm" style="border-color:var(--danger); color:var(--danger)" onclick="confirmDelete('category', '${c.id}', '${jsq(c.name)}')">🗑️ Del</button>
+</div>
+</td>
+</tr>`;
+}).join('');
 }
 
 function openCategoryModal(editId = null) {
-    const c = editId ? globalCategories.find(x => x.id === editId) : null;
-    document.getElementById('catModalTitle').textContent = c ? 'Edit Category' : 'Add New Category';
-    document.getElementById('editCatId').value = c ? c.id : '';
-    document.getElementById('catName').value = c ? c.name : '';
-    document.getElementById('catPillar').value = c ? c.pillar : 'Work Process';
-    document.getElementById('catIcon').value = c ? c.icon : '📂';
-    document.getElementById('categoryModal').classList.add('active');
+const c = editId ? globalCategories.find(x => x.id === editId) : null;
+document.getElementById('catModalTitle').textContent = c ? 'Edit Category' : 'Add New Category';
+document.getElementById('editCatId').value = c ? c.id : '';
+document.getElementById('catName').value = c ? c.name : '';
+document.getElementById('catPillar').value = c ? c.pillar : 'Work Process';
+document.getElementById('catIcon').value = c ? c.icon : '📂';
+document.getElementById('categoryModal').classList.add('active');
 }
 
 function saveCategory() {
-    const eid = document.getElementById('editCatId').value;
-    const name = document.getElementById('catName').value.trim();
-    if(!name) return toast('Category Name is required!', 'error');
+const eid = document.getElementById('editCatId').value;
+const name = document.getElementById('catName').value.trim();
+if(!name) return toast('Category Name is required!', 'error');
 
-    const btn = document.querySelector('#categoryModal .btn-primary');
-    btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:8px;"></div> Saving...';
+const btn = document.querySelector('#categoryModal .btn-primary');
+btn.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:18px;height:18px;margin-right:8px;"></div> Saving...';
 
-    const id = eid || 'c_' + Date.now();
-    const obj = { id: id, name: name, pillar: document.getElementById('catPillar').value, icon: document.getElementById('catIcon').value || '📂' };
+const id = eid || 'c_' + Date.now();
+const obj = { id: id, name: name, pillar: document.getElementById('catPillar').value, icon: document.getElementById('catIcon').value || '📂' };
 
-    db.ref('categories/' + id).set(obj).then(() => {
-        toast('Category Saved!', 'success');
-        btn.innerHTML = 'Save Category';
-        closeModal('categoryModal');
-    });
+db.ref('categories/' + id).set(obj).then(() => {
+toast('Category Saved!', 'success');
+btn.innerHTML = 'Save Category';
+closeModal('categoryModal');
+});
 }
 
-function populateCategoryDropdowns() {
-    const sel = document.getElementById('processCategory');
-    const fSel = document.getElementById('filterCategory');
-    const opts = globalCategories.map(c => `<option value="${c.name}">${c.icon} ${c.name}</option>`).join('');
-    if(sel) sel.innerHTML = opts;
-    if(fSel) fSel.innerHTML = '<option value="all">সব Category</option>' + opts;
+// Process ফর্মে নির্বাচিত Pillar অনুযায়ী Category দেখাবে
+// reset=true হলে আগে নির্বাচিত Category ধরে রাখে না (Pillar বদলালে/নতুন ফর্মে)
+function populateCategoryDropdowns(reset) {
+const sel = document.getElementById('processCategory');
+const fSel = document.getElementById('filterCategory');
+const pil = document.getElementById('processPillar').value;
+const cur = reset ? '' : (sel ? sel.value : '');
+let formOpts = globalCategories.filter(c => c.pillar === pil).map(c => `<option value="${attr(c.name)}">${c.icon} ${c.name}</option>`).join('');
+if(cur && !globalCategories.some(c => c.pillar === pil && c.name === cur)) {
+formOpts = `<option value="${attr(cur)}">📂 ${cur}</option>` + formOpts;
+}
+const allOpts = globalCategories.map(c => `<option value="${attr(c.name)}">${c.icon} ${c.name}</option>`).join('');
+const prevFilter = fSel ? fSel.value : 'all';
+if(sel) { sel.innerHTML = formOpts; if(cur) sel.value = cur; }
+if(fSel) {
+fSel.innerHTML = '<option value="all">সব Category</option>' + allOpts;
+fSel.value = prevFilter;
+if(fSel.value !== prevFilter) fSel.value = 'all';
+}
 }
 
 // DELETE CONFIRMATION
 let deleteTarget = { type: null, id: null };
 function confirmDelete(type, id, title) {
-    deleteTarget = { type, id };
-    document.getElementById('confirmTitle').textContent = `Delete "${title}"?`;
-    document.getElementById('confirmDesc').textContent = type === 'category' ? 'This category and its link to processes will be lost forever.' : 'This action cannot be undone!';
-    document.getElementById('confirmModal').classList.add('active');
+deleteTarget = { type, id };
+document.getElementById('confirmTitle').textContent = `Delete "${title}"?`;
+document.getElementById('confirmDesc').textContent = type === 'category' ? 'This category and its link to processes will be lost forever.' : 'This action cannot be undone!';
+document.getElementById('confirmModal').classList.add('active');
 }
 
 document.getElementById('confirmBtn').addEventListener('click', function() {
-    this.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:20px;height:20px;margin-right:10px;"></div> Deleting...';
-    
-    if(deleteTarget.type === 'process') {
-        db.ref('processes/' + deleteTarget.id).remove().then(() => {
-            toast('Process Deleted!', 'success');
-            finishDelete();
-        });
-    } else if(deleteTarget.type === 'category') {
-        db.ref('categories/' + deleteTarget.id).remove().then(() => {
-            toast('Category Deleted!', 'success');
-            finishDelete();
-        });
-    }
+this.innerHTML = '<div class="spinner" style="border-top-color:#fff;width:20px;height:20px;margin-right:10px;"></div> Deleting...';
+
+if(deleteTarget.type === 'process') {
+db.ref('processes/' + deleteTarget.id).remove().then(() => {
+toast('Process Deleted!', 'success');
+finishDelete();
+navigateTo('all-processes');
+});
+} else if(deleteTarget.type === 'category') {
+db.ref('categories/' + deleteTarget.id).remove().then(() => {
+toast('Category Deleted!', 'success');
+finishDelete();
+});
+}
 });
 
 function finishDelete() {
-    document.getElementById('confirmBtn').innerHTML = 'Yes, Delete';
-    closeModal('confirmModal');
+document.getElementById('confirmBtn').innerHTML = 'Yes, Delete';
+closeModal('confirmModal');
 }
 
 function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
+document.getElementById(modalId).classList.remove('active');
 }
 
 function toast(msg, type) {
-    const b = document.getElementById('toastBox');
-    const t = document.createElement('div');
-    t.className = 'toast';
-    const icons = { success:'✅', error:'❌', warning:'⚠️' };
-    t.innerHTML = `<span style="font-size:20px;">${icons[type] || '📌'}</span> ${msg}`;
-    b.appendChild(t);
-    setTimeout(() => { t.style.transform='translateX(120%)'; t.style.opacity='0'; setTimeout(()=>t.remove(), 400); }, 3000);
+const b = document.getElementById('toastBox');
+const t = document.createElement('div');
+t.className = 'toast';
+const icons = { success:'✅', error:'❌', warning:'⚠️' };
+t.innerHTML = `<span style="font-size:20px;">${icons[type] || '📌'}</span> ${msg}`;
+b.appendChild(t);
+setTimeout(() => { t.style.transform='translateX(120%)'; t.style.opacity='0'; setTimeout(()=>t.remove(), 400); }, 3000);
 }
 
 document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.getElementById('loginModal').classList.contains('active')) doLogin(); });
+
+// Firebase সংযোগ না হলে অনন্ত স্পিনারের বদলে স্পষ্ট বার্তা দেখাবে
+if(window.__dbOffline) {
+refreshUI();
+document.getElementById('dashboardStats').insertAdjacentHTML('beforebegin', `
+<div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:18px 24px; margin-bottom:24px; background:var(--warning-light); border:1px solid var(--warning); border-radius:var(--radius); color:#92400e; font-weight:600; font-size:14.5px;">
+<span style="font-size:24px;">⚠️</span>
+<span style="flex:1; min-width:220px;">ডেটাবেসে সংযোগ হয়নি। ইন্টারনেট চালু আছে কিনা দেখুন, অথবা পেজটি ব্রাউজারে সরাসরি খুলুন (প্রিভিউ প্যানেলে Firebase লোড হয় না)।</span>
+<button class="btn btn-warning btn-sm" onclick="location.reload()">🔄 আবার চেষ্টা করুন</button>
+</div>`);
+}
 
 </script>
 </body>
